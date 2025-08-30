@@ -29,22 +29,9 @@
 		29A1E6822E27F5CB004BB976 /* SacaviaAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SacaviaAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		297101A32E3EEE3B0049B3E8 /* Exceptions for "SacaviaApp" folder in "SacaviaApp" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 29A1E66A2E27F5C9004BB976 /* SacaviaApp */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		29A1E66D2E27F5C9004BB976 /* SacaviaApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				297101A32E3EEE3B0049B3E8 /* Exceptions for "SacaviaApp" folder in "SacaviaApp" target */,
-			);
 			path = SacaviaApp;
 			sourceTree = "<group>";
 		};
@@ -415,8 +402,7 @@
 				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = WAWJ7L538T;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SacaviaApp/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Sacavia;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
@@ -460,8 +446,7 @@
 				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = WAWJ7L538T;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SacaviaApp/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Sacavia;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
