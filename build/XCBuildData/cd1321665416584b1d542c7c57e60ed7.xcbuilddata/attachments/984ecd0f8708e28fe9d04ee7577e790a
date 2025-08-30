@@ -1,0 +1,528 @@
+{
+  "" : {
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SacaviaApp-master.dia",
+    "emit-module-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SacaviaApp-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SacaviaApp-master-emit-module.dia",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SacaviaApp-master.swiftdeps"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/APIService.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/APIService.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/APIService.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/APIService.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/APIService.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/APIService.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/APIService.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/APIService.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/APIService~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/AddLocationComponents.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationComponents.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationComponents.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationComponents.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationComponents.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationComponents.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationComponents.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationComponents.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationComponents~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/AddLocationView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/AuthManager.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AuthManager.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AuthManager.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AuthManager.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AuthManager.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AuthManager.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AuthManager.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AuthManager.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AuthManager~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/BlockUserView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockUserView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockUserView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockUserView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockUserView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockUserView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockUserView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockUserView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockUserView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/BlockedUsersListView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockedUsersListView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockedUsersListView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockedUsersListView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockedUsersListView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockedUsersListView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockedUsersListView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockedUsersListView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockedUsersListView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/BlockingTestView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockingTestView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockingTestView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockingTestView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockingTestView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockingTestView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockingTestView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockingTestView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockingTestView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/BottomTabBar.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BottomTabBar.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BottomTabBar.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BottomTabBar.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BottomTabBar.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BottomTabBar.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BottomTabBar.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BottomTabBar.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BottomTabBar~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/BrowseGuidesView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BrowseGuidesView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BrowseGuidesView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BrowseGuidesView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BrowseGuidesView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BrowseGuidesView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BrowseGuidesView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BrowseGuidesView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BrowseGuidesView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/CategoryFilterTabs.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CategoryFilterTabs.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CategoryFilterTabs.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CategoryFilterTabs.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CategoryFilterTabs.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CategoryFilterTabs.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CategoryFilterTabs.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CategoryFilterTabs.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CategoryFilterTabs~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/ContentView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ContentView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ContentView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ContentView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ContentView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ContentView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ContentView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/CreateGuideView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CreateGuideView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CreateGuideView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CreateGuideView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CreateGuideView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CreateGuideView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CreateGuideView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CreateGuideView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CreateGuideView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/CreatePostView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CreatePostView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CreatePostView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CreatePostView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CreatePostView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CreatePostView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CreatePostView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CreatePostView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CreatePostView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/DeleteAccountView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/DeleteAccountView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/DeleteAccountView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/DeleteAccountView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/DeleteAccountView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/DeleteAccountView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/DeleteAccountView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/DeleteAccountView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/DeleteAccountView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/EnhancedAddLocationView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedAddLocationView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedAddLocationView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedAddLocationView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedAddLocationView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedAddLocationView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedAddLocationView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedAddLocationView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedAddLocationView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/EnhancedLocationDetailView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedLocationDetailView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedLocationDetailView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedLocationDetailView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedLocationDetailView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedLocationDetailView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedLocationDetailView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedLocationDetailView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedLocationDetailView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/EnhancedPeopleSuggestionsView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedPeopleSuggestionsView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedPeopleSuggestionsView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedPeopleSuggestionsView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedPeopleSuggestionsView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedPeopleSuggestionsView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedPeopleSuggestionsView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedPeopleSuggestionsView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedPeopleSuggestionsView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/EnhancedVideoPlayer.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedVideoPlayer.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedVideoPlayer.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedVideoPlayer.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedVideoPlayer.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedVideoPlayer.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedVideoPlayer.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedVideoPlayer.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedVideoPlayer~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/EventDetailView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventDetailView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventDetailView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventDetailView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventDetailView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventDetailView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventDetailView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventDetailView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventDetailView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/EventsManager.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventsManager.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventsManager.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventsManager.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventsManager.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventsManager.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventsManager.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventsManager.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventsManager~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/FeedManager.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FeedManager.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FeedManager.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FeedManager.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FeedManager.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FeedManager.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FeedManager.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FeedManager.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FeedManager~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/FloatingActionButton.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FloatingActionButton.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FloatingActionButton.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FloatingActionButton.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FloatingActionButton.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FloatingActionButton.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FloatingActionButton.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FloatingActionButton.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FloatingActionButton~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/ForgotPasswordView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ForgotPasswordView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ForgotPasswordView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ForgotPasswordView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ForgotPasswordView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ForgotPasswordView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ForgotPasswordView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ForgotPasswordView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ForgotPasswordView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/LandscapeOptimizations.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LandscapeOptimizations.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LandscapeOptimizations.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LandscapeOptimizations.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LandscapeOptimizations.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LandscapeOptimizations.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LandscapeOptimizations.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LandscapeOptimizations.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LandscapeOptimizations~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/LocalBuzzView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocalBuzzView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocalBuzzView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocalBuzzView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocalBuzzView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocalBuzzView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocalBuzzView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocalBuzzView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocalBuzzView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/LocationDetailView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationDetailView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationDetailView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationDetailView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationDetailView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationDetailView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationDetailView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationDetailView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationDetailView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/LocationManager.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationManager.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationManager.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationManager.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationManager.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationManager.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationManager.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationManager.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationManager~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/LocationsMapTabView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationsMapTabView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationsMapTabView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationsMapTabView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationsMapTabView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationsMapTabView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationsMapTabView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationsMapTabView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationsMapTabView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/LoginView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LoginView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LoginView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LoginView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LoginView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LoginView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LoginView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LoginView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LoginView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/NotificationSettingsView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/NotificationSettingsView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/NotificationSettingsView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/NotificationSettingsView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/NotificationSettingsView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/NotificationSettingsView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/NotificationSettingsView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/NotificationSettingsView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/NotificationSettingsView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/NotificationsView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/NotificationsView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/NotificationsView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/NotificationsView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/NotificationsView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/NotificationsView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/NotificationsView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/NotificationsView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/NotificationsView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/PeopleSuggestionCard.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PeopleSuggestionCard.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PeopleSuggestionCard.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PeopleSuggestionCard.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PeopleSuggestionCard.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PeopleSuggestionCard.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PeopleSuggestionCard.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PeopleSuggestionCard.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PeopleSuggestionCard~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/PeopleSuggestionsManager.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PeopleSuggestionsManager.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PeopleSuggestionsManager.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PeopleSuggestionsManager.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PeopleSuggestionsManager.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PeopleSuggestionsManager.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PeopleSuggestionsManager.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PeopleSuggestionsManager.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PeopleSuggestionsManager~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/PlannerView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PlannerView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PlannerView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PlannerView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PlannerView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PlannerView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PlannerView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PlannerView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PlannerView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/ProfileEditView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileEditView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileEditView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileEditView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileEditView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileEditView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileEditView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileEditView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileEditView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/ProfileView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/PushNotificationManager.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PushNotificationManager.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PushNotificationManager.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PushNotificationManager.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PushNotificationManager.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PushNotificationManager.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PushNotificationManager.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PushNotificationManager.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/PushNotificationManager~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/ReportContentView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ReportContentView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ReportContentView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ReportContentView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ReportContentView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ReportContentView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ReportContentView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ReportContentView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ReportContentView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/SacaviaAppApp.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SacaviaAppApp.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SacaviaAppApp.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SacaviaAppApp.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SacaviaAppApp.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SacaviaAppApp.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SacaviaAppApp.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SacaviaAppApp.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SacaviaAppApp~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/SavedView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SavedView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SavedView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SavedView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SavedView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SavedView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SavedView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SavedView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SavedView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/SavedViewModel.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SavedViewModel.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SavedViewModel.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SavedViewModel.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SavedViewModel.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SavedViewModel.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SavedViewModel.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SavedViewModel.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SavedViewModel~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/ScalingModifiers.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ScalingModifiers.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ScalingModifiers.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ScalingModifiers.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ScalingModifiers.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ScalingModifiers.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ScalingModifiers.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ScalingModifiers.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ScalingModifiers~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/SearchView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SearchView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SearchView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SearchView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SearchView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SearchView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SearchView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SearchView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SearchView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/SharedModals.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedModals.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedModals.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedModals.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedModals.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedModals.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedModals.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedModals.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedModals~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/SharedModels.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedModels.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedModels.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedModels.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedModels.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedModels.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedModels.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedModels.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedModels~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/SharedTypes.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedTypes.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedTypes.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedTypes.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedTypes.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedTypes.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedTypes.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedTypes.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SharedTypes~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/SignupView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SignupView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SignupView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SignupView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SignupView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SignupView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SignupView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SignupView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SignupView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/SimplePeopleSuggestionsView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SimplePeopleSuggestionsView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SimplePeopleSuggestionsView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SimplePeopleSuggestionsView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SimplePeopleSuggestionsView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SimplePeopleSuggestionsView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SimplePeopleSuggestionsView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SimplePeopleSuggestionsView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SimplePeopleSuggestionsView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/SwipeablePeopleSuggestionsView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SwipeablePeopleSuggestionsView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SwipeablePeopleSuggestionsView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SwipeablePeopleSuggestionsView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SwipeablePeopleSuggestionsView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SwipeablePeopleSuggestionsView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SwipeablePeopleSuggestionsView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SwipeablePeopleSuggestionsView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SwipeablePeopleSuggestionsView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/TestConnectionView.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/TestConnectionView.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/TestConnectionView.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/TestConnectionView.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/TestConnectionView.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/TestConnectionView.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/TestConnectionView.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/TestConnectionView.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/TestConnectionView~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/Utils.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/Utils.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/Utils.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/Utils.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/Utils.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/Utils.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/Utils.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/Utils.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/Utils~partial.swiftmodule"
+  },
+  "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/GeneratedAssetSymbols~partial.swiftmodule"
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "source": "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/PlannerView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 26
+        }
+      },
+      {
+        "comment": "",
+        "key": "Done",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 52
+        }
+      },
+      {
+        "comment": "",
+        "key": "Your Personal Local Assistant",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 45
+        }
+      },
+      {
+        "comment": "",
+        "key": "Gem Agent",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 39
+        }
+      },
+      {
+        "comment": "",
+        "key": "Just tell me what you want to do!",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 67
+        }
+      },
+      {
+        "comment": "",
+        "key": "Examples: 'I want to take the kids in Boston', 'romantic dinner date', 'fun afternoon with friends'",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 72
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tell me what you're looking for...",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 103
+        }
+      },
+      {
+        "comment": "",
+        "key": "What would you like to do?",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 97
+        }
+      },
+      {
+        "comment": "",
+        "key": "Quick Suggestions",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 112
+        }
+      },
+      {
+        "comment": "",
+        "key": "Hide suggestions",
+        "location": {
+          "startingColumn": 56,
+          "startingLine": 146
+        }
+      },
+      {
+        "comment": "",
+        "key": "Show suggestions",
+        "location": {
+          "startingColumn": 77,
+          "startingLine": 146
+        }
+      },
+      {
+        "comment": "",
+        "key": "Finding the best places...",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 176
+        }
+      },
+      {
+        "comment": "",
+        "key": "Get Personalized Suggestions",
+        "location": {
+          "startingColumn": 81,
+          "startingLine": 176
+        }
+      },
+      {
+        "comment": "",
+        "key": "Location Access Required",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 325
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enable location access in Settings to get personalized recommendations with real locations near you.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 330
+        }
+      },
+      {
+        "comment": "",
+        "key": "Location Enabled",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 353
+        }
+      },
+      {
+        "comment": "",
+        "key": "Will use nearby verified locations for personalized suggestions",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 358
+        }
+      },
+      {
+        "comment": "",
+        "key": "Gem Agent",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 412
+        }
+      },
+      {
+        "comment": "",
+        "key": "Here are my suggestions:",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 431
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld verified location%@ included",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 479
+        }
+      },
+      {
+        "comment": "",
+        "key": "Based on %lld location%@ in your area",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 485
+        }
+      },
+      {
+        "comment": "",
+        "key": "I found some great verified places near you!",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 473
+        }
+      }
+    ]
+  },
+  "version": 1
+}

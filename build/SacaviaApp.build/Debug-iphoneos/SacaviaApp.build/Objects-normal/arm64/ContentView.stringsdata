@@ -1,0 +1,448 @@
+{
+  "source": "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/ContentView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 195
+        }
+      },
+      {
+        "comment": "",
+        "key": "Events",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 276
+        }
+      },
+      {
+        "comment": "",
+        "key": "Search events...",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 305
+        }
+      },
+      {
+        "comment": "",
+        "key": "Discovering amazing events...",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 381
+        }
+      },
+      {
+        "comment": "",
+        "key": "No events found",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 400
+        }
+      },
+      {
+        "comment": "",
+        "key": "Check back later or create your own event to get started!",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 404
+        }
+      },
+      {
+        "comment": "",
+        "key": "Create Event",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 419
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld/%lld",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 595
+        }
+      },
+      {
+        "comment": "",
+        "key": "by %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 624
+        }
+      },
+      {
+        "comment": "",
+        "key": "Join",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 639
+        }
+      },
+      {
+        "comment": "",
+        "key": "Share",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 658
+        }
+      },
+      {
+        "comment": "",
+        "key": "Free",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 821
+        }
+      },
+      {
+        "comment": "",
+        "key": "Free",
+        "location": {
+          "startingColumn": 49,
+          "startingLine": 816
+        }
+      },
+      {
+        "comment": "",
+        "key": "$%@",
+        "location": {
+          "startingColumn": 58,
+          "startingLine": 816
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 844
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 845
+        }
+      },
+      {
+        "comment": "",
+        "key": "Error",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 1157
+        }
+      },
+      {
+        "comment": "",
+        "key": "Create Event",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 993
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 985
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 1003
+        }
+      },
+      {
+        "comment": "",
+        "key": "Previous",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 1080
+        }
+      },
+      {
+        "comment": "",
+        "key": "Next",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 1101
+        }
+      },
+      {
+        "comment": "",
+        "key": "Creating...",
+        "location": {
+          "startingColumn": 58,
+          "startingLine": 1130
+        }
+      },
+      {
+        "comment": "",
+        "key": "Create Event",
+        "location": {
+          "startingColumn": 74,
+          "startingLine": 1130
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 1158
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tell us about your event",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 1183
+        }
+      },
+      {
+        "comment": "",
+        "key": "Event Details",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1179
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enter a catchy event name",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 1201
+        }
+      },
+      {
+        "comment": "",
+        "key": "Event Name",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1196
+        }
+      },
+      {
+        "comment": "",
+        "key": "Describe what people can expect at your event",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 1217
+        }
+      },
+      {
+        "comment": "",
+        "key": "Description",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1212
+        }
+      },
+      {
+        "comment": "",
+        "key": "Category",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1229
+        }
+      },
+      {
+        "comment": "",
+        "key": "Event Type",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1267
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date & Time",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1312
+        }
+      },
+      {
+        "comment": "",
+        "key": "Start Date",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 1317
+        }
+      },
+      {
+        "comment": "",
+        "key": "End Date",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 1324
+        }
+      },
+      {
+        "comment": "",
+        "key": "Max attendees (optional)",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 1344
+        }
+      },
+      {
+        "comment": "",
+        "key": "Capacity",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1340
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tags",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1354
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add a tag",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 1359
+        }
+      },
+      {
+        "comment": "",
+        "key": "Location",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1404
+        }
+      },
+      {
+        "comment": "",
+        "key": "Privacy",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1442
+        }
+      },
+      {
+        "comment": "",
+        "key": "Public Event",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 1451
+        }
+      },
+      {
+        "comment": "",
+        "key": "Private Event",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 1468
+        }
+      },
+      {
+        "comment": "",
+        "key": "Event Settings",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1496
+        }
+      },
+      {
+        "comment": "",
+        "key": "Require Approval",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 1501
+        }
+      },
+      {
+        "comment": "",
+        "key": "Age Restriction",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 1505
+        }
+      },
+      {
+        "comment": "",
+        "key": "Age Restriction",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 1508
+        }
+      },
+      {
+        "comment": "",
+        "key": "Event Status",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1527
+        }
+      },
+      {
+        "comment": "",
+        "key": "Published",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 1536
+        }
+      },
+      {
+        "comment": "",
+        "key": "Draft",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 1553
+        }
+      },
+      {
+        "comment": "",
+        "key": "Select Location",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1767
+        }
+      },
+      {
+        "comment": "",
+        "key": "Search locations...",
+        "location": {
+          "startingColumn": 52,
+          "startingLine": 1776
+        }
+      },
+      {
+        "comment": "",
+        "key": "Loading locations...",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 1746
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 1771
+        }
+      }
+    ]
+  },
+  "version": 1
+}

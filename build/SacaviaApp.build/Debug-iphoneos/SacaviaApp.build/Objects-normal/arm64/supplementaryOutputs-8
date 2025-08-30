@@ -1,0 +1,24 @@
+"/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/BlockedUsersListView.swift":
+  object: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockedUsersListView.o"
+  dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockedUsersListView.d"
+  const-values: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockedUsersListView.swiftconstvalues"
+  swift-dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockedUsersListView.swiftdeps"
+  diagnostics: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BlockedUsersListView.dia"
+"/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/LocalBuzzView.swift":
+  const-values: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocalBuzzView.swiftconstvalues"
+  dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocalBuzzView.d"
+  object: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocalBuzzView.o"
+  swift-dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocalBuzzView.swiftdeps"
+  diagnostics: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocalBuzzView.dia"
+"/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/BrowseGuidesView.swift":
+  const-values: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BrowseGuidesView.swiftconstvalues"
+  dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BrowseGuidesView.d"
+  diagnostics: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BrowseGuidesView.dia"
+  swift-dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BrowseGuidesView.swiftdeps"
+  object: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/BrowseGuidesView.o"
+"/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/FloatingActionButton.swift":
+  swift-dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FloatingActionButton.swiftdeps"
+  const-values: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FloatingActionButton.swiftconstvalues"
+  dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FloatingActionButton.d"
+  object: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FloatingActionButton.o"
+  diagnostics: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/FloatingActionButton.dia"

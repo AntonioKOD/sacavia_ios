@@ -1,0 +1,24 @@
+"/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/ReportContentView.swift":
+  const-values: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ReportContentView.swiftconstvalues"
+  object: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ReportContentView.o"
+  swift-dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ReportContentView.swiftdeps"
+  dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ReportContentView.d"
+  diagnostics: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ReportContentView.dia"
+"/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/TestConnectionView.swift":
+  const-values: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/TestConnectionView.swiftconstvalues"
+  diagnostics: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/TestConnectionView.dia"
+  object: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/TestConnectionView.o"
+  dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/TestConnectionView.d"
+  swift-dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/TestConnectionView.swiftdeps"
+"/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/AddLocationView.swift":
+  dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationView.d"
+  const-values: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationView.swiftconstvalues"
+  object: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationView.o"
+  swift-dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationView.swiftdeps"
+  diagnostics: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/AddLocationView.dia"
+"/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/EnhancedVideoPlayer.swift":
+  diagnostics: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedVideoPlayer.dia"
+  swift-dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedVideoPlayer.swiftdeps"
+  dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedVideoPlayer.d"
+  const-values: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedVideoPlayer.swiftconstvalues"
+  object: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedVideoPlayer.o"

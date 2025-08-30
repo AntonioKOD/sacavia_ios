@@ -1,0 +1,216 @@
+{
+  "source": "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/EnhancedLocationDetailView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "More Options",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 150
+        }
+      },
+      {
+        "comment": "",
+        "key": "Location Details",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 61
+        }
+      },
+      {
+        "comment": "",
+        "key": "Done",
+        "location": {
+          "startingColumn": 54,
+          "startingLine": 63
+        }
+      },
+      {
+        "comment": "",
+        "key": "Location Details",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 84
+        }
+      },
+      {
+        "comment": "",
+        "key": "Done",
+        "location": {
+          "startingColumn": 54,
+          "startingLine": 86
+        }
+      },
+      {
+        "comment": "",
+        "key": "Location Details",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 118
+        }
+      },
+      {
+        "comment": "",
+        "key": "Done",
+        "location": {
+          "startingColumn": 58,
+          "startingLine": 120
+        }
+      },
+      {
+        "comment": "",
+        "key": "Location Details",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 105
+        }
+      },
+      {
+        "comment": "",
+        "key": "Done",
+        "location": {
+          "startingColumn": 37,
+          "startingLine": 108
+        }
+      },
+      {
+        "comment": "",
+        "key": "Loading location details...",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 56
+        }
+      },
+      {
+        "comment": "",
+        "key": "Error",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 71
+        }
+      },
+      {
+        "comment": "",
+        "key": "Retry",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 78
+        }
+      },
+      {
+        "comment": "",
+        "key": "Report Location",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 151
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 154
+        }
+      },
+      {
+        "comment": "",
+        "key": "About This Place",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 714
+        }
+      },
+      {
+        "comment": "",
+        "key": "Address",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 726
+        }
+      },
+      {
+        "comment": "",
+        "key": "Neighborhood",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 737
+        }
+      },
+      {
+        "comment": "",
+        "key": "Business Hours",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 749
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@: %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 756
+        }
+      },
+      {
+        "comment": "",
+        "key": "Contact",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 767
+        }
+      },
+      {
+        "comment": "",
+        "key": "Reviews",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 826
+        }
+      },
+      {
+        "comment": "",
+        "key": "No reviews yet",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 837
+        }
+      },
+      {
+        "comment": "",
+        "key": "Community Photos",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 917
+        }
+      },
+      {
+        "comment": "",
+        "key": "No photos yet",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 928
+        }
+      },
+      {
+        "comment": "",
+        "key": "Insider Tips",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 966
+        }
+      },
+      {
+        "comment": "",
+        "key": "No tips yet",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 977
+        }
+      }
+    ]
+  },
+  "version": 1
+}

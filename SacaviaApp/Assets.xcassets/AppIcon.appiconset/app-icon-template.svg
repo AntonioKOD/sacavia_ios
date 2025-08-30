@@ -1,0 +1,15 @@
+<svg width="1024" height="1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- White Background -->
+  <rect width="1024" height="1024" fill="#FFFFFF"/>
+  
+  <!-- Location Pin (Coral) -->
+  <path d="M256 205 Q256 154 307 154 Q358 154 358 205 L358 461 Q358 512 307 563 L307 614 Q307 665 256 665 Q205 665 205 614 L205 563 Q154 512 154 461 Z" fill="#FF6B6B"/>
+  
+  <!-- Diamond (Teal) -->
+  <path d="M410 256 L512 358 L461 512 L358 410 Z" fill="#4ECDC4"/>
+  <path d="M410 256 L512 358 L461 512 L358 410 Z" fill="none" stroke="#4ECDC4" stroke-width="10"/>
+  
+  <!-- Diamond facets -->
+  <line x1="410" y1="256" x2="461" y2="512" stroke="#4ECDC4" stroke-width="10"/>
+  <line x1="512" y1="358" x2="358" y2="410" stroke="#4ECDC4" stroke-width="10"/>
+</svg> 

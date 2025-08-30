@@ -1,0 +1,24 @@
+"/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/ProfileEditView.swift":
+  swift-dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileEditView.swiftdeps"
+  object: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileEditView.o"
+  dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileEditView.d"
+  diagnostics: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileEditView.dia"
+  const-values: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ProfileEditView.swiftconstvalues"
+"/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/SignupView.swift":
+  const-values: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SignupView.swiftconstvalues"
+  diagnostics: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SignupView.dia"
+  dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SignupView.d"
+  object: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SignupView.o"
+  swift-dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/SignupView.swiftdeps"
+"/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/EventDetailView.swift":
+  diagnostics: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventDetailView.dia"
+  swift-dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventDetailView.swiftdeps"
+  object: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventDetailView.o"
+  dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventDetailView.d"
+  const-values: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EventDetailView.swiftconstvalues"
+"/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/EnhancedAddLocationView.swift":
+  dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedAddLocationView.d"
+  swift-dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedAddLocationView.swiftdeps"
+  diagnostics: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedAddLocationView.dia"
+  const-values: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedAddLocationView.swiftconstvalues"
+  object: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/EnhancedAddLocationView.o"

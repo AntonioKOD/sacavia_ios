@@ -1,0 +1,24 @@
+"/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/CategoryFilterTabs.swift":
+  swift-dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CategoryFilterTabs.swiftdeps"
+  object: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CategoryFilterTabs.o"
+  dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CategoryFilterTabs.d"
+  diagnostics: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CategoryFilterTabs.dia"
+  const-values: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/CategoryFilterTabs.swiftconstvalues"
+"/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/APIService.swift":
+  const-values: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/APIService.swiftconstvalues"
+  object: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/APIService.o"
+  swift-dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/APIService.swiftdeps"
+  dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/APIService.d"
+  diagnostics: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/APIService.dia"
+"/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/ScalingModifiers.swift":
+  const-values: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ScalingModifiers.swiftconstvalues"
+  diagnostics: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ScalingModifiers.dia"
+  dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ScalingModifiers.d"
+  object: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ScalingModifiers.o"
+  swift-dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/ScalingModifiers.swiftdeps"
+"/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/LocationDetailView.swift":
+  swift-dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationDetailView.swiftdeps"
+  const-values: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationDetailView.swiftconstvalues"
+  object: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationDetailView.o"
+  dependencies: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationDetailView.d"
+  diagnostics: "/Users/antoniokodheli/Desktop/SacaviaApp/build/SacaviaApp.build/Debug-iphoneos/SacaviaApp.build/Objects-normal/arm64/LocationDetailView.dia"

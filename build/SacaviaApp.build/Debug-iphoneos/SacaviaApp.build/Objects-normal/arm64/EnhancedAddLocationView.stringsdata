@@ -1,0 +1,320 @@
+{
+  "source": "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/EnhancedAddLocationView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Error",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 101
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 102
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add Location",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 128
+        }
+      },
+      {
+        "comment": "",
+        "key": "Share amazing places with the community",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 132
+        }
+      },
+      {
+        "comment": "",
+        "key": "Step %lld of 8",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 171
+        }
+      },
+      {
+        "comment": "",
+        "key": "Creating location...",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 204
+        }
+      },
+      {
+        "comment": "",
+        "key": "Gallery photos and additional media coming soon",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 275
+        }
+      },
+      {
+        "comment": "",
+        "key": "Contact Information",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 351
+        }
+      },
+      {
+        "comment": "",
+        "key": "Private access management coming soon",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 415
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@/8",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 500
+        }
+      },
+      {
+        "comment": "",
+        "key": "Step %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 483
+        }
+      },
+      {
+        "comment": "",
+        "key": "Back",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 526
+        }
+      },
+      {
+        "comment": "",
+        "key": "Submit",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 543
+        }
+      },
+      {
+        "comment": "",
+        "key": "Next",
+        "location": {
+          "startingColumn": 45,
+          "startingLine": 543
+        }
+      },
+      {
+        "comment": "",
+        "key": "Categories selection coming soon",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 580
+        }
+      },
+      {
+        "comment": "",
+        "key": "Categories",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 567
+        }
+      },
+      {
+        "comment": "",
+        "key": "(Select up to 3)",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 570
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tags",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 592
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add tag",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 597
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 600
+        }
+      },
+      {
+        "comment": "",
+        "key": "×",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 620
+        }
+      },
+      {
+        "comment": "",
+        "key": "Featured Image",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 639
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add Featured Image",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 671
+        }
+      },
+      {
+        "comment": "",
+        "key": "This will be the main image for your location",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 674
+        }
+      },
+      {
+        "comment": "",
+        "key": "Business Information",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 705
+        }
+      },
+      {
+        "comment": "",
+        "key": "Business hours management coming soon",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 716
+        }
+      },
+      {
+        "comment": "",
+        "key": "Best Time to Visit",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 727
+        }
+      },
+      {
+        "comment": "",
+        "key": "Accessibility",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 758
+        }
+      },
+      {
+        "comment": "",
+        "key": "Wheelchair Accessible",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 764
+        }
+      },
+      {
+        "comment": "",
+        "key": "Parking Available",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 769
+        }
+      },
+      {
+        "comment": "",
+        "key": "Public",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 791
+        }
+      },
+      {
+        "comment": "",
+        "key": "Anyone can see and visit your location",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 794
+        }
+      },
+      {
+        "comment": "",
+        "key": "Private",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 810
+        }
+      },
+      {
+        "comment": "",
+        "key": "Only you and invited users can see it",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 813
+        }
+      },
+      {
+        "comment": "",
+        "key": "Promote your location",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 832
+        }
+      },
+      {
+        "comment": "",
+        "key": "Featured Location",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 830
+        }
+      },
+      {
+        "comment": "",
+        "key": "Mark as verified",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 840
+        }
+      },
+      {
+        "comment": "",
+        "key": "Verified Location",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 838
+        }
+      },
+      {
+        "comment": "",
+        "key": "*",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 1071
+        }
+      }
+    ]
+  },
+  "version": 1
+}

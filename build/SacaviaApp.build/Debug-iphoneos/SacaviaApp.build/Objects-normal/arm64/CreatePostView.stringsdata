@@ -1,0 +1,320 @@
+{
+  "source": "/Users/antoniokodheli/Desktop/SacaviaApp/SacaviaApp/CreatePostView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Error",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 66
+        }
+      },
+      {
+        "comment": "",
+        "key": "Success",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 71
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 67
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 72
+        }
+      },
+      {
+        "comment": "",
+        "key": "Your post has been shared successfully!",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 76
+        }
+      },
+      {
+        "comment": "",
+        "key": "Create Post",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 95
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 100
+        }
+      },
+      {
+        "comment": "",
+        "key": "Share",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 107
+        }
+      },
+      {
+        "comment": "",
+        "key": "Retake",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 128
+        }
+      },
+      {
+        "comment": "",
+        "key": "Use Photo",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 134
+        }
+      },
+      {
+        "comment": "",
+        "key": "Share to your story",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 194
+        }
+      },
+      {
+        "comment": "",
+        "key": "Your followers can see this",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 197
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add photos or videos",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 214
+        }
+      },
+      {
+        "comment": "",
+        "key": "Photo",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 224
+        }
+      },
+      {
+        "comment": "",
+        "key": "Video",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 242
+        }
+      },
+      {
+        "comment": "",
+        "key": "Camera",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 260
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add More",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 307
+        }
+      },
+      {
+        "comment": "",
+        "key": "Write a caption...",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 329
+        }
+      },
+      {
+        "comment": "",
+        "key": "Search for a location...",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 374
+        }
+      },
+      {
+        "comment": "",
+        "key": "Searching...",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 396
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tag People",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 456
+        }
+      },
+      {
+        "comment": "",
+        "key": "Share to Facebook",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 468
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sharing...",
+        "location": {
+          "startingColumn": 41,
+          "startingLine": 484
+        }
+      },
+      {
+        "comment": "",
+        "key": "Share",
+        "location": {
+          "startingColumn": 56,
+          "startingLine": 484
+        }
+      },
+      {
+        "comment": "",
+        "key": "Retake",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 538
+        }
+      },
+      {
+        "comment": "",
+        "key": "Use",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 549
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tap to capture",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 603
+        }
+      },
+      {
+        "comment": "",
+        "key": "Gallery",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 624
+        }
+      },
+      {
+        "comment": "",
+        "key": "Video",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 641
+        }
+      },
+      {
+        "comment": "",
+        "key": "Video",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 691
+        }
+      },
+      {
+        "comment": "",
+        "key": "What's on your mind?",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 716
+        }
+      },
+      {
+        "comment": "",
+        "key": "Share your experience...",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 720
+        }
+      },
+      {
+        "comment": "",
+        "key": "Search for a location...",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 736
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add location",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 731
+        }
+      },
+      {
+        "comment": "",
+        "key": "Searching...",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 750
+        }
+      },
+      {
+        "comment": "",
+        "key": "📍 %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 788
+        }
+      },
+      {
+        "comment": "",
+        "key": "Remove",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 793
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sharing...",
+        "location": {
+          "startingColumn": 41,
+          "startingLine": 820
+        }
+      },
+      {
+        "comment": "",
+        "key": "Share Post",
+        "location": {
+          "startingColumn": 56,
+          "startingLine": 820
+        }
+      }
+    ]
+  },
+  "version": 1
+}
