@@ -7,6 +7,10 @@
 
 import SwiftUI
 import UserNotifications
+import Firebase
+import FirebaseCore
+import FirebaseMessaging
+import SwiftUI
 
 @main
 struct SacaviaAppApp: App {
@@ -33,7 +37,7 @@ struct SacaviaAppApp: App {
                     logAPIConfiguration()
                     
                     // Check entitlements status
-                    pushNotificationManager.checkEntitlementsStatus()
+//                    pushNotificationManager.checkEntitlementsStatus()
                     
                     // Request notification permission when app launches
                     print("📱 [SacaviaAppApp] App launched, requesting notification permission")
@@ -71,20 +75,40 @@ struct SacaviaAppApp: App {
 }
 
 // MARK: - App Delegate for Push Notifications
-class AppDelegate: NSObject, UIApplicationDelegate {
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        print("📱 [AppDelegate] App did finish launching")
-        
-        // Set up notification center delegate
-        UNUserNotificationCenter.current().delegate = PushNotificationManager.shared
-        
-        return true
-    }
+class AppDelegate: NSObject, UIApplicationDelegate, MessagingDelegate {
+    
+    
+    func application(_ application: UIApplication,
+                         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+            print("📱 [AppDelegate] App did finish launching")
+            
+        FirebaseApp.configure()
+        Messaging.messaging().delegate = self
+            UNUserNotificationCenter.current().delegate = PushNotificationManager.shared
+
+            application.registerForRemoteNotifications()
+        Messaging.messaging().token { token, error in
+                    if let error {
+                        print("Error fetching FCM registration token: \(error)")
+                    } else if let token {
+                        print("FCM registration token: \(token)")
+                    }
+                }
+            return true
+        }
+
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         print("📱 [AppDelegate] ✅ Successfully registered for remote notifications")
         print("📱 [AppDelegate] Device token data length: \(deviceToken.count) bytes")
-        PushNotificationManager.shared.sendDeviceTokenToServer(deviceToken)
+        //        PushNotificationManager.shared.sendDeviceTokenToServer(deviceToken)
+                Messaging.messaging().apnsToken = deviceToken // pass APNs token to FCM
+                var readableToken = ""
+                       for index in 0 ..< deviceToken.count {
+                           readableToken += String(format: "%02.2hhx", deviceToken[index] as CVarArg)
+                       }
+                       print("Received an APNs device token: \(readableToken)")
+
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
@@ -94,29 +118,29 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         print("📱 [AppDelegate] Error description: \(error.localizedDescription)")
         
         // Check if this is the entitlements error
-        if error.localizedDescription.contains("aps-environment") {
-            print("📱 [AppDelegate] ❌ Push notification entitlements missing. Running in local-only mode.")
-            print("📱 [AppDelegate] To fix this:")
-            print("📱 [AppDelegate] 1. Add 'Push Notifications' capability in Xcode")
-            print("📱 [AppDelegate] 2. Configure App ID in Apple Developer Portal")
-            
-            // Set up for local notifications only
-            DispatchQueue.main.async {
-                PushNotificationManager.shared.isRegistered = true
-                PushNotificationManager.shared.permissionStatus = .authorized
-            }
-        } else {
-            print("📱 [AppDelegate] Different error - not entitlements related")
-            // Schedule a local notification to inform the user
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                PushNotificationManager.shared.scheduleLocalNotification(
-                    title: "📱 Notification Setup",
-                    body: "Push notifications are disabled. You can enable them in Settings > Notifications > Sacavia",
-                    timeInterval: 1,
-                    identifier: "notification_setup_reminder"
-                )
-            }
-        }
+//        if error.localizedDescription.contains("aps-environment") {
+//            print("📱 [AppDelegate] ❌ Push notification entitlements missing. Running in local-only mode.")
+//            print("📱 [AppDelegate] To fix this:")
+//            print("📱 [AppDelegate] 1. Add 'Push Notifications' capability in Xcode")
+//            print("📱 [AppDelegate] 2. Configure App ID in Apple Developer Portal")
+//            
+//            // Set up for local notifications only
+//            DispatchQueue.main.async {
+//                PushNotificationManager.shared.isRegistered = true
+//                PushNotificationManager.shared.permissionStatus = .authorized
+//            }
+//        } else {
+//            print("📱 [AppDelegate] Different error - not entitlements related")
+//            // Schedule a local notification to inform the user
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//                PushNotificationManager.shared.scheduleLocalNotification(
+//                    title: "📱 Notification Setup",
+//                    body: "Push notifications are disabled. You can enable them in Settings > Notifications > Sacavia",
+//                    timeInterval: 1,
+//                    identifier: "notification_setup_reminder"
+//                )
+//            }
+//        }
     }
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
@@ -146,4 +170,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
         print("📱 [AppDelegate] Received local notification: \(notification.alertTitle ?? "No title")")
     }
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+          guard let token = fcmToken else {
+              print("📱 [AppDelegate] ❌ No FCM token received")
+              return
+          }
+          print("📱 [AppDelegate] 🎯 Received FCM token: \(token)")
+          PushNotificationManager.shared.sendFCMTokenToServer(token)
+      }
+
 }
