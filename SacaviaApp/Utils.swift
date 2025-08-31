@@ -5,7 +5,7 @@ import Foundation
 
 // ===== ENVIRONMENT CONFIGURATION =====
 // Set this to true for development (localhost:3000), false for production (sacavia.com)
-let isDevelopment = false
+let isDevelopment = true
 
 // Base API URL - automatically set based on environment
 let baseAPIURL = isDevelopment ? "http://localhost:3000" : "https://sacavia.com"

@@ -100,8 +100,3 @@ struct SimpleButton: View {
 
 
 
-
-
-
-
-

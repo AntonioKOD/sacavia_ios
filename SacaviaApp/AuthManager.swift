@@ -138,7 +138,6 @@ struct AuthResponse: Codable {
     let error: String?
     let code: String?
     let errorType: String?
-    let suggestions: [String]?
 }
 
 struct AuthData: Codable {
@@ -550,30 +549,7 @@ class AuthManager: ObservableObject {
                     if response.success {
                         completion(nil)
                     } else {
-                        // Handle specific username validation errors
-                        if let code = response.code {
-                            switch code {
-                            case "USERNAME_TAKEN":
-                                if let suggestions = response.suggestions, !suggestions.isEmpty {
-                                    let suggestionText = suggestions.prefix(3).joined(separator: ", ")
-                                    completion("\(response.message ?? "Username already taken"). Try: \(suggestionText)")
-                                } else {
-                                    completion(response.message)
-                                }
-                            case "INVALID_USERNAME_FORMAT":
-                                completion("Username can only contain lowercase letters, numbers, hyphens, and underscores")
-                            case "USERNAME_TOO_SHORT":
-                                completion("Username must be at least 3 characters long")
-                            case "USERNAME_TOO_LONG":
-                                completion("Username must be less than 30 characters")
-                            case "RESERVED_USERNAME":
-                                completion("This username is reserved and cannot be used")
-                            default:
-                                completion(response.message)
-                            }
-                        } else {
-                            completion(response.message)
-                        }
+                        completion(response.message)
                     }
                 case .failure(let error):
                     completion(error.localizedDescription)

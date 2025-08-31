@@ -243,7 +243,7 @@ struct NotificationTestView: View {
     
     private func checkEntitlements() {
         addResult("Checking entitlements...")
-        pushNotificationManager.checkEntitlementsStatus()
+//        pushNotificationManager.checkEntitlementsStatus()
         addResult("✅ Entitlements check completed - check console for details")
         showAlert("Entitlements check completed. Check the console for detailed information.")
     }

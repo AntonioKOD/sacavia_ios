@@ -9,25 +9,6 @@ import Foundation
 // Remove the local struct Category and CategoriesResponse
 // Use the Category model from SharedTypes.swift
 
-// MARK: - Username Validation Models
-struct UsernameValidationResponse: Codable {
-    let success: Bool
-    let available: Bool?
-    let error: String?
-    let errorType: String?
-    let code: String?
-    let suggestions: [String]?
-    let message: String?
-}
-
-enum UsernameValidationState {
-    case idle
-    case checking
-    case available
-    case unavailable(String, [String])
-    case invalid(String)
-}
-
 struct SignupView: View {
     @State private var currentStep = 1
     @State private var isLoading = false
@@ -42,7 +23,6 @@ struct SignupView: View {
     @State private var password = ""
     @State private var confirmPassword = ""
     @State private var username = ""
-    @State private var usernameValidationState: UsernameValidationState = .idle
     @State private var termsAccepted = false
     @State private var privacyAccepted = false
     @State private var receiveUpdates = true
@@ -233,12 +213,7 @@ struct SignupView: View {
             VStack(spacing: 12) {
                 CustomTextField(title: "Full Name", text: $name, placeholder: "Enter your full name")
                 
-                UsernameTextField(
-                    title: "Username",
-                    text: $username,
-                    placeholder: "Choose a username",
-                    validationState: $usernameValidationState
-                )
+                CustomTextField(title: "Username", text: $username, placeholder: "Choose a username")
                 
                 CustomTextField(title: "Email", text: $email, placeholder: "your@email.com", icon: "envelope")
                     .keyboardType(.emailAddress)
@@ -555,16 +530,8 @@ struct SignupView: View {
     private func canProceed() -> Bool {
         switch currentStep {
         case 1:
-            let usernameValid: Bool
-            switch usernameValidationState {
-            case .available:
-                usernameValid = true
-            default:
-                usernameValid = false
-            }
             return !name.isEmpty && !email.isEmpty && !password.isEmpty && 
                    !confirmPassword.isEmpty && password == confirmPassword && 
-                   !username.isEmpty && usernameValid &&
                    termsAccepted && privacyAccepted
         case 2:
             return !selectedInterests.isEmpty
@@ -717,202 +684,6 @@ struct SignupView: View {
 
 
 // MARK: - Supporting Views
-
-struct UsernameTextField: View {
-    let title: String
-    @Binding var text: String
-    let placeholder: String
-    @Binding var validationState: UsernameValidationState
-    
-    @FocusState private var isFocused: Bool
-    @State private var validationTimer: Timer?
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.caption)
-                .foregroundColor(Color(red: 102/255, green: 102/255, blue: 102/255))
-            
-            HStack(spacing: 10) {
-                TextField(placeholder, text: $text)
-                    .font(.system(size: 17, weight: .medium))
-                    .foregroundColor(.primary)
-                    .focused($isFocused)
-                    .autocorrectionDisabled(true)
-                    .textInputAutocapitalization(.never)
-                    .onChange(of: text) { _ in
-                        validateUsername()
-                    }
-                
-                // Validation status indicator
-                validationStatusIcon
-            }
-            .padding(.vertical, 14)
-            .padding(.horizontal, 14)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.white)
-                    .shadow(color: Color.black.opacity(0.03), radius: 4, x: 0, y: 2)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(borderColor, lineWidth: 2)
-                    .animation(.easeInOut(duration: 0.2), value: isFocused)
-            )
-            
-            // Validation message and suggestions
-            validationMessage
-        }
-    }
-    
-    private var validationStatusIcon: some View {
-        Group {
-            switch validationState {
-            case .idle:
-                EmptyView()
-            case .checking:
-                ProgressView()
-                    .scaleEffect(0.8)
-            case .available:
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(.green)
-            case .unavailable:
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(.red)
-            case .invalid:
-                Image(systemName: "exclamationmark.circle.fill")
-                    .foregroundColor(.orange)
-            }
-        }
-    }
-    
-    private var borderColor: Color {
-        switch validationState {
-        case .available:
-            return .green
-        case .unavailable, .invalid:
-            return .red
-        case .checking:
-            return Color(red: 255/255, green: 107/255, blue: 107/255)
-        case .idle:
-            return isFocused ? Color(red: 255/255, green: 107/255, blue: 107/255) : Color.gray.opacity(0.18)
-        }
-    }
-    
-    private var validationMessage: some View {
-        Group {
-            switch validationState {
-            case .idle:
-                EmptyView()
-            case .checking:
-                Text("Checking availability...")
-                    .font(.caption)
-                    .foregroundColor(.blue)
-            case .available:
-                Text("Username is available!")
-                    .font(.caption)
-                    .foregroundColor(.green)
-            case .unavailable(let error, let suggestions):
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(error)
-                        .font(.caption)
-                        .foregroundColor(.red)
-                    
-                    if !suggestions.isEmpty {
-                        Text("Suggestions:")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                        
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 4) {
-                            ForEach(suggestions, id: \.self) { suggestion in
-                                Button(action: {
-                                    text = suggestion
-                                }) {
-                                    Text(suggestion)
-                                        .font(.caption)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 4)
-                                        .background(Color.blue.opacity(0.1))
-                                        .foregroundColor(.blue)
-                                        .cornerRadius(8)
-                                }
-                            }
-                        }
-                    }
-                }
-            case .invalid(let error):
-                Text(error)
-                    .font(.caption)
-                    .foregroundColor(.red)
-            }
-        }
-    }
-    
-    private func validateUsername() {
-        // Cancel previous timer
-        validationTimer?.invalidate()
-        
-        // Reset state if empty
-        if text.isEmpty {
-            validationState = .idle
-            return
-        }
-        
-        // Set checking state
-        validationState = .checking
-        
-        // Debounce validation
-        validationTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
-            performValidation()
-        }
-    }
-    
-    private func performValidation() {
-        guard !text.isEmpty else {
-            validationState = .idle
-            return
-        }
-        
-        let urlString = "\(baseAPIURL)/api/mobile/users/check-username?username=\(text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
-        
-        guard let url = URL(string: urlString) else {
-            validationState = .invalid("Invalid URL")
-            return
-        }
-        
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    self.validationState = .invalid("Network error: \(error.localizedDescription)")
-                    return
-                }
-                
-                guard let data = data else {
-                    self.validationState = .invalid("No data received")
-                    return
-                }
-                
-                do {
-                    let response = try JSONDecoder().decode(UsernameValidationResponse.self, from: data)
-                    
-                    if response.success, response.available == true {
-                        self.validationState = .available
-                    } else if let error = response.error {
-                        if let suggestions = response.suggestions, !suggestions.isEmpty {
-                            self.validationState = .unavailable(error, suggestions)
-                        } else {
-                            self.validationState = .invalid(error)
-                        }
-                    } else {
-                        self.validationState = .invalid("Unknown error")
-                    }
-                } catch {
-                    self.validationState = .invalid("Failed to parse response")
-                }
-            }
-        }.resume()
-    }
-}
 
 struct CustomTextField: View {
     let title: String

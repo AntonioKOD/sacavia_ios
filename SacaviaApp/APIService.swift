@@ -12,8 +12,10 @@ import SwiftUI
 // MARK: - API Configuration
 struct APIConfig {
     // Environment configuration - matches Utils.swift
-    // Use the same configuration as Utils.swift
-    static let baseURL = baseAPIURL
+    static let isDevelopment = false
+    
+    // Base URLs - automatically set based on environment
+    static let baseURL = "https://sacavia.com"
     // Remove the pre-pended /api/mobile to avoid double prefixes
     static let webAPIURL = "\(baseURL)/api"
 }

@@ -62,6 +62,8 @@ class PushNotificationManager: NSObject, ObservableObject {
                         timeInterval: 2,
                         identifier: "permission_granted"
                     )
+                    
+                    
                 } else {
                     print("📱 [PushNotificationManager] Notification permission denied: \(error?.localizedDescription ?? "Unknown error")")
                     self.isRegistered = false
@@ -83,30 +85,30 @@ class PushNotificationManager: NSObject, ObservableObject {
         DispatchQueue.main.async {
             print("📱 [PushNotificationManager] Registering for remote notifications")
             
-            // Check if we have push notification entitlements
-            if Bundle.main.object(forInfoDictionaryKey: "aps-environment") == nil {
-                print("📱 [PushNotificationManager] ❌ No push notification entitlements found. Running in local-only mode.")
-                print("📱 [PushNotificationManager] To enable push notifications:")
-                print("📱 [PushNotificationManager] 1. Add 'Push Notifications' capability in Xcode")
-                print("📱 [PushNotificationManager] 2. Configure App ID in Apple Developer Portal")
-                print("📱 [PushNotificationManager] 3. Add APN certificates to server")
-                
-                // Set up for local notifications only
-                self.isRegistered = true
-                self.permissionStatus = .authorized
-                
-                // Schedule a local notification to inform the user
-                self.scheduleLocalNotification(
-                    title: "📱 Development Mode",
-                    body: "Push notifications are disabled. Local notifications are working!",
-                    timeInterval: 2,
-                    identifier: "development_mode_info"
-                )
-                return
-            } else {
-                print("📱 [PushNotificationManager] ✅ Push notification entitlements found!")
-                print("📱 [PushNotificationManager] aps-environment: \(Bundle.main.object(forInfoDictionaryKey: "aps-environment") ?? "nil")")
-            }
+//            // Check if we have push notification entitlements
+//            if Bundle.main.object(forInfoDictionaryKey: "aps-environment") == nil {
+//                print("📱 [PushNotificationManager] ❌ No push notification entitlements found. Running in local-only mode.")
+//                print("📱 [PushNotificationManager] To enable push notifications:")
+//                print("📱 [PushNotificationManager] 1. Add 'Push Notifications' capability in Xcode")
+//                print("📱 [PushNotificationManager] 2. Configure App ID in Apple Developer Portal")
+//                print("📱 [PushNotificationManager] 3. Add APN certificates to server")
+//                
+//                // Set up for local notifications only
+//                self.isRegistered = true
+//                self.permissionStatus = .authorized
+//                
+//                // Schedule a local notification to inform the user
+//                self.scheduleLocalNotification(
+//                    title: "📱 Development Mode",
+//                    body: "Push notifications are disabled. Local notifications are working!",
+//                    timeInterval: 2,
+//                    identifier: "development_mode_info"
+//                )
+//                return
+//            } else {
+//                print("📱 [PushNotificationManager] ✅ Push notification entitlements found!")
+//                print("📱 [PushNotificationManager] aps-environment: \(Bundle.main.object(forInfoDictionaryKey: "aps-environment") ?? "nil")")
+//            }
             
             print("📱 [PushNotificationManager] Calling UIApplication.shared.registerForRemoteNotifications()")
             UIApplication.shared.registerForRemoteNotifications()
@@ -426,7 +428,17 @@ class PushNotificationManager: NSObject, ObservableObject {
             identifier: "friend_activity_\(Date().timeIntervalSince1970)"
         )
     }
-    
+    func sendFCMTokenToServer(_ token: String) {
+            print("📱 [PushNotificationManager] Sending FCM token to server: \(token)")
+            // TODO: replace with your API call to register token
+            // Example:
+            // APIService.shared.registerPushToken(token: token) { result in
+            //     switch result {
+            //     case .success: print("📱 [PushNotificationManager] Token registered successfully")
+            //     case .failure(let error): print("📱 [PushNotificationManager] Failed to register token: \(error)")
+            //     }
+            // }
+        }
     // Test connection to server
     func testServerConnection(completion: @escaping (Bool, String) -> Void) {
         print("📱 [PushNotificationManager] Testing server connection")
@@ -472,44 +484,7 @@ class PushNotificationManager: NSObject, ObservableObject {
     
     // Check entitlements status
     func checkEntitlementsStatus() {
-        print("📱 [PushNotificationManager] === ENTITLEMENTS CHECK ===")
         
-        // Check for aps-environment
-        if let apsEnvironment = Bundle.main.object(forInfoDictionaryKey: "aps-environment") {
-            print("📱 [PushNotificationManager] ✅ aps-environment found: \(apsEnvironment)")
-        } else {
-            print("📱 [PushNotificationManager] ❌ aps-environment NOT found")
-        }
-        
-        // Check bundle identifier
-        if let bundleId = Bundle.main.bundleIdentifier {
-            print("📱 [PushNotificationManager] Bundle ID: \(bundleId)")
-        }
-        
-        // Check if we're in development or production
-        #if DEBUG
-        print("📱 [PushNotificationManager] Build configuration: DEBUG")
-        #else
-        print("📱 [PushNotificationManager] Build configuration: RELEASE")
-        #endif
-        
-        // Check entitlements file path
-        if let entitlementsPath = Bundle.main.path(forResource: "SacaviaApp", ofType: "entitlements") {
-            print("📱 [PushNotificationManager] ✅ Entitlements file found at: \(entitlementsPath)")
-            
-            // Try to read the entitlements file content
-            do {
-                let entitlementsContent = try String(contentsOfFile: entitlementsPath)
-                print("📱 [PushNotificationManager] Entitlements file content:")
-                print(entitlementsContent)
-            } catch {
-                print("📱 [PushNotificationManager] ❌ Could not read entitlements file: \(error)")
-            }
-        } else {
-            print("📱 [PushNotificationManager] ❌ Entitlements file NOT found")
-        }
-        
-        print("📱 [PushNotificationManager] === END ENTITLEMENTS CHECK ===")
     }
 }
 

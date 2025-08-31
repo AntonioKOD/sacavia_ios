@@ -667,7 +667,7 @@ struct SimplePostCard: View {
         print("🔍 [LocalBuzzView] Sharing post: \(post.id)")
         
         // Create shareable URL
-        let baseURL = baseAPIURL
+        let baseURL = "https://sacavia.com"
         let postURL = "\(baseURL)/post/\(post.id)"
         
         // Create share text
