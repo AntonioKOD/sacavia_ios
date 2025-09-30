@@ -105,15 +105,141 @@ class APIService: ObservableObject {
     
     // MARK: - Profile Methods
     
+    func getProfileFeed(username: String, page: Int = 1) async throws -> ProfileFeedData {
+        print("🔍 [APIService] Getting profile feed for username: \(username), page: \(page)")
+        
+        let url = URL(string: "\(Self.baseURL)/api/profile/\(username)/feed?page=\(page)&limit=20")!
+        print("🔍 [APIService] Profile feed URL: \(url)")
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        // Add auth token if available
+        if let token = token {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            print("🔍 [APIService] Added auth token to profile feed request")
+        }
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        
+        print("🔍 [APIService] Profile feed response status: \(httpResponse.statusCode)")
+        
+        if httpResponse.statusCode == 200 {
+            // Debug: Print the actual response to understand the structure
+            if let responseString = String(data: data, encoding: .utf8) {
+                print("🔍 [APIService] Profile feed response: \(responseString)")
+            }
+            
+            do {
+                // Try to decode as ProfileFeedResponse first (with success field)
+                if let feedResponse = try? JSONDecoder().decode(ProfileFeedResponse.self, from: data) {
+                    print("🔍 [APIService] Profile feed decoded successfully: \(feedResponse.data.posts.count) posts")
+                    return feedResponse.data
+                } else {
+                    // If that fails, try to decode as ProfileFeedData directly (without success field)
+                    let feedData = try JSONDecoder().decode(ProfileFeedData.self, from: data)
+                    print("🔍 [APIService] Profile feed decoded directly: \(feedData.posts.count) posts")
+                    return feedData
+                }
+            } catch {
+                print("🔍 [APIService] Profile feed decode error: \(error)")
+                print("🔍 [APIService] Error details: \(error.localizedDescription)")
+                
+                // Try to decode as a simple array of posts if the structure is different
+                do {
+                    let posts = try JSONDecoder().decode([ProfileFeedPost].self, from: data)
+                    print("🔍 [APIService] Decoded as simple posts array: \(posts.count) posts")
+                    
+                    // Create a minimal ProfileFeedData with empty user and pagination
+                    let emptyStats = ProfileFeedUserStats(postsCount: 0, followersCount: 0, followingCount: 0)
+                    let emptyUser = ProfileFeedUser(id: "", name: "", username: "", profileImage: nil, bio: nil, isVerified: false, isCreator: false, stats: emptyStats)
+                    let emptyPagination = ProfileFeedPagination(page: page, limit: 20, total: 0, totalPages: 1, hasNext: false, hasPrev: page > 1)
+                    
+                    return ProfileFeedData(user: emptyUser, posts: posts, pagination: emptyPagination)
+                } catch {
+                    print("🔍 [APIService] Failed to decode as posts array: \(error)")
+                    
+                    // Try to decode as the new format with items array
+                    do {
+                        let response = try JSONDecoder().decode(ProfileFeedItemsResponse.self, from: data)
+                        print("🔍 [APIService] Decoded as items response: \(response.items.count) items")
+                        
+                        // Convert items to posts
+                        let posts = response.items.map { item in
+                            ProfileFeedPost(
+                                id: item.id,
+                                title: item.title,
+                                content: item.content,
+                                type: item.type,
+                                cover: item.cover,
+                                hasVideo: item.hasVideo,
+                                likeCount: item.likeCount,
+                                commentCount: item.commentCount,
+                                saveCount: item.saveCount,
+                                shareCount: item.shareCount,
+                                createdAt: item.createdAt,
+                                updatedAt: item.updatedAt,
+                                user: ProfileFeedPostUser(
+                                    id: "", // Not available in ProfileFeedItem
+                                    name: "", // Not available in ProfileFeedItem
+                                    username: "", // Not available in ProfileFeedItem
+                                    profileImage: nil, // Not available in ProfileFeedItem
+                                    isVerified: false, // Not available in ProfileFeedItem
+                                    isCreator: false // Not available in ProfileFeedItem
+                                ),
+                                location: item.location,
+                                tags: item.tags,
+                                media: ProfileFeedMedia(
+                                    images: item.media?.images ?? [],
+                                    videos: item.media?.videos ?? [],
+                                    totalCount: item.media?.totalCount ?? 0
+                                )
+                            )
+                        }
+                        
+                        // Create a minimal ProfileFeedData with empty user and pagination
+                        let emptyStats = ProfileFeedUserStats(postsCount: 0, followersCount: 0, followingCount: 0)
+                        let emptyUser = ProfileFeedUser(id: "", name: "", username: "", profileImage: nil, bio: nil, isVerified: false, isCreator: false, stats: emptyStats)
+                        let emptyPagination = ProfileFeedPagination(page: page, limit: 20, total: 0, totalPages: 1, hasNext: response.nextCursor != nil, hasPrev: page > 1)
+                        
+                        return ProfileFeedData(user: emptyUser, posts: posts, pagination: emptyPagination)
+                    } catch {
+                        print("🔍 [APIService] Failed to decode as items response: \(error)")
+                        print("🔍 [APIService] Items response error details: \(error.localizedDescription)")
+                        
+                        // If all parsing attempts fail, return empty feed
+                        print("🔍 [APIService] All parsing attempts failed, returning empty feed")
+                        let emptyStats = ProfileFeedUserStats(postsCount: 0, followersCount: 0, followingCount: 0)
+                        let emptyUser = ProfileFeedUser(id: "", name: "", username: "", profileImage: nil, bio: nil, isVerified: false, isCreator: false, stats: emptyStats)
+                        let emptyPagination = ProfileFeedPagination(page: page, limit: 20, total: 0, totalPages: 1, hasNext: false, hasPrev: page > 1)
+                        
+                        return ProfileFeedData(user: emptyUser, posts: [], pagination: emptyPagination)
+                    }
+                }
+            }
+        } else if httpResponse.statusCode == 404 {
+            throw APIError.invalidResponse
+        } else {
+            print("🔍 [APIService] Profile feed request failed with status: \(httpResponse.statusCode)")
+            throw APIError.serverError("Server error: \(httpResponse.statusCode)")
+        }
+    }
+    
     func getUserProfile(userId: String? = nil) async throws -> (ProfileUser, [ProfilePost]) {
         var urlString: String
         
+        let cacheBuster = UUID().uuidString
         if let userId = userId {
             // For other users, use the profile endpoint with userId as query parameter
-            urlString = "\(APIService.baseURL)/api/mobile/users/profile?userId=\(userId)&includeFullData=true&postsLimit=10"
+            urlString = "\(APIService.baseURL)/api/mobile/users/profile?userId=\(userId)&includeFullData=true&postsLimit=50&cb=\(cacheBuster)"
         } else {
             // For current user, use the profile endpoint
-            urlString = "\(APIService.baseURL)/api/mobile/users/profile?includeFullData=true&postsLimit=10"
+            urlString = "\(APIService.baseURL)/api/mobile/users/profile?includeFullData=true&postsLimit=50&cb=\(cacheBuster)"
         }
         
         print("🔍 [APIService] Getting user profile from: \(urlString)")
@@ -126,13 +252,20 @@ class APIService: ObservableObject {
             request.setValue("payload-token=\(token)", forHTTPHeaderField: "Cookie")
         }
         
+        print("🔍 [APIService] Making profile request to: \(urlString)")
+        print("🔍 [APIService] Request headers: \(request.allHTTPHeaderFields ?? [:])")
+        
         let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse else {
+            print("🔍 [APIService] Invalid response type")
             throw APIError.invalidResponse
         }
         
+        print("🔍 [APIService] Response status code: \(httpResponse.statusCode)")
+        
         if httpResponse.statusCode == 401 {
+            print("🔍 [APIService] Unauthorized - token may be invalid")
             throw APIError.unauthorized
         }
         
@@ -147,35 +280,43 @@ class APIService: ObservableObject {
         }
         
         print("🔍 [APIService] Attempting to decode JSON response...")
-        let profileResponse = try JSONDecoder().decode(ProfileResponse.self, from: data)
-        print("🔍 [APIService] JSON decoded successfully")
-        print("🔍 [APIService] Response success: \(profileResponse.success)")
-        print("🔍 [APIService] Has data: \(profileResponse.data != nil)")
         
-        guard profileResponse.success, let profileData = profileResponse.data else {
-            print("🔍 [APIService] Profile data not found or success is false")
-            throw APIError.serverError("Profile data not found")
+        do {
+            let profileResponse = try JSONDecoder().decode(ProfileResponse.self, from: data)
+            print("🔍 [APIService] JSON decoded successfully")
+            print("🔍 [APIService] Response success: \(profileResponse.success)")
+            print("🔍 [APIService] Has data: \(profileResponse.data != nil)")
+            
+            guard profileResponse.success, let profileData = profileResponse.data else {
+                print("🔍 [APIService] Profile data not found or success is false")
+                throw APIError.serverError("Profile data not found")
+            }
+            
+            print("🔍 [APIService] ProfileData user: \(profileData.user.name)")
+            print("🔍 [APIService] ProfileData user bio: \(profileData.user.bio ?? "nil")")
+            print("🔍 [APIService] ProfileData user stats: \(profileData.user.stats?.postsCount ?? -1) posts")
+            print("🔍 [APIService] ProfileData user profile image URL: \(profileData.user.profileImage?.url ?? "nil")")
+            
+            return (profileData.user, profileData.recentPosts ?? [])
+        } catch {
+            print("🔍 [APIService] Failed to decode as ProfileResponse: \(error)")
+            print("🔍 [APIService] Error details: \(error.localizedDescription)")
+            
+            // Try to decode as direct ProfileData if the response format is different
+            do {
+                let profileData = try JSONDecoder().decode(ProfileData.self, from: data)
+                print("🔍 [APIService] Decoded as direct ProfileData")
+                print("🔍 [APIService] Direct ProfileData user: \(profileData.user.name)")
+                print("🔍 [APIService] Direct ProfileData user bio: \(profileData.user.bio ?? "nil")")
+                print("🔍 [APIService] Direct ProfileData user stats: \(profileData.user.stats?.postsCount ?? -1) posts")
+                print("🔍 [APIService] Direct ProfileData user profile image URL: \(profileData.user.profileImage?.url ?? "nil")")
+                return (profileData.user, profileData.recentPosts ?? [])
+            } catch {
+                print("🔍 [APIService] Failed to decode as ProfileData: \(error)")
+                print("🔍 [APIService] ProfileData decode error details: \(error.localizedDescription)")
+                throw APIError.invalidResponse
+            }
         }
-        
-        print("🔍 [APIService] Profile loaded successfully: \(profileData.user.name)")
-        print("🔍 [APIService] Stats: posts=\(profileData.user.stats?.postsCount ?? 0), followers=\(profileData.user.stats?.followersCount ?? 0), following=\(profileData.user.stats?.followingCount ?? 0)")
-        print("🔍 [APIService] Recent posts count: \(profileData.recentPosts?.count ?? 0)")
-        print("🔍 [APIService] Profile ID: \(profileData.user.id)")
-        print("🔍 [APIService] Profile username: \(profileData.user.username ?? "nil")")
-        print("🔍 [APIService] Profile bio: \(profileData.user.bio ?? "nil")")
-        print("🔍 [APIService] Full stats object: \(String(describing: profileData.user.stats))")
-        print("🔍 [APIService] Stats breakdown:")
-        print("  - Posts: \(profileData.user.stats?.postsCount ?? 0)")
-        print("  - Followers: \(profileData.user.stats?.followersCount ?? 0)")
-        print("  - Following: \(profileData.user.stats?.followingCount ?? 0)")
-        print("  - Saved Posts: \(profileData.user.stats?.savedPostsCount ?? 0)")
-        print("  - Liked Posts: \(profileData.user.stats?.likedPostsCount ?? 0)")
-        print("  - Locations: \(profileData.user.stats?.locationsCount ?? 0)")
-        print("  - Reviews: \(profileData.user.stats?.reviewCount ?? 0)")
-        print("  - Recommendations: \(profileData.user.stats?.recommendationCount ?? 0)")
-        print("  - Average Rating: \(profileData.user.stats?.averageRating ?? 0)")
-        
-        return (profileData.user, profileData.recentPosts ?? [])
     }
     
     func updateProfile(profileData: [String: Any]) async throws -> ProfileUser {
@@ -562,6 +703,7 @@ class APIService: ObservableObject {
             // Call progress handler with 100% completion
             progressHandler?(1.0)
             
+            
             return success
         } else {
             print("📱 APIService: HTTP Error \(httpResponse.statusCode)")
@@ -645,6 +787,83 @@ class APIService: ObservableObject {
         }
     }
     
+    // MARK: - Enhanced Location Search
+    
+    func searchLocationsDetailed(query: String) async throws -> [SearchLocation] {
+        guard let url = URL(string: "\(APIService.baseURL)/api/mobile/locations/search") else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // Add authentication header
+        if let token = token {
+            request.setValue("payload-token=\(token)", forHTTPHeaderField: "Cookie")
+        }
+        
+        let body = ["query": query]
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.serverError("Invalid response")
+        }
+        
+        if httpResponse.statusCode == 200 {
+            if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let locations = json["locations"] as? [[String: Any]] {
+                return locations.compactMap { locationData -> SearchLocation? in
+                    guard let id = locationData["id"] as? String,
+                          let name = locationData["name"] as? String else {
+                        return nil
+                    }
+                    
+                    return SearchLocation(
+                        id: id,
+                        name: name,
+                        description: locationData["description"] as? String,
+                        shortDescription: locationData["shortDescription"] as? String,
+                        slug: locationData["slug"] as? String,
+                        address: locationData["address"] as? String,
+                        coordinates: nil, // Will be populated if needed
+                        featuredImage: locationData["featuredImage"] as? String,
+                        gallery: nil,
+                        categories: locationData["categories"] as? [String],
+                        tags: locationData["tags"] as? [String],
+                        priceRange: locationData["priceRange"] as? String,
+                        rating: locationData["rating"] as? Double,
+                        reviewCount: locationData["reviewCount"] as? Int,
+                        visitCount: locationData["visitCount"] as? Int,
+                        businessHours: nil,
+                        contactInfo: nil,
+                        accessibility: nil,
+                        bestTimeToVisit: nil,
+                        insiderTips: nil,
+                        isVerified: locationData["isVerified"] as? Bool,
+                        isFeatured: locationData["isFeatured"] as? Bool,
+                        hasBusinessPartnership: locationData["hasBusinessPartnership"] as? Bool,
+                        partnershipDetails: nil,
+                        neighborhood: locationData["neighborhood"] as? String,
+                        isSaved: false, // Default for search results
+                        isSubscribed: false, // Default for search results
+                        createdBy: locationData["createdBy"] as? String,
+                        createdAt: locationData["createdAt"] as? String,
+                        updatedAt: locationData["updatedAt"] as? String,
+                        ownership: nil,
+                        privacy: locationData["privacy"] as? String,
+                        privateAccess: locationData["privateAccess"] as? [String]
+                    )
+                }
+            }
+            return []
+        } else {
+            throw APIError.serverError("HTTP \(httpResponse.statusCode)")
+        }
+    }
+    
     // MARK: - Media Upload (OPTIMIZED)
     
     func uploadMedia(image: UIImage, progressHandler: ((Double) -> Void)? = nil) async throws -> String {
@@ -709,12 +928,13 @@ class APIService: ObservableObject {
             
             if let success = result?["success"] as? Bool, success,
                let data = result?["data"] as? [String: Any],
-               let url = data["url"] as? String {
+               let id = data["id"] as? String {
                 
                 // Report completion
                 progressHandler?(1.0)
                 
-                return url
+                print("📱 APIService: Image uploaded successfully with ID: \(id)")
+                return id
             }
             throw APIError.serverError("Invalid response format")
         } else {
@@ -1137,7 +1357,7 @@ class APIService: ObservableObject {
         
         if let data = result?["data"] as? [String: Any] {
             dataDict = data
-        } else if let data = result as? [String: Any] {
+        } else if let data = result {
             dataDict = data
         }
         
@@ -1414,6 +1634,58 @@ extension APIService {
         let categories = try JSONDecoder().decode([Category].self, from: categoriesData)
         return categories
     }
+    
+    // MARK: - Normalized Profile Feed API
+    func getNormalizedProfileFeed(username: String, cursor: String? = nil) async throws -> NormalizedProfileFeedResponse {
+        var urlString = "\(APIService.baseURL)/api/profile/\(username)/feed"
+        
+        var queryItems: [URLQueryItem] = []
+        queryItems.append(URLQueryItem(name: "take", value: "24"))
+        
+        if let cursor = cursor {
+            queryItems.append(URLQueryItem(name: "cursor", value: cursor))
+        }
+        
+        var urlComponents = URLComponents(string: urlString)
+        urlComponents?.queryItems = queryItems
+        
+        guard let url = urlComponents?.url else {
+            throw APIError.invalidURL
+        }
+        
+        print("🔍 [APIService] Getting normalized profile feed from: \(url)")
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        if let token = token {
+            request.setValue("payload-token=\(token)", forHTTPHeaderField: "Cookie")
+        }
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        
+        if httpResponse.statusCode == 404 {
+            throw APIError.userNotFound
+        }
+        
+        if httpResponse.statusCode != 200 {
+            throw APIError.serverError("HTTP \(httpResponse.statusCode)")
+        }
+        
+        // Print response for debugging
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("🔍 [APIService] Normalized profile feed response: \(responseString)")
+        }
+        
+        let feedResponse = try JSONDecoder().decode(NormalizedProfileFeedResponse.self, from: data)
+        print("🔍 [APIService] Successfully decoded normalized profile feed response")
+        return feedResponse
+    }
 } 
 
 extension APIService {
@@ -1443,6 +1715,15 @@ extension APIService {
     }
     func unsavePost(postId: String) async throws {
         guard let url = URL(string: "\(APIService.baseURL)/api/mobile/posts/\(postId)/save") else { throw APIError.invalidURL }
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        if let token = token { request.setValue("payload-token=\(token)", forHTTPHeaderField: "Cookie") }
+        let (_, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else { throw APIError.invalidResponse }
+    }
+    
+    func deletePost(postId: String) async throws {
+        guard let url = URL(string: "\(APIService.baseURL)/api/mobile/posts/\(postId)") else { throw APIError.invalidURL }
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
         if let token = token { request.setValue("payload-token=\(token)", forHTTPHeaderField: "Cookie") }
@@ -1999,6 +2280,200 @@ extension APIService {
         print("🔍 [APIService] Successfully decoded response with \(interactionResponse.data?.interactions.count ?? 0) interactions")
         return interactionResponse
     }
+    
+    // MARK: - Friends API
+    func getMutualFriends() async throws -> [ShareFriend] {
+        let urlString = "\(APIService.baseURL)/api/mobile/friends/mutual"
+        
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // Add authentication token
+        if let token = AuthManager.shared.token {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        print("🔍 [APIService] Fetching mutual friends from: \(urlString)")
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        
+        print("🔍 [APIService] Friends API Response Status: \(httpResponse.statusCode)")
+        
+        if httpResponse.statusCode == 200 {
+            let friendsResponse = try JSONDecoder().decode(FriendsResponse.self, from: data)
+            print("🔍 [APIService] Successfully fetched \(friendsResponse.data?.count ?? 0) mutual friends")
+            return friendsResponse.data ?? []
+        } else {
+            let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data)
+            let errorMessage = errorResponse?.message ?? "Failed to fetch friends"
+            print("❌ [APIService] Friends API Error: \(errorMessage)")
+            throw APIError.serverError(errorMessage)
+        }
+    }
+    
+    // MARK: - Followers API
+    func getFollowers() async throws -> [ShareFriend] {
+        let urlString = "\(APIService.baseURL)/api/mobile/friends/followers"
+        
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // Add authentication token
+        if let token = AuthManager.shared.token {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        print("🔍 [APIService] Fetching followers from: \(urlString)")
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        
+        print("🔍 [APIService] Followers API Response Status: \(httpResponse.statusCode)")
+        
+        if httpResponse.statusCode == 200 {
+            let followersResponse = try JSONDecoder().decode(FriendsResponse.self, from: data)
+            print("🔍 [APIService] Successfully fetched \(followersResponse.data?.count ?? 0) followers")
+            return followersResponse.data ?? []
+        } else {
+            let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data)
+            let errorMessage = errorResponse?.message ?? "Failed to fetch followers"
+            print("❌ [APIService] Followers API Error: \(errorMessage)")
+            throw APIError.serverError(errorMessage)
+        }
+    }
+    
+    // MARK: - User Search API
+    func searchUsers(query: String) async throws -> [User] {
+        let urlString = "\(APIService.baseURL)/api/mobile/users/search?q=\(query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+        
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // Add authentication token
+        if let token = AuthManager.shared.token {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        print("🔍 [APIService] Searching users with query: \(query)")
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        
+        print("🔍 [APIService] User Search API Response Status: \(httpResponse.statusCode)")
+        
+        if httpResponse.statusCode == 200 {
+            let usersResponse = try JSONDecoder().decode(UsersSearchResponse.self, from: data)
+            print("🔍 [APIService] Successfully found \(usersResponse.data?.count ?? 0) users")
+            return usersResponse.data ?? []
+        } else {
+            let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data)
+            let errorMessage = errorResponse?.message ?? "Failed to search users"
+            print("❌ [APIService] User Search API Error: \(errorMessage)")
+            throw APIError.serverError(errorMessage)
+        }
+    }
+    
+    // MARK: - Location Share API
+    func shareLocation(locationId: String, recipientIds: [String], message: String, messageType: String = "check_out") async throws -> LocationShareResponse {
+        let urlString = "\(APIService.baseURL)/api/locations/\(locationId)/share"
+        
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // Add authentication token
+        if let token = AuthManager.shared.token {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        // Create request body
+        let shareRequest = LocationShareRequest(
+            recipientIds: recipientIds,
+            message: message,
+            messageType: messageType
+        )
+        
+        do {
+            request.httpBody = try JSONEncoder().encode(shareRequest)
+        } catch {
+            throw APIError.serverError("Failed to encode request: \(error.localizedDescription)")
+        }
+        
+        print("🔍 [APIService] Sharing location \(locationId) with \(recipientIds.count) friends")
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        
+        print("🔍 [APIService] Location share API Response Status: \(httpResponse.statusCode)")
+        
+        if httpResponse.statusCode == 200 {
+            let shareResponse = try JSONDecoder().decode(LocationShareResponse.self, from: data)
+            print("🔍 [APIService] Successfully shared location with \(shareResponse.sharesCreated) friends")
+            return shareResponse
+        } else {
+            let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data)
+            let errorMessage = errorResponse?.message ?? "Failed to share location"
+            print("❌ [APIService] Location share API Error: \(errorMessage)")
+            throw APIError.serverError(errorMessage)
+        }
+    }
 } 
+
+// MARK: - Friends Response Models
+struct FriendsResponse: Codable {
+    let success: Bool
+    let data: [ShareFriend]?
+    let message: String?
+}
+
+struct ErrorResponse: Codable {
+    let message: String
+}
+
+// MARK: - Location Share Request
+struct LocationShareRequest: Codable {
+    let recipientIds: [String]
+    let message: String
+    let messageType: String
+}
+
+// MARK: - Location Share Response
+struct LocationShareResponse: Codable {
+    let success: Bool
+    let sharesCreated: Int
+    let message: String
+}
 
 

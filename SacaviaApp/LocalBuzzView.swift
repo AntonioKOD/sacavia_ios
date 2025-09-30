@@ -239,7 +239,7 @@ struct FeedList: View {
                                 EmptyView()
                             }
                         case .peopleSuggestion(let suggestion):
-                            SimplePeopleCard(suggestion: suggestion, primaryColor: primaryColor)
+                            SimplePeopleCard(suggestion: suggestion, primaryColor: primaryColor, onProfileTap: onProfileTap)
                                 .environmentObject(authManager)
                         }
                     }
@@ -270,6 +270,7 @@ struct FeedList: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 100)
         }
+        .coordinateSpace(name: "scroll")
     }
     
     private var mixedItems: [MixedFeedItem] {
@@ -345,9 +346,15 @@ struct SimplePostCard: View {
     let primaryColor: Color
     let onProfileTap: (String) -> Void
     @EnvironmentObject var feedManager: FeedManager
+    @EnvironmentObject var authManager: AuthManager
     @State private var showComments = false
     @State private var currentImageIndex = 0
     @State private var showReportContent = false
+    @State private var showingDeleteConfirmation = false
+    @State private var postToDelete: FeedPost?
+    
+    @State private var showHeart = false
+    @State private var heartTrigger = 0
     
     private var isLiked: Bool { post.engagement.isLiked }
     private var isSaved: Bool { post.engagement.isSaved }
@@ -424,13 +431,22 @@ struct SimplePostCard: View {
                         print("🔍 [LocalBuzzView] Share post menu item tapped")
                         sharePost(post: post)
                     }
-                    Button("Block User", role: .destructive) {
-                        print("🔍 [LocalBuzzView] Block user menu item tapped")
-                        blockUserFromPost(post: post)
-                    }
-                    Button("Report", role: .destructive) {
-                        print("🔍 [LocalBuzzView] Report post menu item tapped")
-                        reportPost(post: post)
+                    
+                    // Show delete option only for current user's posts
+                    if authManager.user?.id == post.author.id {
+                        Button("Delete", role: .destructive) {
+                            print("🔍 [LocalBuzzView] Delete post menu item tapped")
+                            deletePost(post: post)
+                        }
+                    } else {
+                        Button("Block User", role: .destructive) {
+                            print("🔍 [LocalBuzzView] Block user menu item tapped")
+                            blockUserFromPost(post: post)
+                        }
+                        Button("Report", role: .destructive) {
+                            print("🔍 [LocalBuzzView] Report post menu item tapped")
+                            reportPost(post: post)
+                        }
                     }
                 } label: {
                     Image(systemName: "ellipsis")
@@ -445,84 +461,70 @@ struct SimplePostCard: View {
             
             // Media content
             if hasVideo {
-                let firstVideo = videoMedia.first
-                
-                if let firstVideo = firstVideo, let videoUrl = absoluteMediaURL(firstVideo.url) {
-                    EnhancedVideoPlayer(videoUrl: videoUrl, enableAutoplay: true, enableAudio: true, loop: true)
+                ZStack {
+                    if let firstVideo = videoMedia.first, let videoUrl = absoluteMediaURL(firstVideo.url) {
+                        AutoplayVideoPlayer(videoUrl: videoUrl, enableAudio: true, loop: true)
+                            .frame(height: 250)
+                            .cornerRadius(12)
+                    } else {
+                        VStack(spacing: 12) {
+                            Image(systemName: "video.slash")
+                                .font(.system(size: 48))
+                                .foregroundColor(.gray)
+                            Text("Video not available")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.gray)
+                        }
                         .frame(height: 250)
+                        .frame(maxWidth: .infinity)
+                        .background(Color(.systemGray6))
                         .cornerRadius(12)
-                        .onAppear {
-                            print("🔍 [LocalBuzzView] Video URL created: \(videoUrl)")
-                            print("🔍 [LocalBuzzView] Video type: \(firstVideo.type)")
-                            print("🔍 [LocalBuzzView] Original URL: \(firstVideo.url)")
-                        }
-                } else {
-                    // Video not available fallback with better error info
-                    VStack(spacing: 12) {
-                        Image(systemName: "video.slash")
-                            .font(.system(size: 48))
-                            .foregroundColor(.gray)
-                        Text("Video not available")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.gray)
-                        Text("Unable to load video content")
-                            .font(.system(size: 12))
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                        #if DEBUG
-                        VStack(spacing: 4) {
-                            Text("Debug Info:")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.secondary)
-                            Text("URL: \(firstVideo?.url ?? "nil")")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                            Text("Type: \(firstVideo?.type ?? "nil")")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                        }
-                        .padding(.top, 4)
-                        #endif
                     }
-                    .frame(height: 250)
-                    .frame(maxWidth: .infinity)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(12)
-                    .onAppear {
-                        print("🔍 [LocalBuzzView] Video URL creation failed")
-                        print("🔍 [LocalBuzzView] Video media: \(firstVideo?.url ?? "nil")")
-                        print("🔍 [LocalBuzzView] Video type: \(firstVideo?.type ?? "nil")")
-                        
-                        // Try to debug the URL processing
-                        if let originalUrl = firstVideo?.url {
-                            print("🔍 [LocalBuzzView] Original URL: \(originalUrl)")
-                            if let processedUrl = absoluteMediaURL(originalUrl) {
-                                print("🔍 [LocalBuzzView] Processed URL: \(processedUrl)")
-                            } else {
-                                print("🔍 [LocalBuzzView] URL processing failed")
-                            }
-                        }
-                    }
+                    DoubleTapLikeOverlay(trigger: heartTrigger, isVisible: showHeart)
+                }
+                .contentShape(Rectangle())
+                .onTapGesture(count: 2) {
+                    doubleTapLike()
                 }
             } else if !imageMedia.isEmpty {
-                TabView(selection: $currentImageIndex) {
-                    ForEach(Array(imageMedia.enumerated()), id: \.offset) { index, media in
-                        if let imageUrl = absoluteMediaURL(media.url) {
-                            AsyncImage(url: imageUrl) { image in
-                                image.resizable().aspectRatio(contentMode: .fill)
-                            } placeholder: {
-                                Rectangle().fill(Color.gray.opacity(0.1))
+                ZStack {
+                    TabView(selection: $currentImageIndex) {
+                        ForEach(Array(imageMedia.enumerated()), id: \.offset) { index, media in
+                            if let imageUrl = absoluteMediaURL(media.url) {
+                                AsyncImage(url: imageUrl) { image in
+                                    image.resizable().aspectRatio(contentMode: .fill)
+                                } placeholder: {
+                                    Rectangle().fill(Color.gray.opacity(0.1))
+                                }
+                                .frame(height: 250)
+                                .clipped()
+                                .tag(index)
                             }
-                            .frame(height: 250)
-                            .clipped()
-                            .tag(index)
                         }
                     }
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: hasMultipleImages ? .automatic : .never))
+                    .frame(height: 250)
+                    .cornerRadius(12)
+
+                    DoubleTapLikeOverlay(trigger: heartTrigger, isVisible: showHeart)
                 }
-                .tabViewStyle(PageTabViewStyle(indexDisplayMode: hasMultipleImages ? .automatic : .never))
-                .frame(height: 250)
-                .cornerRadius(12)
+                .contentShape(Rectangle())
+                .onTapGesture(count: 2) {
+                    doubleTapLike()
+                }
+            }
+            
+            // Location (if provided and not private)
+            if let location = post.location, let name = location.name, !(location.privacy?.lowercased() == "private") {
+                HStack(spacing: 6) {
+                    Image(systemName: "mappin.and.ellipse")
+                        .foregroundColor(.secondary)
+                    Text(name)
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                    Spacer()
+                }
             }
             
             // Caption
@@ -604,6 +606,43 @@ struct SimplePostCard: View {
                 contentTitle: post.caption
             )
         }
+        .alert("Delete Post", isPresented: $showingDeleteConfirmation) {
+            Button("Cancel", role: .cancel) {
+                postToDelete = nil
+            }
+            Button("Delete", role: .destructive) {
+                confirmDeletePost()
+            }
+        } message: {
+            Text("Are you sure you want to delete this post? This action cannot be undone.")
+        }
+    }
+    
+    private func doubleTapLike() {
+        // Trigger animation
+        heartTrigger += 1
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+            showHeart = true
+        }
+        // Haptic feedback
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        // Perform like if not already liked
+        if !isLiked {
+            Task {
+                do {
+                    try await apiService.likePost(postId: post.id)
+                    feedManager.updatePostLikeState(postId: post.id, isLiked: true)
+                } catch {
+                    print("Double-tap like failed: \(error)")
+                }
+            }
+        }
+        // Auto hide overlay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            withAnimation(.easeOut(duration: 0.2)) {
+                showHeart = false
+            }
+        }
     }
     
     private func formatDate(_ dateString: String) -> String {
@@ -667,12 +706,13 @@ struct SimplePostCard: View {
         print("🔍 [LocalBuzzView] Sharing post: \(post.id)")
         
         // Create shareable URL
-        let baseURL = baseAPIURL
+        let baseURL = "https://sacavia.com"
         let postURL = "\(baseURL)/post/\(post.id)"
         
-        // Create share text
-        let shareText = post.caption.count > 100 ? String(post.caption.prefix(100)) + "..." : post.caption
+        // Create enhanced share content
         let shareTitle = "Check out this post by \(post.author.name) on Sacavia"
+        let shareText = createEnhancedShareText(for: post)
+        let hashtags = createHashtags(for: post)
         
         // Safely create URL
         guard let url = URL(string: postURL) else {
@@ -680,11 +720,22 @@ struct SimplePostCard: View {
             return
         }
         
-        // Use iOS native sharing
+        // Create comprehensive share content
+        let shareContent = "\(shareTitle)\n\n\(shareText)\n\n\(hashtags)\n\n\(url.absoluteString)"
+        
+        // Use iOS native sharing with enhanced content
         let activityVC = UIActivityViewController(
-            activityItems: [shareTitle, shareText, url],
+            activityItems: [shareContent, url],
             applicationActivities: nil
         )
+        
+        // Exclude certain activities that don't work well with URLs
+        activityVC.excludedActivityTypes = [
+            .assignToContact,
+            .saveToCameraRoll,
+            .addToReadingList,
+            .openInIBooks
+        ]
         
         // Configure for iPad presentation
         if let popover = activityVC.popoverPresentationController {
@@ -708,10 +759,64 @@ struct SimplePostCard: View {
                 print("🔍 [LocalBuzzView] Presenting share sheet from: \(type(of: topViewController))")
                 topViewController.present(activityVC, animated: true) {
                     print("🔍 [LocalBuzzView] Share sheet presented successfully")
+                    
+                    // Track share event (you could add analytics here)
+                    self.trackShareEvent(for: post)
                 }
             } else {
                 print("🔍 [LocalBuzzView] Failed to present share sheet - no root view controller found")
             }
+        }
+    }
+    
+    private func createEnhancedShareText(for post: FeedPost) -> String {
+        var shareText = ""
+        
+        // Add post content
+        if !post.caption.isEmpty {
+            let truncatedCaption = post.caption.count > 150 ? String(post.caption.prefix(150)) + "..." : post.caption
+            shareText += truncatedCaption
+        }
+        
+        // Add location if available
+        if let location = post.location, let locationName = location.name, !(location.privacy?.lowercased() == "private") {
+            shareText += "\n📍 \(locationName)"
+        }
+        
+        // Add categories if available
+        if !post.categories.isEmpty {
+            let categoryText = post.categories.prefix(3).joined(separator: ", ")
+            shareText += "\n🏷️ \(categoryText)"
+        }
+        
+        return shareText
+    }
+    
+    private func createHashtags(for post: FeedPost) -> String {
+        var hashtags: [String] = ["#Sacavia"]
+        
+        // Add category hashtags
+        for category in post.categories.prefix(3) {
+            let hashtag = "#\(category.replacingOccurrences(of: " ", with: ""))"
+            hashtags.append(hashtag)
+        }
+        
+        // Add location hashtag if available
+        if let location = post.location, let locationName = location.name, !(location.privacy?.lowercased() == "private") {
+            let locationHashtag = "#\(locationName.replacingOccurrences(of: " ", with: ""))"
+            hashtags.append(locationHashtag)
+        }
+        
+        return hashtags.joined(separator: " ")
+    }
+    
+    private func trackShareEvent(for post: FeedPost) {
+        // You can add analytics tracking here
+        print("📊 [LocalBuzzView] Post shared: \(post.id) by \(post.author.name)")
+        
+        // Update share count in the feed manager
+        Task {
+            await feedManager.incrementShareCount(postId: post.id)
         }
     }
     
@@ -727,7 +832,23 @@ struct SimplePostCard: View {
         // For now, we'll just add the user to the blocked list
         feedManager.addBlockedUser(post.author.id)
     }
+    
+    private func deletePost(post: FeedPost) {
+        print("🔍 [LocalBuzzView] Requesting to delete post: \(post.id)")
+        postToDelete = post
+        showingDeleteConfirmation = true
+    }
+    
+    private func confirmDeletePost() {
+        guard let post = postToDelete else { return }
+        print("🔍 [LocalBuzzView] Confirming deletion of post: \(post.id)")
+        Task {
+            await feedManager.deletePost(postId: post.id)
+        }
+        postToDelete = nil
+    }
 }
+
 
 // MARK: - Simple Place Card
 struct SimplePlaceCard: View {
@@ -804,6 +925,7 @@ struct SimplePlaceCard: View {
         .background(Color.white)
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 2)
+        .contentShape(Rectangle())
         .onTapGesture {
             showLocationDetail = true
         }
@@ -818,8 +940,7 @@ struct SimplePlaceCard: View {
 struct SimplePeopleCard: View {
     let suggestion: PeopleSuggestionCategory
     let primaryColor: Color
-    @State private var showProfile = false
-    @State private var selectedUserId = ""
+    let onProfileTap: (String) -> Void
     @EnvironmentObject var authManager: AuthManager
     
     var body: some View {
@@ -852,10 +973,7 @@ struct SimplePeopleCard: View {
                     SimpleUserCard(
                         user: user,
                         primaryColor: primaryColor,
-                        onViewProfile: { userId in
-                            selectedUserId = userId
-                            showProfile = true
-                        }
+                        onViewProfile: onProfileTap
                     )
                     .environmentObject(authManager)
                 }
@@ -865,10 +983,6 @@ struct SimplePeopleCard: View {
         .background(Color.white)
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 2)
-        .fullScreenCover(isPresented: $showProfile) {
-            ProfileView(userId: selectedUserId)
-                .environmentObject(authManager)
-        }
     }
 }
 
@@ -934,7 +1048,10 @@ struct SimpleUserCard: View {
             }
             
             HStack(spacing: 6) {
-                Button(action: { onViewProfile(user.id) }) {
+                Button(action: { 
+                    print("🔍 [SimpleUserCard] View button tapped for user: \(user.id)")
+                    onViewProfile(user.id) 
+                }) {
                     Text("View")
                         .font(.system(size: 10, weight: .semibold))
                         .foregroundColor(.primary)
@@ -1054,18 +1171,35 @@ struct SimpleCommentModal: View {
                 }
                 
                 Divider()
-                HStack(spacing: 8) {
-                    TextField("Add a comment...", text: $newCommentText)
-                        .padding(10)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(18)
-                    Button(action: submitComment) {
-                        Image(systemName: "paperplane.fill")
-                            .foregroundColor(newCommentText.trimmingCharacters(in: .whitespaces).isEmpty ? .gray : primaryColor)
+                VStack(spacing: 12) {
+                    // TikTok-style comment input
+                    MentionInputView(
+                        text: $newCommentText,
+                        placeholder: "Add a comment...",
+                        maxLength: 500
+                    )
+                    
+                    // Send button - TikTok style
+                    HStack {
+                        Spacer()
+                        Button(action: submitComment) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "paperplane.fill")
+                                    .font(.system(size: 14, weight: .medium))
+                                Text("Send")
+                                    .font(.system(size: 14, weight: .medium))
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(newCommentText.trimmingCharacters(in: .whitespaces).isEmpty ? Color.gray : primaryColor)
+                            )
+                        }
+                        .disabled(newCommentText.trimmingCharacters(in: .whitespaces).isEmpty)
+                        .buttonStyle(PlainButtonStyle())
                     }
-                    .disabled(newCommentText.trimmingCharacters(in: .whitespaces).isEmpty)
-                    .frame(width: 44, height: 44) // Ensure minimum touch target
-                    .buttonStyle(PlainButtonStyle())
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
@@ -1135,7 +1269,7 @@ struct SimpleCommentView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-                Text(comment.content)
+                MentionDisplayView(text: comment.content)
                     .font(.system(size: 14))
             }
             

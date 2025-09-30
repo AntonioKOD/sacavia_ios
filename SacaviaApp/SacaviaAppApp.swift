@@ -10,7 +10,6 @@ import UserNotifications
 import Firebase
 import FirebaseCore
 import FirebaseMessaging
-import SwiftUI
 
 @main
 struct SacaviaAppApp: App {
@@ -23,7 +22,7 @@ struct SacaviaAppApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainAppView()
                 .environmentObject(authManager)
                 .environmentObject(pushNotificationManager)
                 .environmentObject(feedManager)
@@ -33,26 +32,17 @@ struct SacaviaAppApp: App {
                 .launchScreenAware() // Ensures proper scaling behavior
                 .deviceSpecificContent() // Device-specific optimizations
                 .onAppear {
-                    // Log API configuration
-                    logAPIConfiguration()
+                    // Log API configuration and app info
+                    logAPIConfiguration() // This will show the current API URL being used
+                    logAppInfo() // This will show app version and bundle info
                     
                     // Check entitlements status
 //                    pushNotificationManager.checkEntitlementsStatus()
                     
                     // Request notification permission when app launches
                     print("📱 [SacaviaAppApp] App launched, requesting notification permission")
-                    pushNotificationManager.requestPermission()
+                    pushNotificationManager.requestNotificationPermission()
                     
-                    // Schedule a test notification after 3 seconds to verify the system works
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                        print("📱 [SacaviaAppApp] Scheduling test notification")
-                        pushNotificationManager.scheduleLocalNotification(
-                            title: "🎉 Welcome to Sacavia!",
-                            body: "Your journey of guided discovery begins now. Explore authentic places and connect with your community.",
-                            timeInterval: 2,
-                            identifier: "welcome_notification"
-                        )
-                    }
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
                     // Refresh feed with interaction state sync when app becomes active
@@ -74,109 +64,14 @@ struct SacaviaAppApp: App {
     }
 }
 
-// MARK: - App Delegate for Push Notifications
-class AppDelegate: NSObject, UIApplicationDelegate, MessagingDelegate {
-    
-    
-    func application(_ application: UIApplication,
-                         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-            print("📱 [AppDelegate] App did finish launching")
-            
-        FirebaseApp.configure()
-        Messaging.messaging().delegate = self
-            UNUserNotificationCenter.current().delegate = PushNotificationManager.shared
-
-            application.registerForRemoteNotifications()
-        Messaging.messaging().token { token, error in
-                    if let error {
-                        print("Error fetching FCM registration token: \(error)")
-                    } else if let token {
-                        print("FCM registration token: \(token)")
-                    }
-                }
-            return true
-        }
-
-    
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        print("📱 [AppDelegate] ✅ Successfully registered for remote notifications")
-        print("📱 [AppDelegate] Device token data length: \(deviceToken.count) bytes")
-        //        PushNotificationManager.shared.sendDeviceTokenToServer(deviceToken)
-                Messaging.messaging().apnsToken = deviceToken // pass APNs token to FCM
-                var readableToken = ""
-                       for index in 0 ..< deviceToken.count {
-                           readableToken += String(format: "%02.2hhx", deviceToken[index] as CVarArg)
-                       }
-                       print("Received an APNs device token: \(readableToken)")
-
+// MARK: - Helper Functions
+extension SacaviaAppApp {
+    private func logAppInfo() {
+        // Log app information for debugging
+        print("📱 [SacaviaAppApp] App Information:")
+        print("📱 [SacaviaAppApp] - Environment: \(Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") ?? "Unknown")")
+        print("📱 [SacaviaAppApp] - Bundle ID: \(Bundle.main.bundleIdentifier ?? "Unknown")")
+        print("📱 [SacaviaAppApp] - Version: \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] ?? "Unknown")")
+        print("📱 [SacaviaAppApp] - Build: \(Bundle.main.infoDictionary?["CFBundleVersion"] ?? "Unknown")")
     }
-    
-    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("📱 [AppDelegate] ❌ Failed to register for remote notifications: \(error)")
-        print("📱 [AppDelegate] Error domain: \(error._domain)")
-        print("📱 [AppDelegate] Error code: \(error._code)")
-        print("📱 [AppDelegate] Error description: \(error.localizedDescription)")
-        
-        // Check if this is the entitlements error
-//        if error.localizedDescription.contains("aps-environment") {
-//            print("📱 [AppDelegate] ❌ Push notification entitlements missing. Running in local-only mode.")
-//            print("📱 [AppDelegate] To fix this:")
-//            print("📱 [AppDelegate] 1. Add 'Push Notifications' capability in Xcode")
-//            print("📱 [AppDelegate] 2. Configure App ID in Apple Developer Portal")
-//            
-//            // Set up for local notifications only
-//            DispatchQueue.main.async {
-//                PushNotificationManager.shared.isRegistered = true
-//                PushNotificationManager.shared.permissionStatus = .authorized
-//            }
-//        } else {
-//            print("📱 [AppDelegate] Different error - not entitlements related")
-//            // Schedule a local notification to inform the user
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-//                PushNotificationManager.shared.scheduleLocalNotification(
-//                    title: "📱 Notification Setup",
-//                    body: "Push notifications are disabled. You can enable them in Settings > Notifications > Sacavia",
-//                    timeInterval: 1,
-//                    identifier: "notification_setup_reminder"
-//                )
-//            }
-//        }
-    }
-    
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        // Handle push notification when app is in background
-        print("📱 [AppDelegate] Received remote notification: \(userInfo)")
-        
-        // Process the notification
-        if let aps = userInfo["aps"] as? [String: Any],
-           let alert = aps["alert"] as? [String: Any],
-           let title = alert["title"] as? String,
-           let body = alert["body"] as? String {
-            
-            // Show a local notification if the app is in background
-            if application.applicationState != .active {
-                PushNotificationManager.shared.scheduleLocalNotification(
-                    title: title,
-                    body: body,
-                    timeInterval: 1,
-                    identifier: "remote_notification_\(Date().timeIntervalSince1970)"
-                )
-            }
-        }
-        
-        completionHandler(.newData)
-    }
-    
-    func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
-        print("📱 [AppDelegate] Received local notification: \(notification.alertTitle ?? "No title")")
-    }
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-          guard let token = fcmToken else {
-              print("📱 [AppDelegate] ❌ No FCM token received")
-              return
-          }
-          print("📱 [AppDelegate] 🎯 Received FCM token: \(token)")
-          PushNotificationManager.shared.sendFCMTokenToServer(token)
-      }
-
 }

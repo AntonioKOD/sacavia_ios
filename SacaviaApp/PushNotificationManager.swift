@@ -6,444 +6,346 @@ class PushNotificationManager: NSObject, ObservableObject {
     static let shared = PushNotificationManager()
     
     @Published var isRegistered = false
-    @Published var deviceToken: String?
     @Published var permissionStatus: UNAuthorizationStatus = .notDetermined
+    @Published var deviceToken: String?
+    @Published var isConnected = false
     
-    override init() {
+    private var baseAPIURL: String {
+        return isDevelopment ? "http://localhost:3000" : "https://sacavia.com"
+    }
+    
+    private override init() {
         super.init()
+        setupNotificationCenter()
+    }
+    
+    // MARK: - Setup
+    private func setupNotificationCenter() {
         UNUserNotificationCenter.current().delegate = self
+        setupNotificationCategories()
         checkNotificationPermission()
+    }
+    
+    // MARK: - Notification Categories
+    private func setupNotificationCategories() {
+        // Location Share Category with action buttons
+        let viewLocationAction = UNNotificationAction(
+            identifier: "VIEW_LOCATION_ACTION",
+            title: "View Location",
+            options: [.foreground]
+        )
+        
+        let replyAction = UNNotificationAction(
+            identifier: "REPLY_ACTION",
+            title: "Reply",
+            options: [.foreground]
+        )
+        
+        let dismissAction = UNNotificationAction(
+            identifier: "DISMISS_ACTION",
+            title: "Dismiss",
+            options: [.destructive]
+        )
+        
+        let locationShareCategory = UNNotificationCategory(
+            identifier: "LOCATION_SHARE_CATEGORY",
+            actions: [viewLocationAction, replyAction, dismissAction],
+            intentIdentifiers: [],
+            options: [.customDismissAction]
+        )
+        
+        // Register categories
+        UNUserNotificationCenter.current().setNotificationCategories([locationShareCategory])
+        print("📱 [PushNotificationManager] Registered notification categories")
     }
     
     func checkNotificationPermission() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
                 self.permissionStatus = settings.authorizationStatus
-                print("📱 [PushNotificationManager] Notification permission status: \(settings.authorizationStatus.rawValue)")
-                
-                switch settings.authorizationStatus {
-                case .authorized:
-                    print("📱 [PushNotificationManager] Notifications are authorized")
-                    self.isRegistered = true
-                case .denied:
-                    print("📱 [PushNotificationManager] Notifications are denied")
-                    self.isRegistered = false
-                case .notDetermined:
-                    print("📱 [PushNotificationManager] Notification permission not determined")
-                    self.isRegistered = false
-                case .provisional:
-                    print("📱 [PushNotificationManager] Notifications are provisional")
-                    self.isRegistered = true
-                case .ephemeral:
-                    print("📱 [PushNotificationManager] Notifications are ephemeral")
-                    self.isRegistered = true
-                @unknown default:
-                    print("📱 [PushNotificationManager] Unknown notification permission status")
-                    self.isRegistered = false
-                }
+                self.isRegistered = settings.authorizationStatus == .authorized
             }
         }
     }
     
-    func requestPermission() {
-        print("📱 [PushNotificationManager] Requesting notification permission")
-        
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+    func requestNotificationPermission() {
+        print("📱 [PushNotificationManager] Requesting notification permission...")
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound, .provisional]) { granted, error in
             DispatchQueue.main.async {
                 if granted {
-                    print("📱 [PushNotificationManager] Notification permission granted")
+                    print("✅ [PushNotificationManager] Notification permission granted")
+                    self.permissionStatus = .authorized
                     self.isRegistered = true
-                    self.registerForRemoteNotifications()
                     
-                    // Schedule a welcome notification
-                    self.scheduleLocalNotification(
-                        title: "🎉 Notifications Enabled!",
-                        body: "You'll now receive updates about new locations, events, and community activities.",
-                        timeInterval: 2,
-                        identifier: "permission_granted"
-                    )
-                } else {
-                    print("📱 [PushNotificationManager] Notification permission denied: \(error?.localizedDescription ?? "Unknown error")")
-                    self.isRegistered = false
-                    
-                    // Schedule a reminder notification
-                    self.scheduleLocalNotification(
-                        title: "📱 Enable Notifications",
-                        body: "To stay updated with new locations and events, enable notifications in Settings > Notifications > Sacavia",
-                        timeInterval: 3,
-                        identifier: "permission_denied_reminder"
-                    )
-                }
-                self.checkNotificationPermission()
-            }
-        }
-    }
-    
-    func registerForRemoteNotifications() {
-        DispatchQueue.main.async {
-            print("📱 [PushNotificationManager] Registering for remote notifications")
-            
-            // Check if we have push notification entitlements
-//            if Bundle.main.object(forInfoDictionaryKey: "aps-environment") == nil {
-//                print("📱 [PushNotificationManager] ❌ No push notification entitlements found. Running in local-only mode.")
-//                print("📱 [PushNotificationManager] To enable push notifications:")
-//                print("📱 [PushNotificationManager] 1. Add 'Push Notifications' capability in Xcode")
-//                print("📱 [PushNotificationManager] 2. Configure App ID in Apple Developer Portal")
-//                print("📱 [PushNotificationManager] 3. Add APN certificates to server")
-//                
-//                // Set up for local notifications only
-//                self.isRegistered = true
-//                self.permissionStatus = .authorized
-//                
-//                // Schedule a local notification to inform the user
-//                self.scheduleLocalNotification(
-//                    title: "📱 Development Mode",
-//                    body: "Push notifications are disabled. Local notifications are working!",
-//                    timeInterval: 2,
-//                    identifier: "development_mode_info"
-//                )
-//                return
-//            } else {
-//                print("📱 [PushNotificationManager] ✅ Push notification entitlements found!")
-//                print("📱 [PushNotificationManager] aps-environment: \(Bundle.main.object(forInfoDictionaryKey: "aps-environment") ?? "nil")")
-//            }
-            
-            print("📱 [PushNotificationManager] Calling UIApplication.shared.registerForRemoteNotifications()")
-            UIApplication.shared.registerForRemoteNotifications()
-        }
-    }
-    
-    func unregisterForRemoteNotifications() {
-        DispatchQueue.main.async {
-            print("📱 [PushNotificationManager] Unregistering from remote notifications")
-            UIApplication.shared.unregisterForRemoteNotifications()
-        }
-    }
-    
-    func sendDeviceTokenToServer(_ deviceToken: Data) {
-        let tokenString = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
-        self.deviceToken = tokenString
-        
-        print("📱 [PushNotificationManager] Device token: \(tokenString)")
-        
-        // Send token to your backend
-        sendTokenToBackend(tokenString)
-    }
-    
-    private func sendTokenToBackend(_ token: String) {
-        let urlString = "\(baseAPIURL)/api/mobile/notifications/register-device"
-        print("📱 [PushNotificationManager] Device registration URL: \(urlString)")
-        
-        guard let url = URL(string: urlString) else {
-            print("📱 [PushNotificationManager] Invalid URL for device registration")
-            return
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        // Add auth token if available
-        if let authToken = AuthManager.shared.token {
-            request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
-            print("📱 [PushNotificationManager] Using auth token for device registration")
-        } else {
-            print("📱 [PushNotificationManager] No auth token available for device registration")
-            return
-        }
-        
-        let body = [
-            "deviceToken": token,
-            "platform": "ios",
-            "appVersion": Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
-        ]
-        
-        do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: body)
-            print("📱 [PushNotificationManager] Device registration request body: \(body)")
-        } catch {
-            print("📱 [PushNotificationManager] Error creating device registration request body: \(error)")
-            return
-        }
-        
-        print("📱 [PushNotificationManager] Sending device token to server...")
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("📱 [PushNotificationManager] Error sending device token: \(error)")
-                return
-            }
-            
-            if let httpResponse = response as? HTTPURLResponse {
-                print("📱 [PushNotificationManager] Device registration response status: \(httpResponse.statusCode)")
-                
-                if let data = data {
-                    do {
-                        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-                        print("📱 [PushNotificationManager] Device registration response: \(json ?? [:])")
-                    } catch {
-                        print("📱 [PushNotificationManager] Error parsing device registration response: \(error)")
-                    }
-                }
-                
-                if httpResponse.statusCode == 200 {
+                    // Register for remote notifications after permission is granted
                     DispatchQueue.main.async {
-                        self.isRegistered = true
+                        UIApplication.shared.registerForRemoteNotifications()
+                        print("📱 [PushNotificationManager] Registered for remote notifications")
                     }
-                    print("📱 [PushNotificationManager] Device token successfully registered with server")
                 } else {
-                    print("📱 [PushNotificationManager] Server returned error: \(httpResponse.statusCode)")
-                }
-            }
-        }.resume()
-    }
-    
-    // Track recent notifications to prevent duplicates
-    private var recentNotificationIds = Set<String>()
-    private let maxRecentNotifications = 100
-    
-    func scheduleLocalNotification(title: String, body: String, timeInterval: TimeInterval = 5, identifier: String? = nil) {
-        // Create a unique identifier for this notification
-        let notificationId = identifier ?? "\(title)_\(body)_\(Date().timeIntervalSince1970)"
-        
-        // Check if we've recently shown this notification
-        if recentNotificationIds.contains(notificationId) {
-            print("📱 [PushNotificationManager] Skipping duplicate notification: \(title)")
-            return
-        }
-        
-        // Add to recent notifications
-        recentNotificationIds.insert(notificationId)
-        
-        // Limit the size of recent notifications set
-        if recentNotificationIds.count > maxRecentNotifications {
-            recentNotificationIds.removeAll()
-        }
-        
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
-        content.sound = .default
-        content.userInfo = ["notificationId": notificationId]
-        
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: false)
-        let request = UNNotificationRequest(identifier: notificationId, content: content, trigger: trigger)
-        
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("📱 [PushNotificationManager] Error scheduling notification: \(error)")
-            } else {
-                print("📱 [PushNotificationManager] Scheduled notification: \(title)")
-            }
-        }
-    }
-    
-    // Test notification function
-    func sendTestNotification() {
-        print("📱 [PushNotificationManager] Sending test notification")
-        scheduleLocalNotification(
-            title: "🧪 Test Notification",
-            body: "This is a test notification to verify the notification system is working properly.",
-            timeInterval: 2,
-            identifier: "test_notification"
-        )
-    }
-    
-    // Force device re-registration
-    func forceReregisterDevice() {
-        print("📱 [PushNotificationManager] Force re-registering device")
-        if let deviceToken = self.deviceToken {
-            print("📱 [PushNotificationManager] Re-registering device token: \(deviceToken)")
-            sendTokenToBackend(deviceToken)
-        } else {
-            print("📱 [PushNotificationManager] No device token available for re-registration")
-            // Try to register for remote notifications again
-            registerForRemoteNotifications()
-        }
-    }
-    
-    // Check device registration status
-    func checkDeviceRegistrationStatus(completion: @escaping (Bool, String) -> Void) {
-        print("📱 [PushNotificationManager] Checking device registration status")
-        
-        let urlString = "\(baseAPIURL)/api/mobile/notifications/check-registration"
-        print("📱 [PushNotificationManager] Check registration URL: \(urlString)")
-        
-        guard let url = URL(string: urlString) else {
-            completion(false, "Invalid URL")
-            return
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        
-        // Add auth token if available
-        if let authToken = AuthManager.shared.token {
-            request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
-        } else {
-            completion(false, "No authentication token available")
-            return
-        }
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    completion(false, "Network error: \(error.localizedDescription)")
-                    return
+                    print("❌ [PushNotificationManager] Notification permission denied: \(error?.localizedDescription ?? "Unknown error")")
+                    self.permissionStatus = .denied
+                    self.isRegistered = false
                 }
                 
-                if let httpResponse = response as? HTTPURLResponse {
-                    if httpResponse.statusCode == 200 {
-                        completion(true, "Device is registered")
-                    } else {
-                        completion(false, "Device not registered (Status: \(httpResponse.statusCode))")
-                    }
-                } else {
-                    completion(false, "Invalid response")
-                }
+                // Log current permission status
+                self.logCurrentPermissionStatus()
             }
-        }.resume()
+        }
     }
     
-    // Server test notification function
-    func sendServerTestNotification(completion: @escaping (Bool, String) -> Void) {
-        print("📱 [PushNotificationManager] Sending server test notification")
-        
-        let urlString = "\(baseAPIURL)/api/mobile/notifications/test"
-        print("📱 [PushNotificationManager] Server test URL: \(urlString)")
-        
-        guard let url = URL(string: urlString) else {
-            print("📱 [PushNotificationManager] Invalid URL for server test notification")
-            completion(false, "Invalid URL")
-            return
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        // Add auth token if available
-        if let authToken = AuthManager.shared.token {
-            request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
-            print("📱 [PushNotificationManager] Using auth token for server test")
-        } else {
-            print("📱 [PushNotificationManager] No auth token available for server test")
-            completion(false, "No authentication token available")
-            return
-        }
-        
-        let testData: [String: Any] = [
-            "title": "🧪 Server Test Notification",
-            "body": "This is a test push notification sent from the server!",
-            "data": [
-                "type": "test_notification",
-                "timestamp": Date().timeIntervalSince1970
-            ]
-        ]
-        
-        do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: testData)
-            print("📱 [PushNotificationManager] Server test request body: \(testData)")
-        } catch {
-            print("📱 [PushNotificationManager] Error creating server test request body: \(error)")
-            completion(false, "Error creating request: \(error.localizedDescription)")
-            return
-        }
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
+    private func logCurrentPermissionStatus() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
-                if let error = error {
-                    print("📱 [PushNotificationManager] Server test network error: \(error)")
-                    completion(false, "Network error: \(error.localizedDescription)")
-                    return
-                }
-                
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("📱 [PushNotificationManager] Server test response status: \(httpResponse.statusCode)")
-                    
-                    if httpResponse.statusCode == 200 {
-                        if let data = data {
-                            do {
-                                let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-                                print("📱 [PushNotificationManager] Server test response: \(json ?? [:])")
-                                completion(true, "Server test notification sent successfully!")
-                            } catch {
-                                print("📱 [PushNotificationManager] Error parsing server test response: \(error)")
-                                completion(true, "Server test notification sent! (Response parsing failed)")
-                            }
-                        } else {
-                            completion(true, "Server test notification sent successfully!")
-                        }
-                    } else {
-                        var errorMessage = "Server returned error: \(httpResponse.statusCode)"
-                        if let data = data {
-                            do {
-                                let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-                                if let details = json?["details"] as? String {
-                                    errorMessage = details
-                                } else if let error = json?["error"] as? String {
-                                    errorMessage = error
-                                }
-                            } catch {
-                                print("📱 [PushNotificationManager] Error parsing error response: \(error)")
-                            }
-                        }
-                        print("📱 [PushNotificationManager] Server test failed: \(errorMessage)")
-                        completion(false, errorMessage)
-                    }
-                } else {
-                    print("📱 [PushNotificationManager] Server test invalid response")
-                    completion(false, "Invalid server response")
-                }
+                print("📱 [PushNotificationManager] Current permission status:")
+                print("📱 [PushNotificationManager] - Authorization: \(settings.authorizationStatus.rawValue)")
+                print("📱 [PushNotificationManager] - Alert setting: \(settings.alertSetting.rawValue)")
+                print("📱 [PushNotificationManager] - Badge setting: \(settings.badgeSetting.rawValue)")
+                print("📱 [PushNotificationManager] - Sound setting: \(settings.soundSetting.rawValue)")
+                print("📱 [PushNotificationManager] - Lock screen setting: \(settings.lockScreenSetting.rawValue)")
+                print("📱 [PushNotificationManager] - Notification center setting: \(settings.notificationCenterSetting.rawValue)")
             }
-        }.resume()
+        }
     }
     
-    // Function to send different types of notifications
-    func sendLocationNotification(locationName: String, locationId: String) {
-        scheduleLocalNotification(
-            title: "📍 New Location Added",
-            body: "A new location '\(locationName)' has been added to your area!",
-            timeInterval: 1,
-            identifier: "location_\(locationId)"
-        )
-    }
-    
-    func sendEventNotification(eventName: String, eventId: String) {
-        scheduleLocalNotification(
-            title: "🎉 New Event",
-            body: "A new event '\(eventName)' is happening soon!",
-            timeInterval: 1,
-            identifier: "event_\(eventId)"
-        )
-    }
-    
-    func sendFriendActivityNotification(friendName: String, activity: String) {
-        scheduleLocalNotification(
-            title: "👥 Friend Activity",
-            body: "\(friendName) \(activity)",
-            timeInterval: 1,
-            identifier: "friend_activity_\(Date().timeIntervalSince1970)"
-        )
-    }
+    // MARK: - Token Management
     func sendFCMTokenToServer(_ token: String) {
-            print("📱 [PushNotificationManager] Sending FCM token to server: \(token)")
-        scheduleLocalNotification(
-            title: "Device token",
-            body: " Device token: \(token)",
-            timeInterval: 10,
-            identifier: "newNotification",
+        print("📱 [PushNotificationManager] Sending FCM token to server: \(token)")
+        
+        // Get current user ID if available
+        let userId = getCurrentUserId()
+        
+        // Register FCM token with server via TokenAPI
+        Task {
+            let deviceInfo = TokenAPI.getCurrentDeviceInfo()
+            let result = await TokenAPI.shared.registerDeviceToken(
+                deviceToken: token,
+                userId: userId,
+                platform: "ios",
+                deviceInfo: deviceInfo
+            )
             
-        )
-            // TODO: replace with your API call to register token
-            // Example:
-            // APIService.shared.registerPushToken(token: token) { result in
-            //     switch result {
-            //     case .success: print("📱 [PushNotificationManager] Token registered successfully")
-            //     case .failure(let error): print("📱 [PushNotificationManager] Failed to register token: \(error)")
-            //     }
-            // }
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let response):
+                    print("✅ [PushNotificationManager] FCM token registered successfully: \(response.message)")
+                    self.deviceToken = token
+                    
+                    // Schedule success notification
+                    self.scheduleLocalNotification(
+                        title: "✅ Token Registered",
+                        body: "Your device is now registered for push notifications",
+                        timeInterval: 2,
+                        identifier: "token_registered_success"
+                    )
+                case .failure(let error):
+                    print("❌ [PushNotificationManager] Failed to register FCM token: \(error.localizedDescription)")
+                    
+                    // Schedule error notification
+                    self.scheduleLocalNotification(
+                        title: "❌ Registration Failed",
+                        body: "Failed to register device: \(error.localizedDescription)",
+                        timeInterval: 2,
+                        identifier: "token_registered_failed"
+                    )
+                }
+            }
         }
+    }
+    
+    // MARK: - Token Management via TokenAPI
+    func registerDeviceToken(_ token: String, userId: String? = nil) async -> Bool {
+        print("📱 [PushNotificationManager] Registering device token: \(token)")
+        
+        let deviceInfo = TokenAPI.getCurrentDeviceInfo()
+        let result = await TokenAPI.shared.registerDeviceToken(
+            deviceToken: token,
+            userId: userId,
+            platform: "ios",
+            deviceInfo: deviceInfo
+        )
+        
+        DispatchQueue.main.async {
+            switch result {
+            case .success(let response):
+                print("✅ [PushNotificationManager] Device token registered: \(response.message)")
+                self.deviceToken = token
+                self.isRegistered = true
+            case .failure(let error):
+                print("❌ [PushNotificationManager] Failed to register device token: \(error.localizedDescription)")
+                self.isRegistered = false
+            }
+        }
+        
+        switch result {
+        case .success:
+            return true
+        case .failure:
+            return false
+        }
+    }
+    
+    func deactivateDeviceToken(_ token: String, userId: String? = nil) async -> Bool {
+        print("📱 [PushNotificationManager] Deactivating device token: \(token)")
+        
+        let result = await TokenAPI.shared.deactivateDeviceToken(
+            deviceToken: token,
+            userId: userId
+        )
+        
+        DispatchQueue.main.async {
+            switch result {
+            case .success(let response):
+                print("✅ [PushNotificationManager] Device token deactivated: \(response.message)")
+                if self.deviceToken == token {
+                    self.deviceToken = nil
+                    self.isRegistered = false
+                }
+            case .failure(let error):
+                print("❌ [PushNotificationManager] Failed to deactivate device token: \(error.localizedDescription)")
+            }
+        }
+        
+        switch result {
+        case .success:
+            return true
+        case .failure:
+            return false
+        }
+    }
+    
+    func subscribeToTopics(_ topics: [String], deviceToken: String? = nil, userId: String? = nil) async -> Bool {
+        let token = deviceToken ?? self.deviceToken ?? ""
+        guard !token.isEmpty else {
+            print("❌ [PushNotificationManager] No device token available for topic subscription")
+            return false
+        }
+        
+        print("📱 [PushNotificationManager] Subscribing to topics: \(topics)")
+        
+        let result = await TokenAPI.shared.subscribeToTopics(
+            deviceToken: token,
+            topics: topics,
+            userId: userId
+        )
+        
+        DispatchQueue.main.async {
+            switch result {
+            case .success(let response):
+                print("✅ [PushNotificationManager] Subscribed to topics: \(response.message)")
+            case .failure(let error):
+                print("❌ [PushNotificationManager] Failed to subscribe to topics: \(error.localizedDescription)")
+            }
+        }
+        
+        switch result {
+        case .success:
+            return true
+        case .failure:
+            return false
+        }
+    }
+    
+    func unsubscribeFromTopics(_ topics: [String], deviceToken: String? = nil, userId: String? = nil) async -> Bool {
+        let token = deviceToken ?? self.deviceToken ?? ""
+        guard !token.isEmpty else {
+            print("❌ [PushNotificationManager] No device token available for topic unsubscription")
+            return false
+        }
+        
+        print("📱 [PushNotificationManager] Unsubscribing from topics: \(topics)")
+        
+        let result = await TokenAPI.shared.unsubscribeFromTopics(
+            deviceToken: token,
+            topics: topics,
+            userId: userId
+        )
+        
+        DispatchQueue.main.async {
+            switch result {
+            case .success(let response):
+                print("✅ [PushNotificationManager] Unsubscribed from topics: \(response.message)")
+            case .failure(let error):
+                print("❌ [PushNotificationManager] Failed to unsubscribe from topics: \(error.localizedDescription)")
+            }
+        }
+        
+        switch result {
+        case .success:
+            return true
+        case .failure:
+            return false
+        }
+    }
+    
+    func getCurrentTopics(deviceToken: String? = nil, userId: String? = nil) async -> [String] {
+        let token = deviceToken ?? self.deviceToken ?? ""
+        guard !token.isEmpty else {
+            print("❌ [PushNotificationManager] No device token available for topic retrieval")
+            return []
+        }
+        
+        print("📱 [PushNotificationManager] Getting current topics for device: \(token)")
+        
+        let result = await TokenAPI.shared.getCurrentTopics(
+            deviceToken: token,
+            userId: userId
+        )
+        
+        switch result {
+        case .success(let response):
+            if let topics = response.subscribedTopics {
+                print("✅ [PushNotificationManager] Retrieved \(topics.count) topics")
+                return topics
+            } else {
+                print("📱 [PushNotificationManager] No topics found")
+                return []
+            }
+        case .failure(let error):
+            print("❌ [PushNotificationManager] Failed to get topics: \(error.localizedDescription)")
+            return []
+        }
+    }
+    
+    func sendTestNotification(title: String, body: String, data: [String: String]? = nil) async -> Bool {
+        guard let deviceToken = self.deviceToken else {
+            print("❌ [PushNotificationManager] No device token available for test notification")
+            return false
+        }
+        
+        print("📱 [PushNotificationManager] Sending test notification to device: \(deviceToken)")
+        
+        let result = await TokenAPI.shared.sendNotification(
+            type: "token",
+            target: deviceToken,
+            title: title,
+            body: body,
+            data: data
+        )
+        
+        DispatchQueue.main.async {
+            switch result {
+            case .success(let response):
+                print("✅ [PushNotificationManager] Test notification sent: \(response.message)")
+            case .failure(let error):
+                print("❌ [PushNotificationManager] Failed to send test notification: \(error.localizedDescription)")
+            }
+        }
+        
+        switch result {
+        case .success:
+            return true
+        case .failure:
+            return false
+        }
+    }
+    
+    // MARK: - Helper Methods
+    private func getCurrentUserId() -> String? {
+        // Get current user ID from your authentication system
+        // This should integrate with your existing AuthManager
+        return AuthManager.shared.user?.id
+    }
 
     // Test connection to server
     func testServerConnection(completion: @escaping (Bool, String) -> Void) {
@@ -499,39 +401,232 @@ extension PushNotificationManager: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         // Show notification even when app is in foreground
         print("📱 [PushNotificationManager] Will present notification: \(notification.request.content.title)")
-        completionHandler([.banner, .sound, .badge])
+        print("📱 [PushNotificationManager] Notification body: \(notification.request.content.body)")
+        print("📱 [PushNotificationManager] User info: \(notification.request.content.userInfo)")
+        
+        // Always show banner, sound, and badge for foreground notifications
+        let presentationOptions: UNNotificationPresentationOptions = [.banner, .sound, .badge]
+        print("📱 [PushNotificationManager] Presenting notification with options: \(presentationOptions)")
+        completionHandler(presentationOptions)
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        // Handle notification tap
         let userInfo = response.notification.request.content.userInfo
+        let actionIdentifier = response.actionIdentifier
+        
         print("📱 [PushNotificationManager] Did receive notification response: \(userInfo)")
-        handleNotificationTap(userInfo)
+        print("📱 [PushNotificationManager] Action identifier: \(actionIdentifier)")
+        
+        // Handle action buttons
+        switch actionIdentifier {
+        case "VIEW_LOCATION_ACTION":
+            if let locationId = userInfo["locationId"] as? String {
+                print("📱 [PushNotificationManager] View Location action tapped for: \(locationId)")
+                navigateToLocation(locationId: locationId)
+            }
+        case "REPLY_ACTION":
+            if let locationId = userInfo["locationId"] as? String,
+               let shareId = userInfo["shareId"] as? String {
+                print("📱 [PushNotificationManager] Reply action tapped for location: \(locationId), share: \(shareId)")
+                openLocationShareReply(locationId: locationId, shareId: shareId)
+            }
+        case "DISMISS_ACTION":
+            print("📱 [PushNotificationManager] Dismiss action tapped")
+            // Just dismiss, no action needed
+        case UNNotificationDefaultActionIdentifier:
+            // Default tap action
+            handleNotificationTap(userInfo)
+        default:
+            print("📱 [PushNotificationManager] Unknown action identifier: \(actionIdentifier)")
+            handleNotificationTap(userInfo)
+        }
+        
         completionHandler()
+    }
+    
+    // MARK: - Action Handlers
+    private func openLocationShareReply(locationId: String, shareId: String) {
+        // Post notification to open location share reply interface
+        NotificationCenter.default.post(
+            name: NSNotification.Name("OpenLocationShareReply"),
+            object: nil,
+            userInfo: [
+                "locationId": locationId,
+                "shareId": shareId
+            ]
+        )
     }
     
     private func handleNotificationTap(_ userInfo: [AnyHashable: Any]) {
         // Handle different notification types
         if let type = userInfo["type"] as? String {
             switch type {
+            case "location_shared":
+                if let locationId = userInfo["locationId"] as? String {
+                    // Navigate to location detail
+                    print("📱 [PushNotificationManager] Navigate to shared location: \(locationId)")
+                    navigateToLocation(locationId: locationId)
+                }
+            case "location_share_reply":
+                if let locationId = userInfo["locationId"] as? String {
+                    // Navigate to location detail for reply
+                    print("📱 [PushNotificationManager] Navigate to location for reply: \(locationId)")
+                    navigateToLocation(locationId: locationId)
+                }
+            case "post_tagged":
+                if let postId = userInfo["postId"] as? String {
+                    // Navigate to post detail
+                    print("📱 [PushNotificationManager] Navigate to tagged post: \(postId)")
+                    navigateToPost(postId: postId)
+                }
+            case "review_tagged":
+                if let reviewId = userInfo["reviewId"] as? String {
+                    // Navigate to review detail
+                    print("📱 [PushNotificationManager] Navigate to tagged review: \(reviewId)")
+                    navigateToReview(reviewId: reviewId)
+                }
             case "new_location":
                 if let locationId = userInfo["locationId"] as? String {
                     // Navigate to location detail
                     print("📱 [PushNotificationManager] Navigate to location: \(locationId)")
+                    navigateToLocation(locationId: locationId)
                 }
             case "new_review":
                 if let locationId = userInfo["locationId"] as? String {
                     // Navigate to location reviews
                     print("📱 [PushNotificationManager] Navigate to location reviews: \(locationId)")
+                    navigateToLocation(locationId: locationId)
                 }
             case "friend_activity":
                 if let userId = userInfo["userId"] as? String {
                     // Navigate to friend profile
                     print("📱 [PushNotificationManager] Navigate to friend profile: \(userId)")
+                    navigateToProfile(userId: userId)
+                }
+            case "event_reminder":
+                if let eventId = userInfo["eventId"] as? String {
+                    // Navigate to event detail
+                    print("📱 [PushNotificationManager] Navigate to event: \(eventId)")
+                    navigateToEvent(eventId: eventId)
                 }
             default:
                 print("📱 [PushNotificationManager] Unknown notification type: \(type)")
             }
         }
+    }
+    
+    // MARK: - Navigation Helpers
+    private func navigateToLocation(locationId: String) {
+        // Post notification to open location detail
+        NotificationCenter.default.post(
+            name: NSNotification.Name("NavigateToLocation"),
+            object: nil,
+            userInfo: ["locationId": locationId]
+        )
+    }
+    
+    private func navigateToPost(postId: String) {
+        // Post notification to open post detail
+        NotificationCenter.default.post(
+            name: NSNotification.Name("NavigateToPost"),
+            object: nil,
+            userInfo: ["postId": postId]
+        )
+    }
+    
+    private func navigateToReview(reviewId: String) {
+        // Post notification to open review detail
+        NotificationCenter.default.post(
+            name: NSNotification.Name("NavigateToReview"),
+            object: nil,
+            userInfo: ["reviewId": reviewId]
+        )
+    }
+    
+    private func navigateToProfile(userId: String) {
+        // Post notification to open profile
+        NotificationCenter.default.post(
+            name: NSNotification.Name("NavigateToProfile"),
+            object: nil,
+            userInfo: ["userId": userId]
+        )
+    }
+    
+    private func navigateToEvent(eventId: String) {
+        // Post notification to open event
+        NotificationCenter.default.post(
+            name: NSNotification.Name("NavigateToEvent"),
+            object: nil,
+            userInfo: ["eventId": eventId]
+        )
+    }
+}
+
+// MARK: - Local Notifications
+extension PushNotificationManager {
+    func scheduleLocalNotification(
+        title: String,
+        body: String,
+        timeInterval: TimeInterval,
+        identifier: String,
+        userInfo: [String: Any]? = nil
+    ) {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.sound = .default
+        
+        if let userInfo = userInfo {
+            content.userInfo = userInfo
+        }
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: false)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("❌ [PushNotificationManager] Failed to schedule local notification: \(error)")
+            } else {
+                print("✅ [PushNotificationManager] Local notification scheduled: \(identifier)")
+            }
+        }
+    }
+    
+    func scheduleLocalNotification(
+        title: String,
+        body: String,
+        date: Date,
+        identifier: String,
+        userInfo: [String: Any]? = nil
+    ) {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.sound = .default
+        
+        if let userInfo = userInfo {
+            content.userInfo = userInfo
+        }
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date), repeats: false)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("❌ [PushNotificationManager] Failed to schedule local notification: \(error)")
+            } else {
+                print("✅ [PushNotificationManager] Local notification scheduled: \(identifier)")
+            }
+        }
+    }
+    
+    func cancelLocalNotification(identifier: String) {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
+        print("📱 [PushNotificationManager] Cancelled local notification: \(identifier)")
+    }
+    
+    func cancelAllLocalNotifications() {
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        print("📱 [PushNotificationManager] Cancelled all local notifications")
     }
 } 

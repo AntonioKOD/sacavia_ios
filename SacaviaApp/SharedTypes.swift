@@ -3,11 +3,11 @@ import SwiftUI
 
 // MARK: - Shared Types for Profile and User Data
 
-struct ProfileImage: Codable {
+struct ProfileImage: Codable, Equatable {
     let url: String
 }
 
-struct UserLocation: Codable {
+struct UserLocation: Codable, Equatable {
     let coordinates: UserCoordinates?
     let address: String?
     let city: String?
@@ -28,7 +28,7 @@ struct UserLocation: Codable {
     }
 }
 
-struct UserCoordinates: Codable {
+struct UserCoordinates: Codable, Equatable {
     let latitude: Double?
     let longitude: Double?
     
@@ -172,7 +172,14 @@ struct AuthUser: Codable {
         name = try container.decode(String.self, forKey: .name)
         email = try container.decodeIfPresent(String.self, forKey: .email)
         username = try container.decodeIfPresent(String.self, forKey: .username)
-        profileImage = try container.decodeIfPresent(ProfileImage.self, forKey: .profileImage) // Changed from String to ProfileImage
+        // Decode profileImage as object or string
+        if let profileImageObj = try? container.decode(ProfileImage.self, forKey: .profileImage) {
+            profileImage = profileImageObj
+        } else if let profileImageString = try? container.decode(String.self, forKey: .profileImage) {
+            profileImage = ProfileImage(url: profileImageString)
+        } else {
+            profileImage = nil
+        }
         role = try container.decode(String.self, forKey: .role)
         bio = try container.decodeIfPresent(String.self, forKey: .bio)
         location = try container.decodeIfPresent(LocationData.self, forKey: .location)
@@ -195,6 +202,15 @@ struct UserPreferences: Codable {
     let budgetPreference: String?
     let travelRadius: String?
     
+    init(categories: [String] = [], notifications: Bool = true, radius: Int = 10, primaryUseCase: String? = nil, budgetPreference: String? = nil, travelRadius: String? = nil) {
+        self.categories = categories
+        self.notifications = notifications
+        self.radius = radius
+        self.primaryUseCase = primaryUseCase
+        self.budgetPreference = budgetPreference
+        self.travelRadius = travelRadius
+    }
+    
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
@@ -211,7 +227,7 @@ struct UserPreferences: Codable {
     }
 }
 
-struct UserStats: Codable {
+struct UserStats: Codable, Equatable {
     let postsCount: Int
     let followersCount: Int
     let followingCount: Int
@@ -220,10 +236,11 @@ struct UserStats: Codable {
     let locationsCount: Int
     let reviewCount: Int
     let recommendationCount: Int
+    let blockedUsersCount: Int
     let averageRating: Double?
     
     // Custom initializer for creating instances with specific values
-    init(postsCount: Int, followersCount: Int, followingCount: Int, savedPostsCount: Int, likedPostsCount: Int, locationsCount: Int, reviewCount: Int, recommendationCount: Int, averageRating: Double?) {
+    init(postsCount: Int, followersCount: Int, followingCount: Int, savedPostsCount: Int, likedPostsCount: Int, locationsCount: Int, reviewCount: Int, recommendationCount: Int, blockedUsersCount: Int, averageRating: Double?) {
         self.postsCount = postsCount
         self.followersCount = followersCount
         self.followingCount = followingCount
@@ -232,6 +249,7 @@ struct UserStats: Codable {
         self.locationsCount = locationsCount
         self.reviewCount = reviewCount
         self.recommendationCount = recommendationCount
+        self.blockedUsersCount = blockedUsersCount
         self.averageRating = averageRating
     }
     
@@ -246,22 +264,23 @@ struct UserStats: Codable {
         locationsCount = try container.decode(Int.self, forKey: .locationsCount)
         reviewCount = try container.decode(Int.self, forKey: .reviewCount)
         recommendationCount = try container.decode(Int.self, forKey: .recommendationCount)
+        blockedUsersCount = try container.decode(Int.self, forKey: .blockedUsersCount)
         averageRating = try container.decodeIfPresent(Double.self, forKey: .averageRating)
     }
     
     enum CodingKeys: String, CodingKey {
-        case postsCount, followersCount, followingCount, savedPostsCount, likedPostsCount, locationsCount, reviewCount, recommendationCount, averageRating
+        case postsCount, followersCount, followingCount, savedPostsCount, likedPostsCount, locationsCount, reviewCount, recommendationCount, blockedUsersCount, averageRating
     }
 }
 
-struct SocialLink: Codable {
+struct SocialLink: Codable, Equatable {
     let platform: String
     let url: String
     let username: String?
 }
 
 // MARK: - Profile Types
-struct ProfileUser: Codable, Identifiable {
+struct ProfileUser: Codable, Identifiable, Equatable {
     let id: String
     let name: String
     let email: String?
@@ -308,12 +327,19 @@ struct ProfileUser: Codable, Identifiable {
         name = try container.decode(String.self, forKey: .name)
         email = try container.decodeIfPresent(String.self, forKey: .email)
         username = try container.decodeIfPresent(String.self, forKey: .username)
-        profileImage = try container.decodeIfPresent(ProfileImage.self, forKey: .profileImage)
+        // Decode profileImage as object or string
+        if let profileImageObj = try? container.decode(ProfileImage.self, forKey: .profileImage) {
+            profileImage = profileImageObj
+        } else if let profileImageString = try? container.decode(String.self, forKey: .profileImage) {
+            profileImage = ProfileImage(url: profileImageString)
+        } else {
+            profileImage = nil
+        }
         bio = try container.decodeIfPresent(String.self, forKey: .bio)
         location = try container.decodeIfPresent(UserLocation.self, forKey: .location)
         role = try container.decodeIfPresent(String.self, forKey: .role)
         isCreator = try container.decodeIfPresent(Bool.self, forKey: .isCreator)
-        isVerified = try container.decode(Bool.self, forKey: .isVerified)
+        isVerified = try container.decodeIfPresent(Bool.self, forKey: .isVerified) ?? false
         stats = try container.decodeIfPresent(UserStats.self, forKey: .stats)
         isFollowing = try container.decodeIfPresent(Bool.self, forKey: .isFollowing)
         joinedAt = try container.decodeIfPresent(String.self, forKey: .joinedAt)
@@ -325,6 +351,224 @@ struct ProfileUser: Codable, Identifiable {
     
     enum CodingKeys: String, CodingKey {
         case id, name, email, username, profileImage, bio, location, role, isCreator, isVerified, stats, isFollowing, joinedAt, interests, socialLinks, following, followers
+    }
+}
+
+// MARK: - Profile Feed Data Models
+
+struct ProfileFeedResponse: Codable {
+    let success: Bool
+    let data: ProfileFeedData
+}
+
+struct ProfileFeedData: Codable {
+    let user: ProfileFeedUser
+    let posts: [ProfileFeedPost]
+    let pagination: ProfileFeedPagination
+}
+
+struct ProfileFeedUser: Codable {
+    let id: String
+    let name: String
+    let username: String
+    let profileImage: String?
+    let bio: String?
+    let isVerified: Bool
+    let isCreator: Bool
+    let stats: ProfileFeedUserStats
+}
+
+struct ProfileFeedUserStats: Codable {
+    let postsCount: Int
+    let followersCount: Int
+    let followingCount: Int
+}
+
+struct ProfileFeedPost: Codable, Identifiable {
+    let id: String
+    let title: String?
+    let content: String
+    let type: String
+    let cover: String?
+    let hasVideo: Bool
+    let likeCount: Int
+    let commentCount: Int
+    let saveCount: Int
+    let shareCount: Int
+    let createdAt: String
+    let updatedAt: String
+    let user: ProfileFeedPostUser
+    let location: ProfileFeedLocation?
+    let tags: [String]
+    let media: ProfileFeedMedia
+}
+
+struct ProfileFeedPostUser: Codable {
+    let id: String
+    let name: String
+    let username: String
+    let profileImage: String?
+    let isVerified: Bool
+    let isCreator: Bool
+}
+
+struct ProfileFeedLocation: Codable {
+    let id: String
+    let name: String
+    let address: String?
+    let city: String?
+    let state: String?
+    let country: String?
+}
+
+struct ProfileFeedMedia: Codable {
+    let images: [String]
+    let videos: [String]
+    let totalCount: Int
+}
+
+struct ProfileFeedPagination: Codable {
+    let page: Int
+    let limit: Int
+    let total: Int
+    let totalPages: Int
+    let hasNext: Bool
+    let hasPrev: Bool
+}
+
+// MARK: - Profile Feed Items Response (New API Format)
+struct ProfileFeedItemsResponse: Codable {
+    let items: [ProfileFeedItem]
+    let nextCursor: String?
+}
+
+struct ProfileFeedItem: Codable, Identifiable {
+    let id: String
+    let title: String?
+    let content: String
+    let type: String
+    let cover: String?
+    let hasVideo: Bool
+    let likeCount: Int
+    let commentCount: Int
+    let saveCount: Int
+    let shareCount: Int
+    let tags: [String]
+    let location: ProfileFeedLocation?
+    let media: ProfileFeedItemMedia?
+    let createdAt: String
+    let updatedAt: String
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        title = try container.decodeIfPresent(String.self, forKey: .title)
+        
+        // Handle both 'content' and 'caption' fields
+        if let content = try container.decodeIfPresent(String.self, forKey: .content) {
+            self.content = content
+        } else if let caption = try container.decodeIfPresent(String.self, forKey: .caption) {
+            self.content = caption
+        } else {
+            self.content = ""
+        }
+        
+        type = try container.decodeIfPresent(String.self, forKey: .type) ?? "post"
+        
+        // Handle cover field - can be a string or an object with url
+        if let coverString = try container.decodeIfPresent(String.self, forKey: .cover) {
+            cover = coverString
+        } else if let coverObject = try container.decodeIfPresent(CoverObject.self, forKey: .cover) {
+            cover = coverObject.url
+        } else {
+            cover = nil
+        }
+        hasVideo = try container.decodeIfPresent(Bool.self, forKey: .hasVideo) ?? false
+        likeCount = try container.decodeIfPresent(Int.self, forKey: .likeCount) ?? 0
+        commentCount = try container.decodeIfPresent(Int.self, forKey: .commentCount) ?? 0
+        saveCount = try container.decodeIfPresent(Int.self, forKey: .saveCount) ?? 0
+        shareCount = try container.decodeIfPresent(Int.self, forKey: .shareCount) ?? 0
+        tags = try container.decodeIfPresent([String].self, forKey: .tags) ?? []
+        location = try container.decodeIfPresent(ProfileFeedLocation.self, forKey: .location)
+        media = try container.decodeIfPresent(ProfileFeedItemMedia.self, forKey: .media)
+        createdAt = try container.decode(String.self, forKey: .createdAt)
+        updatedAt = try container.decodeIfPresent(String.self, forKey: .updatedAt) ?? createdAt
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encodeIfPresent(title, forKey: .title)
+        try container.encode(content, forKey: .content)
+        try container.encode(type, forKey: .type)
+        try container.encodeIfPresent(cover, forKey: .cover)
+        try container.encode(hasVideo, forKey: .hasVideo)
+        try container.encode(likeCount, forKey: .likeCount)
+        try container.encode(commentCount, forKey: .commentCount)
+        try container.encode(saveCount, forKey: .saveCount)
+        try container.encode(shareCount, forKey: .shareCount)
+        try container.encode(tags, forKey: .tags)
+        try container.encodeIfPresent(location, forKey: .location)
+        try container.encodeIfPresent(media, forKey: .media)
+        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(updatedAt, forKey: .updatedAt)
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case id, title, content, caption, type, cover, hasVideo, likeCount, commentCount, saveCount, shareCount, tags, location, media, createdAt, updatedAt
+    }
+}
+
+struct ProfileFeedItemMedia: Codable {
+    let images: [String]
+    let videos: [String]
+    let totalCount: Int
+}
+
+struct CoverObject: Codable {
+    let type: String
+    let url: String
+}
+
+
+// MARK: - Normalized Profile Feed API Models
+struct NormalizedProfileFeedResponse: Codable {
+    let items: [NormalizedProfileFeedItem]
+    let nextCursor: String?
+}
+
+struct NormalizedProfileFeedItem: Codable, Identifiable {
+    let id: String
+    let caption: String
+    let createdAt: String
+    let cover: NormalizedCover?
+    let media: [NormalizedMediaItem]
+    
+    enum CodingKeys: String, CodingKey {
+        case id, caption, createdAt, cover, media
+    }
+}
+
+struct NormalizedCover: Codable {
+    let type: String // "IMAGE" or "VIDEO"
+    let url: String
+    
+    enum CodingKeys: String, CodingKey {
+        case type, url
+    }
+}
+
+struct NormalizedMediaItem: Codable, Identifiable {
+    let id: String
+    let type: String // "IMAGE" or "VIDEO"
+    let url: String
+    let thumbnailUrl: String?
+    let width: Int?
+    let height: Int?
+    let durationSec: Double?
+    
+    enum CodingKeys: String, CodingKey {
+        case id, type, url, thumbnailUrl, width, height, durationSec
     }
 }
 
@@ -341,6 +585,9 @@ struct ProfilePost: Codable, Identifiable {
     let photos: [String]?
     let videos: [String]?
     let media: [String]?
+    let images: [String]? // New field for normalized images array
+    let cover: String? // New field for cover image URL
+    let hasVideo: Bool? // New field to indicate if post has video content
     let likeCount: Int
     let commentCount: Int
     let shareCount: Int
@@ -353,7 +600,7 @@ struct ProfilePost: Codable, Identifiable {
     let mimeType: String?
     
     // Custom initializer for creating from UserPost
-    init(id: String, title: String?, content: String, caption: String?, type: String, featuredImage: ProfileImage?, image: String?, video: String?, videoThumbnail: String?, photos: [String]?, videos: [String]?, media: [String]?, likeCount: Int, commentCount: Int, shareCount: Int, saveCount: Int, rating: Double?, tags: [String]?, location: PostLocation?, createdAt: String, updatedAt: String, mimeType: String?) {
+    init(id: String, title: String?, content: String, caption: String?, type: String, featuredImage: ProfileImage?, image: String?, video: String?, videoThumbnail: String?, photos: [String]?, videos: [String]?, media: [String]?, images: [String]?, cover: String?, hasVideo: Bool?, likeCount: Int, commentCount: Int, shareCount: Int, saveCount: Int, rating: Double?, tags: [String]?, location: PostLocation?, createdAt: String, updatedAt: String, mimeType: String?) {
         self.id = id
         self.title = title
         self.content = content
@@ -366,6 +613,9 @@ struct ProfilePost: Codable, Identifiable {
         self.photos = photos
         self.videos = videos
         self.media = media
+        self.images = images
+        self.cover = cover
+        self.hasVideo = hasVideo
         self.likeCount = likeCount
         self.commentCount = commentCount
         self.shareCount = shareCount
@@ -417,6 +667,9 @@ struct ProfilePost: Codable, Identifiable {
         
         videos = try container.decodeIfPresent([String].self, forKey: .videos)
         media = try container.decodeIfPresent([String].self, forKey: .media)
+        images = try container.decodeIfPresent([String].self, forKey: .images)
+        cover = try container.decodeIfPresent(String.self, forKey: .cover)
+        hasVideo = try container.decodeIfPresent(Bool.self, forKey: .hasVideo)
         likeCount = try container.decode(Int.self, forKey: .likeCount)
         commentCount = try container.decode(Int.self, forKey: .commentCount)
         shareCount = try container.decodeIfPresent(Int.self, forKey: .shareCount) ?? 0
@@ -430,7 +683,7 @@ struct ProfilePost: Codable, Identifiable {
     }
     
     enum CodingKeys: String, CodingKey {
-        case id, title, content, caption, type, featuredImage, image, video, videoThumbnail, photos, videos, media, likeCount, commentCount, shareCount, saveCount, rating, tags, location, createdAt, updatedAt, mimeType
+        case id, title, content, caption, type, featuredImage, image, video, videoThumbnail, photos, videos, media, images, cover, hasVideo, likeCount, commentCount, shareCount, saveCount, rating, tags, location, createdAt, updatedAt, mimeType
     }
 }
 
@@ -532,28 +785,51 @@ struct PostLocation: Codable {
 
 // MARK: - API Response Types
 
-struct User: Codable {
+struct User: Codable, Identifiable {
     let id: String
     let name: String
     let email: String
+    let username: String?
     let profileImage: ProfileImage?
     let location: UserLocation?
-    let role: String
-    let preferences: UserPreferences
+    let role: String?
+    let isVerified: Bool?
+    let preferences: UserPreferences?
+    
+    init(id: String, name: String, email: String, username: String? = nil, profileImage: ProfileImage? = nil, location: UserLocation? = nil, role: String? = nil, isVerified: Bool? = nil, preferences: UserPreferences? = nil) {
+        self.id = id
+        self.name = name
+        self.email = email
+        self.username = username
+        self.profileImage = profileImage
+        self.location = location
+        self.role = role
+        self.isVerified = isVerified
+        self.preferences = preferences
+    }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         email = try container.decode(String.self, forKey: .email)
-        profileImage = try container.decodeIfPresent(ProfileImage.self, forKey: .profileImage)
+        username = try container.decodeIfPresent(String.self, forKey: .username)
+        // Decode profileImage as object or string
+        if let profileImageObj = try? container.decode(ProfileImage.self, forKey: .profileImage) {
+            profileImage = profileImageObj
+        } else if let profileImageString = try? container.decode(String.self, forKey: .profileImage) {
+            profileImage = ProfileImage(url: profileImageString)
+        } else {
+            profileImage = nil
+        }
         location = try container.decodeIfPresent(UserLocation.self, forKey: .location)
-        role = try container.decode(String.self, forKey: .role)
-        preferences = try container.decode(UserPreferences.self, forKey: .preferences)
+        role = try container.decodeIfPresent(String.self, forKey: .role)
+        isVerified = try container.decodeIfPresent(Bool.self, forKey: .isVerified)
+        preferences = try container.decodeIfPresent(UserPreferences.self, forKey: .preferences)
     }
     
     enum CodingKeys: String, CodingKey {
-        case id, name, email, profileImage, location, role, preferences
+        case id, name, email, username, profileImage, location, role, isVerified, preferences
     }
 }
 
@@ -589,6 +865,7 @@ enum APIError: Error, LocalizedError {
     case networkError
     case authenticationRequired
     case unauthorized
+    case userNotFound
     
     var errorDescription: String? {
         switch self {
@@ -604,6 +881,8 @@ enum APIError: Error, LocalizedError {
             return "Authentication required. Please log in."
         case .unauthorized:
             return "Unauthorized access"
+        case .userNotFound:
+            return "User not found"
         }
     }
 }
@@ -648,6 +927,9 @@ struct SearchLocation: Codable {
     let createdBy: String?
     let createdAt: String?
     let updatedAt: String?
+    let ownership: OwnershipInfo?
+    let privacy: String?
+    let privateAccess: [String]?
     
     // Helper function to create a copy with updated fields
     func copy(
@@ -674,45 +956,109 @@ struct SearchLocation: Codable {
         isVerified: Bool? = nil,
         isFeatured: Bool? = nil,
         hasBusinessPartnership: Bool? = nil,
-                       partnershipDetails: PartnershipDetails? = nil,
+        partnershipDetails: PartnershipDetails? = nil,
         neighborhood: String? = nil,
         isSaved: Bool? = nil,
         isSubscribed: Bool? = nil,
         createdBy: String? = nil,
         createdAt: String? = nil,
-        updatedAt: String? = nil
+        updatedAt: String? = nil,
+        ownership: OwnershipInfo? = nil,
+        privacy: String? = nil,
+        privateAccess: [String]? = nil
     ) -> SearchLocation {
-        return SearchLocation(
+        // Break up the expression into smaller parts to help Swift type-check
+        let basicInfo = (
             id: id ?? self.id,
             name: name ?? self.name,
             description: description ?? self.description,
             shortDescription: shortDescription ?? self.shortDescription,
             slug: slug ?? self.slug,
-            address: address ?? self.address,
+            address: address ?? self.address
+        )
+        
+        let mediaInfo = (
             coordinates: coordinates ?? self.coordinates,
             featuredImage: featuredImage ?? self.featuredImage,
-            gallery: gallery ?? self.gallery,
+            gallery: gallery ?? self.gallery
+        )
+        
+        let categoryInfo = (
             categories: categories ?? self.categories,
             tags: tags ?? self.tags,
-            priceRange: priceRange ?? self.priceRange,
+            priceRange: priceRange ?? self.priceRange
+        )
+        
+        let ratingInfo = (
             rating: rating ?? self.rating,
             reviewCount: reviewCount ?? self.reviewCount,
-            visitCount: visitCount ?? self.visitCount,
+            visitCount: visitCount ?? self.visitCount
+        )
+        
+        let businessInfo = (
             businessHours: businessHours ?? self.businessHours,
             contactInfo: contactInfo ?? self.contactInfo,
             accessibility: accessibility ?? self.accessibility,
             bestTimeToVisit: bestTimeToVisit ?? self.bestTimeToVisit,
-            insiderTips: insiderTips ?? self.insiderTips,
+            insiderTips: insiderTips ?? self.insiderTips
+        )
+        
+        let statusInfo = (
             isVerified: isVerified ?? self.isVerified,
             isFeatured: isFeatured ?? self.isFeatured,
             hasBusinessPartnership: hasBusinessPartnership ?? self.hasBusinessPartnership,
             partnershipDetails: partnershipDetails ?? self.partnershipDetails,
-            neighborhood: neighborhood ?? self.neighborhood,
+            neighborhood: neighborhood ?? self.neighborhood
+        )
+        
+        let userInfo = (
             isSaved: isSaved ?? self.isSaved,
             isSubscribed: isSubscribed ?? self.isSubscribed,
             createdBy: createdBy ?? self.createdBy,
             createdAt: createdAt ?? self.createdAt,
-            updatedAt: updatedAt ?? self.updatedAt
+            updatedAt: updatedAt ?? self.updatedAt,
+            ownership: ownership ?? self.ownership
+        )
+        
+        let privacyInfo = (
+            privacy: privacy ?? self.privacy,
+            privateAccess: privateAccess ?? self.privateAccess
+        )
+        
+        return SearchLocation(
+            id: basicInfo.id,
+            name: basicInfo.name,
+            description: basicInfo.description,
+            shortDescription: basicInfo.shortDescription,
+            slug: basicInfo.slug,
+            address: basicInfo.address,
+            coordinates: mediaInfo.coordinates,
+            featuredImage: mediaInfo.featuredImage,
+            gallery: mediaInfo.gallery,
+            categories: categoryInfo.categories,
+            tags: categoryInfo.tags,
+            priceRange: categoryInfo.priceRange,
+            rating: ratingInfo.rating,
+            reviewCount: ratingInfo.reviewCount,
+            visitCount: ratingInfo.visitCount,
+            businessHours: businessInfo.businessHours,
+            contactInfo: businessInfo.contactInfo,
+            accessibility: businessInfo.accessibility,
+            bestTimeToVisit: businessInfo.bestTimeToVisit,
+            insiderTips: businessInfo.insiderTips,
+            isVerified: statusInfo.isVerified,
+            isFeatured: statusInfo.isFeatured,
+            hasBusinessPartnership: statusInfo.hasBusinessPartnership,
+            partnershipDetails: statusInfo.partnershipDetails,
+            neighborhood: statusInfo.neighborhood,
+            isSaved: userInfo.isSaved,
+            isSubscribed: userInfo.isSubscribed,
+            createdBy: userInfo.createdBy,
+            createdAt: userInfo.createdAt,
+            updatedAt: userInfo.updatedAt,
+            ownership: userInfo.ownership,
+            privacy: privacyInfo.privacy,
+            privateAccess: privacyInfo.privateAccess
         )
     }
 }
@@ -836,6 +1182,13 @@ struct PartnershipDetails: Codable {
     let partnerName: String?
     let partnerContact: String?
     let details: String?
+}
+
+struct OwnershipInfo: Codable {
+    let claimStatus: String?
+    let ownerId: String?
+    let claimedAt: String?
+    let claimEmail: String?
 }
 
 struct PostData: Identifiable, Codable {
@@ -1014,6 +1367,11 @@ struct TipsData: Codable {
     let tips: [InsiderTip]
 }
 
+struct UsersSearchResponse: Codable {
+    let success: Bool
+    let data: [User]?
+}
+
 struct CommunityPhotosResponse: Codable {
     let success: Bool
     let data: CommunityPhotosData
@@ -1021,6 +1379,14 @@ struct CommunityPhotosResponse: Codable {
 
 struct CommunityPhotosData: Codable {
     let photos: [CommunityPhoto]
+}
+
+// MARK: - Share Friend Model
+struct ShareFriend: Codable {
+    let id: String
+    let name: String
+    let username: String
+    let profileImageUrl: String?
 }
 
 // MARK: - Location Detail Response Models

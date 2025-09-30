@@ -584,7 +584,7 @@ struct EventDetailView: View {
 
     
     private func shareEvent() {
-        guard let url = URL(string: "https://sacavia.com/events/\(event.id)") else { return }
+        guard let url = URL(string: "\(baseAPIURL)/events/\(event.id)") else { return }
         
         let activityVC = UIActivityViewController(
             activityItems: [

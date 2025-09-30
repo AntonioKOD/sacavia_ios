@@ -20,11 +20,35 @@ struct UsernameValidationResponse: Codable {
     let message: String?
 }
 
+struct EmailValidationResponse: Codable {
+    let success: Bool
+    let available: Bool?
+    let error: String?
+    let message: String?
+    let errorType: String?
+    let code: String?
+    let email: String?
+}
+
 enum UsernameValidationState {
     case idle
     case checking
     case available
     case unavailable(String, [String])
+    case invalid(String)
+}
+
+enum EmailValidationState {
+    case idle
+    case checking
+    case valid
+    case invalid(String)
+    case alreadyExists
+}
+
+enum NameValidationState {
+    case idle
+    case valid
     case invalid(String)
 }
 
@@ -43,6 +67,8 @@ struct SignupView: View {
     @State private var confirmPassword = ""
     @State private var username = ""
     @State private var usernameValidationState: UsernameValidationState = .idle
+    @State private var emailValidationState: EmailValidationState = .idle
+    @State private var nameValidationState: NameValidationState = .idle
     @State private var termsAccepted = false
     @State private var privacyAccepted = false
     @State private var receiveUpdates = true
@@ -231,7 +257,12 @@ struct SignupView: View {
                 .multilineTextAlignment(.center)
             
             VStack(spacing: 12) {
-                CustomTextField(title: "Full Name", text: $name, placeholder: "Enter your full name")
+                NameTextField(
+                    title: "Full Name",
+                    text: $name,
+                    placeholder: "Enter your full name",
+                    validationState: $nameValidationState
+                )
                 
                 UsernameTextField(
                     title: "Username",
@@ -240,8 +271,12 @@ struct SignupView: View {
                     validationState: $usernameValidationState
                 )
                 
-                CustomTextField(title: "Email", text: $email, placeholder: "your@email.com", icon: "envelope")
-                    .keyboardType(.emailAddress)
+                EmailTextField(
+                    title: "Email",
+                    text: $email,
+                    placeholder: "your@email.com",
+                    validationState: $emailValidationState
+                )
                 
                 CustomSecureField(title: "Password", text: $password, placeholder: "Create a secure password", icon: "lock")
                 
@@ -562,9 +597,26 @@ struct SignupView: View {
             default:
                 usernameValid = false
             }
+            
+            let emailValid: Bool
+            switch emailValidationState {
+            case .valid:
+                emailValid = true
+            default:
+                emailValid = false
+            }
+            
+            let nameValid: Bool
+            switch nameValidationState {
+            case .valid:
+                nameValid = true
+            default:
+                nameValid = false
+            }
+            
             return !name.isEmpty && !email.isEmpty && !password.isEmpty && 
                    !confirmPassword.isEmpty && password == confirmPassword && 
-                   !username.isEmpty && usernameValid &&
+                   !username.isEmpty && usernameValid && emailValid && nameValid &&
                    termsAccepted && privacyAccepted
         case 2:
             return !selectedInterests.isEmpty
@@ -695,7 +747,7 @@ struct SignupView: View {
             deviceInfo: DeviceInfo(
                 deviceId: UIDevice.current.identifierForVendor?.uuidString,
                 platform: "ios",
-                appVersion: "1.0"
+                appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.9.81"
             ),
             termsAccepted: termsAccepted,
             privacyAccepted: privacyAccepted
@@ -911,6 +963,300 @@ struct UsernameTextField: View {
                 }
             }
         }.resume()
+    }
+}
+
+struct EmailTextField: View {
+    let title: String
+    @Binding var text: String
+    let placeholder: String
+    @Binding var validationState: EmailValidationState
+    
+    @FocusState private var isFocused: Bool
+    @State private var validationTimer: Timer?
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.caption)
+                .foregroundColor(Color(red: 102/255, green: 102/255, blue: 102/255))
+            HStack(spacing: 10) {
+                Image(systemName: "envelope")
+                    .foregroundColor(isFocused ? Color(red: 255/255, green: 107/255, blue: 107/255) : Color.gray.opacity(0.7))
+                    .frame(width: 20)
+                TextField(placeholder, text: $text)
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundColor(.primary)
+                    .keyboardType(.emailAddress)
+                    .autocorrectionDisabled(true)
+                    .textInputAutocapitalization(.never)
+                    .focused($isFocused)
+                    .onChange(of: text) { _ in
+                        validateEmail()
+                    }
+                
+                // Validation status icon
+                validationStatusIcon
+            }
+            .padding(.vertical, 14)
+            .padding(.horizontal, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.white)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(borderColor, lineWidth: 1)
+                    )
+            )
+            
+            // Validation message
+            if case .invalid(let message) = validationState {
+                Text(message)
+                    .font(.caption)
+                    .foregroundColor(.red)
+            } else if case .alreadyExists = validationState {
+                Text("This email is already registered")
+                    .font(.caption)
+                    .foregroundColor(.red)
+            } else if case .valid = validationState {
+                Text("Email looks good!")
+                    .font(.caption)
+                    .foregroundColor(.green)
+            }
+        }
+    }
+    
+    private var borderColor: Color {
+        switch validationState {
+        case .idle:
+            return isFocused ? Color(red: 255/255, green: 107/255, blue: 107/255) : Color.gray.opacity(0.3)
+        case .checking:
+            return Color.orange
+        case .valid:
+            return .green
+        case .invalid, .alreadyExists:
+            return .red
+        }
+    }
+    
+    private var validationStatusIcon: some View {
+        Group {
+            switch validationState {
+            case .idle:
+                EmptyView()
+            case .checking:
+                ProgressView()
+                    .scaleEffect(0.8)
+                    .foregroundColor(.orange)
+            case .valid:
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundColor(.green)
+            case .invalid, .alreadyExists:
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundColor(.red)
+            }
+        }
+    }
+    
+    private func validateEmail() {
+        // Cancel previous timer
+        validationTimer?.invalidate()
+        
+        // Reset state if empty
+        if text.isEmpty {
+            validationState = .idle
+            return
+        }
+        
+        // Basic email format validation first
+        if !isValidEmailFormat(text) {
+            validationState = .invalid("Please enter a valid email address")
+            return
+        }
+        
+        // Set checking state
+        validationState = .checking
+        
+        // Debounce validation
+        validationTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
+            performEmailValidation()
+        }
+    }
+    
+    private func isValidEmailFormat(_ email: String) -> Bool {
+        let emailRegex = "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+        return emailPredicate.evaluate(with: email)
+    }
+    
+    private func performEmailValidation() {
+        guard !text.isEmpty && isValidEmailFormat(text) else {
+            validationState = .invalid("Please enter a valid email address")
+            return
+        }
+        
+        let urlString = "\(baseAPIURL)/api/mobile/users/check-email?email=\(text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+        
+        guard let url = URL(string: urlString) else {
+            validationState = .invalid("Invalid URL")
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    self.validationState = .invalid("Network error: \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let data = data else {
+                    self.validationState = .invalid("No data received")
+                    return
+                }
+                
+                do {
+                    // First try to decode as EmailValidationResponse
+                    let response = try JSONDecoder().decode(EmailValidationResponse.self, from: data)
+                    
+                    if response.success, response.available == true {
+                        self.validationState = .valid
+                    } else if response.available == false {
+                        self.validationState = .alreadyExists
+                    } else if let error = response.error {
+                        self.validationState = .invalid(error)
+                    } else if let message = response.message {
+                        self.validationState = .invalid(message)
+                    } else {
+                        self.validationState = .invalid("Email validation failed")
+                    }
+                } catch {
+                    // If EmailValidationResponse fails, try UsernameValidationResponse as fallback
+                    do {
+                        let response = try JSONDecoder().decode(UsernameValidationResponse.self, from: data)
+                        
+                        if response.success, response.available == true {
+                            self.validationState = .valid
+                        } else if response.available == false {
+                            self.validationState = .alreadyExists
+                        } else if let error = response.error {
+                            self.validationState = .invalid(error)
+                        } else {
+                            self.validationState = .invalid("Email validation failed")
+                        }
+                    } catch {
+                        // If both fail, show the raw response for debugging
+                        if let responseString = String(data: data, encoding: .utf8) {
+                            print("🔍 [EmailValidation] Failed to parse response: \(responseString)")
+                            self.validationState = .invalid("Invalid response format")
+                        } else {
+                            self.validationState = .invalid("Failed to parse response")
+                        }
+                    }
+                }
+            }
+        }.resume()
+    }
+}
+
+struct NameTextField: View {
+    let title: String
+    @Binding var text: String
+    let placeholder: String
+    @Binding var validationState: NameValidationState
+    
+    @FocusState private var isFocused: Bool
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.caption)
+                .foregroundColor(Color(red: 102/255, green: 102/255, blue: 102/255))
+            HStack(spacing: 10) {
+                Image(systemName: "person")
+                    .foregroundColor(isFocused ? Color(red: 255/255, green: 107/255, blue: 107/255) : Color.gray.opacity(0.7))
+                    .frame(width: 20)
+                TextField(placeholder, text: $text)
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundColor(.primary)
+                    .focused($isFocused)
+                    .onChange(of: text) { _ in
+                        validateName()
+                    }
+                
+                // Validation status icon
+                validationStatusIcon
+            }
+            .padding(.vertical, 14)
+            .padding(.horizontal, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.white)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(borderColor, lineWidth: 1)
+                    )
+            )
+            
+            // Validation message
+            if case .invalid(let message) = validationState {
+                Text(message)
+                    .font(.caption)
+                    .foregroundColor(.red)
+            } else if case .valid = validationState {
+                Text("Name looks good!")
+                    .font(.caption)
+                    .foregroundColor(.green)
+            }
+        }
+    }
+    
+    private var borderColor: Color {
+        switch validationState {
+        case .idle:
+            return isFocused ? Color(red: 255/255, green: 107/255, blue: 107/255) : Color.gray.opacity(0.3)
+        case .valid:
+            return .green
+        case .invalid:
+            return .red
+        }
+    }
+    
+    private var validationStatusIcon: some View {
+        Group {
+            switch validationState {
+            case .idle:
+                EmptyView()
+            case .valid:
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundColor(.green)
+            case .invalid:
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundColor(.red)
+            }
+        }
+    }
+    
+    private func validateName() {
+        let trimmedName = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if trimmedName.isEmpty {
+            validationState = .idle
+        } else if trimmedName.count < 2 {
+            validationState = .invalid("Name must be at least 2 characters")
+        } else if trimmedName.count > 50 {
+            validationState = .invalid("Name must be less than 50 characters")
+        } else if !isValidNameFormat(trimmedName) {
+            validationState = .invalid("Name contains invalid characters")
+        } else {
+            validationState = .valid
+        }
+    }
+    
+    private func isValidNameFormat(_ name: String) -> Bool {
+        // Allow letters, spaces, hyphens, and apostrophes
+        let nameRegex = "^[a-zA-Z\\s\\-']+$"
+        let namePredicate = NSPredicate(format: "SELF MATCHES %@", nameRegex)
+        return namePredicate.evaluate(with: name)
     }
 }
 

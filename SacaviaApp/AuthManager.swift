@@ -298,8 +298,42 @@ class AuthManager: ObservableObject {
         )
         
         DispatchQueue.main.async {
+            print("🔐 [AuthManager] Updating user on main thread")
+            print("🔐 [AuthManager] New user data: \(userData.name ?? "nil")")
+            print("🔐 [AuthManager] New profile image URL: \(userData.profileImage?.url ?? "nil")")
+            print("🔐 [AuthManager] Current user before update: \(self.user?.name ?? "nil")")
+            print("🔐 [AuthManager] Current profile image before update: \(self.user?.profileImage?.url ?? "nil")")
+            
             self.user = updatedUser
             self.saveAuthData()
+            
+            print("🔐 [AuthManager] User updated successfully")
+            print("🔐 [AuthManager] New user after update: \(self.user?.name ?? "nil")")
+            print("🔐 [AuthManager] New profile image after update: \(self.user?.profileImage?.url ?? "nil")")
+            
+            // Post notification for profile update
+            NotificationCenter.default.post(
+                name: NSNotification.Name("ProfileUpdated"),
+                object: nil,
+                userInfo: ["userData": userData]
+            )
+            print("📢 [AuthManager] Posted ProfileUpdated notification")
+            
+            // Post specific notification for profile image update
+            NotificationCenter.default.post(
+                name: NSNotification.Name("ProfileImageUpdated"),
+                object: nil,
+                userInfo: ["userData": userData]
+            )
+            print("📢 [AuthManager] Posted ProfileImageUpdated notification")
+            
+            // Test notification to verify the system is working
+            NotificationCenter.default.post(
+                name: NSNotification.Name("TestNotification"),
+                object: nil,
+                userInfo: ["message": "AuthManager test notification"]
+            )
+            print("📢 [AuthManager] Posted TestNotification")
         }
     }
     
@@ -469,7 +503,7 @@ class AuthManager: ObservableObject {
     func login(email: String, password: String, rememberMe: Bool, completion: @escaping (String?) -> Void) {
         isLoading = true
         let url = URL(string: "\(baseURL)/login")!
-        let deviceInfo = DeviceInfo(deviceId: UUID().uuidString, platform: "ios", appVersion: "1.0.0")
+        let deviceInfo = DeviceInfo(deviceId: UUID().uuidString, platform: "ios", appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.9.81")
         let body = LoginRequest(email: email, password: password, rememberMe: rememberMe, deviceInfo: deviceInfo)
         
         print("🔐 Login attempt - URL: \(url)")

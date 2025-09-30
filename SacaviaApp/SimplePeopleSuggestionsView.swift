@@ -3,8 +3,8 @@ import SwiftUI
 struct SimplePeopleSuggestionsView: View {
     @StateObject private var peopleSuggestionsManager = PeopleSuggestionsManager()
     @EnvironmentObject var authManager: AuthManager
-    @State private var showProfile: Bool = false
-    @State private var selectedUserId: String = ""
+    @State private var showingProfile = false
+    @State private var selectedUserId: String?
     
     // Brand colors
     let primaryColor = Color(red: 255/255, green: 107/255, blue: 107/255) // #FF6B6B
@@ -157,7 +157,7 @@ struct SimplePeopleSuggestionsView: View {
                                                 },
                                                 onTap: { userId in
                                                     selectedUserId = userId
-                                                    showProfile = true
+                                                    showingProfile = true
                                                 }
                                             )
                                         }
@@ -181,9 +181,27 @@ struct SimplePeopleSuggestionsView: View {
             // Fetch all categories for the People tab
             peopleSuggestionsManager.fetchPeopleSuggestions(category: "all")
         }
-        .navigationDestination(isPresented: $showProfile) {
-            ProfileView(userId: selectedUserId)
-                .environmentObject(authManager)
+        .fullScreenCover(isPresented: Binding<Bool>(
+            get: { showingProfile && selectedUserId != nil },
+            set: { newValue in 
+                if !newValue {
+                    showingProfile = false
+                    selectedUserId = nil
+                }
+            }
+        )) {
+            if let userId = selectedUserId {
+                ProfileView(userId: userId)
+                    .environmentObject(authManager)
+                    .onAppear {
+                        print("🔍 [SimplePeopleSuggestionsView] ProfileView appeared for userId: \(userId)")
+                    }
+                    .onDisappear {
+                        print("🔍 [SimplePeopleSuggestionsView] ProfileView disappeared")
+                        showingProfile = false
+                        selectedUserId = nil
+                    }
+            }
         }
     }
 } 

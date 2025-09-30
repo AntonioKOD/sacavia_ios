@@ -469,6 +469,7 @@ struct EventUser: Codable {
 class EventsManager: ObservableObject {
     @Published var events: [Event] = []
     @Published var isLoading = false
+    @Published var isRefreshing = false
     @Published var errorMessage: String?
     
     private let authManager = AuthManager.shared
@@ -532,7 +533,12 @@ class EventsManager: ObservableObject {
     }
     
     func refreshEvents(type: String = "all") {
-        fetchEvents(type: type) { _, _ in }
+        isRefreshing = true
+        fetchEvents(type: type) { success, error in
+            DispatchQueue.main.async {
+                self.isRefreshing = false
+            }
+        }
     }
     
     // MARK: - Event Creation

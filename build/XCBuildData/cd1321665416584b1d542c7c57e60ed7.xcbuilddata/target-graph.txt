@@ -1,2 +1,0 @@
-Target dependency graph (1 target)
-Target 'SacaviaApp' in project 'SacaviaApp' (no dependencies)

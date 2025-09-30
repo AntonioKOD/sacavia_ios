@@ -12,6 +12,7 @@ struct LocationDetailView: View {
     @State private var showReviewModal = false
     @State private var showTipModal = false
     @State private var showPhotoModal = false
+    @State private var showClaimModal = false
     @State private var selectedGalleryIndex = 0
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var auth: AuthManager
@@ -261,6 +262,32 @@ struct LocationDetailView: View {
                                         )
                                     }
                                     
+                                    // Claim Business Button (only show if unclaimed)
+                                    if isLocationUnclaimed() {
+                                        Button(action: { showClaimModal = true }) {
+                                            HStack(spacing: 8) {
+                                                Image(systemName: "building.2")
+                                                    .font(.system(size: 16, weight: .semibold))
+                                                Text("Claim Business")
+                                                    .font(.system(size: 16, weight: .semibold))
+                                            }
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, 20)
+                                            .padding(.vertical, 12)
+                                            .background(
+                                                Capsule()
+                                                    .fill(
+                                                        LinearGradient(
+                                                            gradient: Gradient(colors: [Color.orange, Color.orange.opacity(0.8)]),
+                                                            startPoint: .leading,
+                                                            endPoint: .trailing
+                                                        )
+                                                    )
+                                                    .shadow(color: Color.orange.opacity(0.4), radius: 6, x: 0, y: 3)
+                                            )
+                                        }
+                                    }
+                                    
                                     Spacer()
                                     
                                     Button(action: { showPhotoModal = true }) {
@@ -361,6 +388,13 @@ struct LocationDetailView: View {
             }
             .environmentObject(auth)
         }
+        .sheet(isPresented: $showClaimModal) {
+            ClaimBusinessModal(
+                locationId: locationId,
+                locationName: location?.location.name ?? "Unknown Location",
+                isPresented: $showClaimModal
+            )
+        }
     }
     
     private func fetchLocationDetails() {
@@ -445,9 +479,15 @@ struct LocationDetailView: View {
         guard let coordinates = location?.location.coordinates else { return }
         let lat = coordinates.latitude
         let lon = coordinates.longitude
-        if let url = URL(string: "http://maps.apple.com/?ll=\(lat),\(lon)") {
+        if let url = URL(string: "http://maps.apple.com/?daddr=\(lat),\(lon)") {
             UIApplication.shared.open(url)
         }
+    }
+    
+    private func isLocationUnclaimed() -> Bool {
+        guard let location = location else { return false }
+        // Check if the location is unclaimed based on ownership status
+        return location.location.ownership?.claimStatus == "unclaimed"
     }
 }
 

@@ -216,6 +216,7 @@ struct AllSavedContentView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 20)
             }
+            .coordinateSpace(name: "scroll")
         }
     }
 }
@@ -518,7 +519,7 @@ struct SavedPostCard: View {
                 // Modern media content
                 if let videoUrl = firstVideoUrl {
                     ZStack(alignment: .center) {
-                        EnhancedVideoPlayer(videoUrl: videoUrl, enableAutoplay: true, enableAudio: true, loop: true)
+                        AutoplayVideoPlayer(videoUrl: videoUrl, enableAudio: true, loop: true)
                             .aspectRatio(contentMode: .fill)
                             .frame(maxHeight: 420)
                             .background(Color.black)

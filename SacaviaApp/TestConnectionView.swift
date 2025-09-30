@@ -49,7 +49,7 @@ struct TestConnectionView: View {
                 await MainActor.run {
                     isLoading = false
                     if success {
-                        testResult = "Success! Connected to sacavia.com API"
+                        testResult = "Success! Connected to \(baseAPIURL) API"
                     } else {
                         testResult = "Connection failed - API returned false"
                     }

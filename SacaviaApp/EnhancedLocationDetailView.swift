@@ -40,12 +40,135 @@ struct EnhancedLocationDetailView: View {
     @State private var selectedTab = 0 // 0: About, 1: Reviews, 2: Photos, 3: Tips
     @State private var showMoreOptions = false
     @State private var showReportContent = false
+    @State private var showClaimModal = false
+    @State private var showShareModal = false
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var auth: AuthManager
 
     // Brand colors
     let primaryColor = Color(red: 255/255, green: 107/255, blue: 107/255) // #FF6B6B
     let secondaryColor = Color(red: 78/255, green: 205/255, blue: 196/255) // #4ECDC4
+    
+    // Check if location is unclaimed or can be claimed
+    private var isUnclaimed: Bool {
+        guard let location = location?.location else { return false }
+        
+        // If no ownership info exists, it's unclaimed
+        guard let ownership = location.ownership else {
+            print("🔍 [EnhancedLocationDetailView] No ownership info - treating as unclaimed")
+            return true
+        }
+        
+        // Check claim status
+        let claimStatus = ownership.claimStatus
+        let result = claimStatus == "unclaimed" || claimStatus == nil
+        
+        print("🔍 [EnhancedLocationDetailView] isUnclaimed check:")
+        print("🔍 [EnhancedLocationDetailView] - Location: \(location.name)")
+        print("🔍 [EnhancedLocationDetailView] - Ownership: \(claimStatus ?? "nil")")
+        print("🔍 [EnhancedLocationDetailView] - CreatedBy: \(location.createdBy ?? "nil")")
+        print("🔍 [EnhancedLocationDetailView] - Result: \(result)")
+        return result
+    }
+    
+    // Check if location is verified/claimed
+    private var isVerified: Bool {
+        guard let ownership = location?.location.ownership,
+              let claimStatus = ownership.claimStatus else { return false }
+        return ["approved", "verified"].contains(claimStatus)
+    }
+    
+    // Check if location is pending claim
+    private var isPendingClaim: Bool {
+        guard let ownership = location?.location.ownership,
+              let claimStatus = ownership.claimStatus else { return false }
+        return claimStatus == "pending"
+    }
+    
+    // Check if location has incomplete data (simple community submission)
+    private var hasIncompleteData: Bool {
+        guard let location = location?.location else { return true }
+        
+        // Check for missing key business information
+        let hasContactInfo = location.contactInfo?.phone != nil || location.contactInfo?.website != nil
+        let hasBusinessHours = location.businessHours != nil && !location.businessHours!.isEmpty
+        let hasPriceRange = location.priceRange != nil && !location.priceRange!.isEmpty
+        let hasDetailedDescription = location.description != nil && location.description!.count > 50
+        
+        // If missing multiple key fields, consider it incomplete
+        let missingFields = [hasContactInfo, hasBusinessHours, hasPriceRange, hasDetailedDescription].filter { !$0 }.count
+        return missingFields >= 2
+    }
+    
+    // Get data completeness score (0-100)
+    private var dataCompletenessScore: Int {
+        guard let location = location?.location else { return 0 }
+        
+        var score = 0
+        let maxScore = 100
+        
+        // Basic info (20 points)
+        if location.name.count > 0 { score += 10 }
+        if location.shortDescription != nil && !location.shortDescription!.isEmpty { score += 10 }
+        
+        // Contact info (20 points)
+        if location.contactInfo?.phone != nil { score += 10 }
+        if location.contactInfo?.website != nil { score += 10 }
+        
+        // Business details (20 points)
+        if location.businessHours != nil && !location.businessHours!.isEmpty { score += 10 }
+        if location.priceRange != nil && !location.priceRange!.isEmpty { score += 10 }
+        
+        // Rich content (20 points)
+        if location.description != nil && location.description!.count > 50 { score += 10 }
+        if location.gallery != nil && !location.gallery!.isEmpty { score += 10 }
+        
+        // Categories and tags (10 points)
+        if location.categories != nil && !location.categories!.isEmpty { score += 5 }
+        if location.tags != nil && !location.tags!.isEmpty { score += 5 }
+        
+        // Accessibility (5 points)
+        if location.accessibility != nil { score += 5 }
+        
+        // Additional content (5 points) - for any other rich content
+        if location.insiderTips != nil && !location.insiderTips!.isEmpty { score += 5 }
+        
+        return min(score, maxScore)
+    }
+    
+    // Status badge view
+    private var statusBadge: some View {
+        Group {
+            if isVerified {
+                Text("Verified")
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.green)
+                    .cornerRadius(12)
+            } else if isPendingClaim {
+                Text("Pending")
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.orange)
+                    .cornerRadius(12)
+            } else {
+                Text("Community-added")
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.gray.opacity(0.7))
+                    .cornerRadius(12)
+            }
+        }
+    }
 
     var body: some View {
         NavigationView {
@@ -95,6 +218,8 @@ struct EnhancedLocationDetailView: View {
                         // Quick action buttons
                         quickActionButtons
                         
+                        // Friends sharing section
+                        
                         // Tab navigation
                         tabNavigation
                         
@@ -102,24 +227,46 @@ struct EnhancedLocationDetailView: View {
                         tabContent(for: location)
                     }
                 }
+                .background(
+                    LinearGradient(
+                        colors: [Color(.systemGray6), Color.white],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    .ignoresSafeArea()
+                )
                 .navigationTitle("Location Details")
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationBarItems(
                     leading: Button("Done") {
                         presentationMode.wrappedValue.dismiss()
                     },
-                    trailing: Button(action: { showMoreOptions = true }) {
-                        Image(systemName: "ellipsis")
-                            .foregroundColor(.primary)
+                    trailing: HStack(spacing: 16) {
+                        Button(action: { showShareModal = true }) {
+                            Image(systemName: "square.and.arrow.up")
+                                .foregroundColor(primaryColor)
+                        }
+                        Button(action: { toggleSaveLocation() }) {
+                            Image(systemName: (location.location.isSaved ?? false) ? "bookmark.fill" : "bookmark")
+                                .foregroundColor((location.location.isSaved ?? false) ? .orange : .primary)
+                        }
+                        Button(action: { showMoreOptions = true }) {
+                            Image(systemName: "ellipsis")
+                                .foregroundColor(.primary)
+                        }
                     }
                 )
             } else {
                 EmptyView()
                     .navigationTitle("Location Details")
                     .navigationBarTitleDisplayMode(.inline)
-                    .navigationBarItems(trailing: Button("Done") {
-                        presentationMode.wrappedValue.dismiss()
-                    })
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Done") {
+                                presentationMode.wrappedValue.dismiss()
+                            }
+                        }
+                    }
             }
         }
         .onAppear {
@@ -160,118 +307,190 @@ struct EnhancedLocationDetailView: View {
                 contentTitle: location?.location.name ?? "Location"
             )
         }
+        .sheet(isPresented: $showClaimModal) {
+            ClaimBusinessModal(
+                locationId: locationId,
+                locationName: location?.location.name ?? "Unknown Location",
+                isPresented: $showClaimModal
+            )
+        }
+        .sheet(isPresented: $showShareModal) {
+            if let location = location {
+                LocationShareModal(location: location.location, isPresented: $showShareModal)
+            }
+        }
     }
     
     // MARK: - Compact Header View
     private func compactHeaderView(for location: LocationDetailData) -> some View {
-        VStack(spacing: 0) {
-            // Image carousel section
+        ZStack(alignment: .bottomLeading) {
+            // Hero image carousel
             locationImageCarousel(for: location)
+                .frame(height: 240)
+                .clipped()
             
-            // Location info overlay
+            // Bottom gradient to improve text contrast
+            LinearGradient(
+                colors: [Color.black.opacity(0.0), Color.black.opacity(0.6)],
+                startPoint: .center,
+                endPoint: .bottom
+            )
+            .frame(height: 240)
+            
+            // Info overlay
             VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(location.location.name)
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                        
-                        if let rating = location.location.rating {
-                            HStack(spacing: 4) {
-                                ForEach(0..<5) { index in
-                                    Image(systemName: index < Int(rating) ? "star.fill" : "star")
-                                        .font(.system(size: 12))
-                                        .foregroundColor(.yellow)
-                                }
-                                Text(String(format: "%.1f", rating))
-                                    .font(.caption)
-                                    .foregroundColor(.white.opacity(0.9))
-                            }
-                        }
-                    }
+                HStack(alignment: .center, spacing: 8) {
+                    Text(location.location.name)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .lineLimit(2)
                     
-                    Spacer()
-                    
-                    // Category badge
-                    if let categories = location.location.categories, !categories.isEmpty {
-                        Text(categories[0])
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(primaryColor)
-                            .foregroundColor(.white)
-                            .clipShape(Capsule())
-                    }
+                    // Status badge
+                    statusBadge
                 }
                 
                 if let address = location.location.address {
-                    HStack {
+                    HStack(spacing: 6) {
                         Image(systemName: "location.fill")
-                            .font(.system(size: 12))
-                            .foregroundColor(.white.opacity(0.8))
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.9))
                         Text(address)
                             .font(.caption)
                             .foregroundColor(.white.opacity(0.9))
                             .lineLimit(2)
                     }
                 }
+                
+                // Chips row
+                HStack(spacing: 8) {
+                    if let rating = location.location.rating {
+                        HStack(spacing: 6) {
+                            Image(systemName: "star.fill")
+                                .foregroundColor(.yellow)
+                            Text(String(format: "%.1f", rating))
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.white)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(.ultraThinMaterial)
+                        .clipShape(Capsule())
+                    }
+                    
+                    if let categories = location.location.categories, let first = categories.first {
+                        Text(first)
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(.ultraThinMaterial)
+                            .clipShape(Capsule())
+                    }
+                    
+                    Spacer()
+                }
             }
             .padding(16)
-            .background(
-                LinearGradient(
-                    colors: [Color.clear, Color.black.opacity(0.7)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
         }
     }
     
     // MARK: - Quick Action Buttons
     private var quickActionButtons: some View {
-        HStack(spacing: 16) {
-            QuickActionButton(
-                icon: "location.fill",
-                title: "Directions",
-                color: primaryColor
-            ) {
-                openInMaps()
+        VStack(spacing: 16) {
+            // Regular action buttons
+            HStack(spacing: 16) {
+                QuickActionButton(
+                    icon: "location.fill",
+                    title: "Directions",
+                    color: primaryColor
+                ) {
+                    openInMaps()
+                }
+                
+                QuickActionButton(
+                    icon: location?.location.isSaved == true ? "bookmark.fill" : "bookmark",
+                    title: location?.location.isSaved == true ? "Saved" : "Save",
+                    color: location?.location.isSaved == true ? .orange : .blue
+                ) {
+                    print("🔍 [EnhancedLocationDetailView] Save button pressed")
+                    print("🔍 [EnhancedLocationDetailView] Current isSaved state: \(location?.location.isSaved ?? false)")
+                    toggleSaveLocation()
+                }
+                
+                QuickActionButton(
+                    icon: "star.fill",
+                    title: "Review",
+                    color: secondaryColor
+                ) {
+                    showReviewModal = true
+                }
+                
+                QuickActionButton(
+                    icon: "camera.fill",
+                    title: "Photo",
+                    color: .green
+                ) {
+                    showPhotoModal = true
+                }
+                
+                QuickActionButton(
+                    icon: "lightbulb.fill",
+                    title: "Tip",
+                    color: .orange
+                ) {
+                    showTipModal = true
+                }
+                
+                // Regular claim button for complete locations
+                if isUnclaimed && !hasIncompleteData {
+                    QuickActionButton(
+                        icon: "building.2.fill",
+                        title: "Claim",
+                        color: .orange
+                    ) {
+                        showClaimModal = true
+                    }
+                }
             }
             
-            QuickActionButton(
-                icon: location?.location.isSaved == true ? "bookmark.fill" : "bookmark",
-                title: location?.location.isSaved == true ? "Saved" : "Save",
-                color: location?.location.isSaved == true ? .orange : .blue
-            ) {
-                print("🔍 [EnhancedLocationDetailView] Save button pressed")
-                print("🔍 [EnhancedLocationDetailView] Current isSaved state: \(location?.location.isSaved ?? false)")
-                toggleSaveLocation()
-            }
-            
-            QuickActionButton(
-                icon: "star.fill",
-                title: "Review",
-                color: secondaryColor
-            ) {
-                showReviewModal = true
-            }
-            
-            QuickActionButton(
-                icon: "camera.fill",
-                title: "Photo",
-                color: .green
-            ) {
-                showPhotoModal = true
-            }
-            
-            QuickActionButton(
-                icon: "lightbulb.fill",
-                title: "Tip",
-                color: .orange
-            ) {
-                showTipModal = true
+            // Prominent claim button for incomplete locations
+            if isUnclaimed && hasIncompleteData {
+                Button(action: { showClaimModal = true }) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "building.2.fill")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundColor(.white)
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Claim This Location")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.white)
+                            Text("Add complete location information")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(.white.opacity(0.9))
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.white)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
+                    .background(
+                        LinearGradient(
+                            colors: [primaryColor, primaryColor.opacity(0.8)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .cornerRadius(12)
+                    .shadow(color: primaryColor.opacity(0.3), radius: 6, x: 0, y: 3)
+                }
             }
         }
         .padding(.horizontal, 20)
@@ -279,11 +498,12 @@ struct EnhancedLocationDetailView: View {
         .background(Color.white)
     }
     
+    
     // MARK: - Image Carousel
     private func locationImageCarousel(for location: LocationDetailData) -> some View {
         let allImages = getAllImages(for: location)
         
-        return Group {
+        return VStack {
             if allImages.isEmpty {
                 // No images available - show placeholder
                 Rectangle()
@@ -336,6 +556,24 @@ struct EnhancedLocationDetailView: View {
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                     .frame(height: 200)
+                    .allowsHitTesting(true)
+                    .gesture(
+                        DragGesture()
+                            .onEnded { value in
+                                let threshold: CGFloat = 50
+                                if value.translation.width > threshold {
+                                    // Swipe right - go to previous image
+                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                        selectedGalleryIndex = selectedGalleryIndex > 0 ? selectedGalleryIndex - 1 : allImages.count - 1
+                                    }
+                                } else if value.translation.width < -threshold {
+                                    // Swipe left - go to next image
+                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                        selectedGalleryIndex = selectedGalleryIndex < allImages.count - 1 ? selectedGalleryIndex + 1 : 0
+                                    }
+                                }
+                            }
+                    )
                     
                     // Custom page indicator and navigation
                     VStack {
@@ -356,6 +594,7 @@ struct EnhancedLocationDetailView: View {
                                     .clipShape(Circle())
                             }
                             .opacity(allImages.count > 1 ? 1 : 0)
+                            .allowsHitTesting(true)
                             
                             Spacer()
                             
@@ -376,6 +615,7 @@ struct EnhancedLocationDetailView: View {
                             .padding(.vertical, 6)
                             .background(Color.black.opacity(0.5))
                             .clipShape(Capsule())
+                            .allowsHitTesting(true)
                             
                             Spacer()
                             
@@ -393,10 +633,12 @@ struct EnhancedLocationDetailView: View {
                                     .clipShape(Circle())
                             }
                             .opacity(allImages.count > 1 ? 1 : 0)
+                            .allowsHitTesting(true)
                         }
                         .padding(.horizontal, 20)
                         .padding(.bottom, 16)
                     }
+                    .allowsHitTesting(true)
                     
                     // Image counter (top right)
                     if allImages.count > 1 {
@@ -426,21 +668,64 @@ struct EnhancedLocationDetailView: View {
     private func getAllImages(for location: LocationDetailData) -> [String] {
         var images: [String] = []
         
+        // Debug: Print image data
+        print("🔍 [EnhancedLocationDetailView] Getting images for location: \(location.location.name)")
+        print("🔍 [EnhancedLocationDetailView] Featured image: \(location.location.featuredImage ?? "nil")")
+        print("🔍 [EnhancedLocationDetailView] Gallery count: \(location.location.gallery?.count ?? 0)")
+        
         // Add featured image first if available
         if let featuredImage = location.location.featuredImage, !featuredImage.isEmpty {
-            images.append(featuredImage)
+            let processedUrl = processImageUrl(featuredImage)
+            if !processedUrl.isEmpty {
+                images.append(processedUrl)
+                print("🔍 [EnhancedLocationDetailView] Added featured image: \(processedUrl)")
+            }
         }
         
         // Add gallery images
         if let gallery = location.location.gallery {
-            for galleryItem in gallery {
-                if let imageUrl = galleryItem.image, !imageUrl.isEmpty && !images.contains(imageUrl) {
-                    images.append(imageUrl)
+            for (index, galleryItem) in gallery.enumerated() {
+                print("🔍 [EnhancedLocationDetailView] Gallery item \(index): image=\(galleryItem.image ?? "nil"), caption=\(galleryItem.caption ?? "nil")")
+                if let imageUrl = galleryItem.image, !imageUrl.isEmpty {
+                    let processedUrl = processImageUrl(imageUrl)
+                    if !processedUrl.isEmpty && !images.contains(processedUrl) {
+                        images.append(processedUrl)
+                        print("🔍 [EnhancedLocationDetailView] Added gallery image: \(processedUrl)")
+                    }
                 }
             }
         }
         
+        print("🔍 [EnhancedLocationDetailView] Total images found: \(images.count)")
         return images
+    }
+    
+    // MARK: - Helper function to process image URLs
+    private func processImageUrl(_ url: String) -> String {
+        // Skip blob URLs as they're not accessible from iOS app
+        if url.hasPrefix("blob:") {
+            print("🔍 [EnhancedLocationDetailView] Skipping blob URL: \(url)")
+            return ""
+        }
+        
+        // Skip data URLs as they're embedded
+        if url.hasPrefix("data:") {
+            print("🔍 [EnhancedLocationDetailView] Skipping data URL")
+            return ""
+        }
+        
+        // Return valid HTTP/HTTPS URLs
+        if url.hasPrefix("http://") || url.hasPrefix("https://") {
+            return url
+        }
+        
+        // If it's a relative URL, make it absolute
+        if url.hasPrefix("/") {
+            let baseURL = baseAPIURL // Use the configured base URL from Utils.swift
+            return baseURL + url
+        }
+        
+        return url
     }
     
     // MARK: - Tab Navigation
@@ -503,7 +788,7 @@ struct EnhancedLocationDetailView: View {
         guard let location = location else { return }
         let lat = location.location.coordinates?.latitude ?? 0
         let lon = location.location.coordinates?.longitude ?? 0
-        if let url = URL(string: "http://maps.apple.com/?ll=\(lat),\(lon)") {
+        if let url = URL(string: "http://maps.apple.com/?daddr=\(lat),\(lon)") {
             UIApplication.shared.open(url)
         }
     }
@@ -621,6 +906,7 @@ struct EnhancedLocationDetailView: View {
         }
         return iso
     }
+    
     
     // MARK: - API Functions
     private func fetchLocationDetails(showLoading: Bool = true) {
@@ -822,7 +1108,7 @@ struct QuickActionButton: View {
     
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 6) {
+            VStack(spacing: 8) {
                 Image(systemName: icon)
                     .font(.system(size: 18, weight: .medium))
                     .foregroundColor(color)
@@ -833,8 +1119,15 @@ struct QuickActionButton: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
-            .background(Color.gray.opacity(0.05))
-            .cornerRadius(12)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.white)
+                    .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(color.opacity(0.25), lineWidth: 1)
+                    )
+            )
         }
     }
 }
@@ -845,10 +1138,22 @@ struct CompactAboutSectionView: View {
     let sendEmail: (String) -> Void
     let formatDate: (String) -> String
     
+    // Check if location has incomplete data
+    private var hasIncompleteData: Bool {
+        let hasContactInfo = location.contactInfo?.phone != nil || location.contactInfo?.website != nil
+        let hasBusinessHours = location.businessHours != nil && !location.businessHours!.isEmpty
+        let hasPriceRange = location.priceRange != nil && !location.priceRange!.isEmpty
+        let hasDetailedDescription = location.description != nil && location.description!.count > 50
+        
+        let missingFields = [hasContactInfo, hasBusinessHours, hasPriceRange, hasDetailedDescription].filter { !$0 }.count
+        return missingFields >= 2
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            // Description
-            if let desc = location.description {
+            // Description - show description or shortDescription
+            let descriptionText = location.description ?? location.shortDescription
+            if let desc = descriptionText, !desc.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("About This Place")
                         .font(.headline)
@@ -858,6 +1163,8 @@ struct CompactAboutSectionView: View {
                         .foregroundColor(.secondary)
                 }
             }
+            
+            // Removed the entire "On the Map" section including the if condition
             
             // Address & Neighborhood
             if let address = location.address {
@@ -900,8 +1207,9 @@ struct CompactAboutSectionView: View {
                 }
             }
             
-            // Contact Info
-            if let contact = location.contactInfo {
+            // Contact Info - only show if there's actual contact information
+            if let contact = location.contactInfo,
+               (contact.phone != nil || contact.email != nil || contact.website != nil) {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Contact")
                         .font(.headline)
@@ -1095,6 +1403,17 @@ struct CompactCommunityPhotosSectionView: View {
         }
         .background(Color.white)
     }
+    
+    // MARK: - Share Functions
+    private func shareToFriend(_ friend: ShareFriend) {
+        // Quick share to a specific friend
+        // In a real app, this would make an API call to share the location
+        print("📱 Sharing location with friend: \(friend.name)")
+        
+        // For now, just show a success message or haptic feedback
+        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+        impactFeedback.impactOccurred()
+    }
 }
 
 struct CompactTipsSectionView: View {
@@ -1184,3 +1503,533 @@ struct CompactTipCard: View {
 }
 
 // AddPhotoModal is now defined in SharedModals.swift
+
+// MARK: - Social Share Sheet
+struct SocialShareSheet: View {
+    let location: SearchLocation
+    @Environment(\.presentationMode) var presentationMode
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 24) {
+                // Header
+                VStack(spacing: 12) {
+                    Image(systemName: "square.and.arrow.up.circle.fill")
+                        .font(.system(size: 60))
+                        .foregroundColor(Color(red: 255/255, green: 107/255, blue: 107/255))
+                    
+                    Text("Share Location")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    
+                    Text("Share this amazing place with your friends and followers")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                }
+                .padding(.top, 20)
+                
+                // Location Info Card
+                HStack(spacing: 12) {
+                    AsyncImage(url: URL(string: location.featuredImage ?? "")) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } placeholder: {
+                        Rectangle()
+                            .fill(Color.gray.opacity(0.3))
+                    }
+                    .frame(width: 60, height: 60)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(location.name)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .lineLimit(2)
+                        
+                        if let address = location.address {
+                            Text(address)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                        }
+                    }
+                    
+                    Spacer()
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .padding(.horizontal)
+                
+                // Share Options
+                VStack(spacing: 16) {
+                    Text("Choose how to share")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                    
+                    VStack(spacing: 12) {
+                        // Instagram
+                        SocialShareButton(
+                            title: "Instagram",
+                            icon: "camera.fill",
+                            color: .purple,
+                            action: shareToInstagram
+                        )
+                        
+                        // Twitter
+                        SocialShareButton(
+                            title: "Twitter",
+                            icon: "bird.fill",
+                            color: .blue,
+                            action: shareToTwitter
+                        )
+                        
+                        // Facebook
+                        SocialShareButton(
+                            title: "Facebook",
+                            icon: "f.circle.fill",
+                            color: .blue,
+                            action: shareToFacebook
+                        )
+                        
+                        // Share Anywhere
+                        SocialShareButton(
+                            title: "Share Anywhere",
+                            icon: "square.and.arrow.up",
+                            color: .gray,
+                            action: shareToAnywhere
+                        )
+                    }
+                }
+                
+                Spacer()
+            }
+            .navigationTitle("Share")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarItems(
+                trailing: Button("Done") {
+                    presentationMode.wrappedValue.dismiss()
+                }
+            )
+        }
+    }
+    
+    // MARK: - Share Functions
+    private func shareToInstagram() {
+        let content = generateShareContent()
+        let instagramHook = "instagram://share"
+        
+        if let url = URL(string: instagramHook), UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        } else {
+            // Fallback to web Instagram
+            if let webUrl = URL(string: "https://www.instagram.com/") {
+                UIApplication.shared.open(webUrl)
+            }
+        }
+    }
+    
+    private func shareToTwitter() {
+        let content = generateShareContent()
+        let tweetText = "\(content.message) \(content.url) \(content.hashtags.joined(separator: " "))"
+        let twitterUrl = "twitter://post?message=\(tweetText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+        
+        if let url = URL(string: twitterUrl), UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        } else {
+            // Fallback to web Twitter
+            if let webUrl = URL(string: "https://twitter.com/intent/tweet?text=\(tweetText.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? "")") {
+                UIApplication.shared.open(webUrl)
+            }
+        }
+    }
+    
+    private func shareToFacebook() {
+        let content = generateShareContent()
+        
+        // Fallback to web Facebook
+        if let webUrl = URL(string: "https://www.facebook.com/sharer/sharer.php?u=\(content.url.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? "")") {
+            UIApplication.shared.open(webUrl)
+        }
+    }
+    
+    private func shareToAnywhere() {
+        let content = generateShareContent()
+        let shareText = "\(content.message)\n\n\(content.url)\n\n\(content.hashtags.joined(separator: " "))"
+        
+        let activityVC = UIActivityViewController(
+            activityItems: [shareText],
+            applicationActivities: nil
+        )
+        
+        // Configure for iPad presentation
+        if let popover = activityVC.popoverPresentationController {
+            popover.sourceView = UIApplication.shared.windows.first?.rootViewController?.view
+            popover.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
+            popover.permittedArrowDirections = []
+        }
+        
+        // Present the share sheet
+        DispatchQueue.main.async {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first,
+               let rootViewController = window.rootViewController {
+                rootViewController.present(activityVC, animated: true)
+            }
+        }
+    }
+    
+    private func generateShareContent() -> ShareContent {
+        let shareManager = SocialShareManager.shared
+        return shareManager.generateShareContent(for: .location(Location(from: location)), user: AuthManager.shared.user)
+    }
+}
+
+// MARK: - Social Share Button
+struct SocialShareButton: View {
+    let title: String
+    let icon: String
+    let color: Color
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundColor(color)
+                    .frame(width: 24, height: 24)
+                
+                Text(title)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.primary)
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color(.systemGray6))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+// MARK: - Friends Share Modal
+struct FriendsShareModal: View {
+    let location: SearchLocation
+    @Environment(\.presentationMode) var presentationMode
+    @State private var selectedFriends: Set<String> = []
+    @State private var message: String = ""
+    @State private var isLoading: Bool = false
+    @State private var showSuccess: Bool = false
+    @State private var errorMessage: String?
+    @State private var friends: [ShareFriend] = []
+    @State private var isLoadingFriends: Bool = true
+    
+    // Quick reply templates
+    private let quickReplies = [
+        "Check this out!",
+        "You should visit this place!",
+        "Found an amazing spot!",
+        "This looks interesting!"
+    ]
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 0) {
+                // Header
+                headerView
+                
+                // Content
+                ScrollView {
+                    VStack(spacing: 24) {
+                        // Location info
+                        locationInfoCard
+                        
+                        // Message section
+                        messageSection
+                        
+                        // Friends selection
+                        friendsSelectionSection
+                    }
+                    .padding()
+                }
+                
+                // Bottom action button
+                bottomActionButton
+            }
+            .background(Color(.systemBackground))
+            .navigationBarHidden(true)
+        }
+        .sheet(isPresented: $showSuccess) {
+            SuccessView(isPresented: $showSuccess)
+        }
+        .alert("Error", isPresented: .constant(errorMessage != nil)) {
+            Button("OK") {
+                errorMessage = nil
+            }
+        } message: {
+            if let error = errorMessage {
+                Text(error)
+            }
+        }
+        .onAppear {
+            fetchFriends()
+        }
+    }
+    
+    // MARK: - Header View
+    private var headerView: some View {
+        VStack(spacing: 16) {
+            HStack {
+                Button("Cancel") {
+                    presentationMode.wrappedValue.dismiss()
+                }
+                .foregroundColor(.primary)
+                
+                Spacer()
+                
+                Text("Send to Followers")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                
+                Spacer()
+                
+                Button("Send") {
+                    sendToFriends()
+                }
+                .font(.headline)
+                .foregroundColor(selectedFriends.isEmpty ? .gray : Color(red: 255/255, green: 107/255, blue: 107/255))
+                .disabled(selectedFriends.isEmpty || isLoading)
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 10)
+        }
+        .padding(.bottom, 16)
+        .background(Color(.systemBackground))
+    }
+    
+    // MARK: - Location Info Card
+    private var locationInfoCard: some View {
+        HStack(spacing: 12) {
+            AsyncImage(url: URL(string: location.featuredImage ?? "")) { image in
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } placeholder: {
+                Rectangle()
+                    .fill(Color.gray.opacity(0.3))
+            }
+            .frame(width: 60, height: 60)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(location.name)
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                
+                if let address = location.address {
+                    Text(address)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            
+            Spacer()
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+    
+    // MARK: - Message Section
+    private var messageSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Add a message (optional)")
+                .font(.headline)
+                .fontWeight(.semibold)
+            
+            // Quick replies
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(quickReplies, id: \.self) { reply in
+                        Button(reply) {
+                            message = reply
+                        }
+                        .font(.caption)
+                        .foregroundColor(message == reply ? .white : Color(red: 255/255, green: 107/255, blue: 107/255))
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(
+                            message == reply ? 
+                            Color(red: 255/255, green: 107/255, blue: 107/255) :
+                            Color(red: 255/255, green: 107/255, blue: 107/255).opacity(0.1)
+                        )
+                        .clipShape(Capsule())
+                    }
+                }
+                .padding(.horizontal, 4)
+            }
+            
+            // Custom message
+            TextEditor(text: $message)
+                .frame(minHeight: 80)
+                .padding(8)
+                .background(Color(.systemGray6))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+        }
+    }
+    
+    // MARK: - Friends Selection Section
+    private var friendsSelectionSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Select Friends")
+                .font(.headline)
+                .fontWeight(.semibold)
+            
+            if isLoadingFriends {
+                HStack {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                    Text("Loading friends...")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+            } else if friends.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "person.2.slash")
+                        .font(.system(size: 40))
+                        .foregroundColor(.gray)
+                    
+                    Text("No Friends Found")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    
+                    Text("You don't have any mutual friends yet. Start following people to share locations with them!")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+            } else {
+                LazyVStack(spacing: 8) {
+                    ForEach(friends, id: \.id) { friend in
+                        FriendSelectionRow(
+                            friend: friend,
+                            isSelected: selectedFriends.contains(friend.id),
+                            onToggle: {
+                                toggleFriend(friend.id)
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+    
+    // MARK: - Bottom Action Button
+    private var bottomActionButton: some View {
+        VStack(spacing: 0) {
+            Divider()
+            
+            Button(action: sendToFriends) {
+                HStack {
+                    if isLoading {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                            .foregroundColor(.white)
+                    } else {
+                        Image(systemName: "paperplane.fill")
+                        Text("Send to \(selectedFriends.count) friend\(selectedFriends.count == 1 ? "" : "s")")
+                    }
+                }
+                .font(.headline)
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(
+                    selectedFriends.isEmpty ? Color.gray : Color(red: 255/255, green: 107/255, blue: 107/255)
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+            .disabled(selectedFriends.isEmpty || isLoading)
+            .padding()
+        }
+        .background(Color(.systemBackground))
+    }
+    
+    // MARK: - Helper Functions
+    private func toggleFriend(_ friendId: String) {
+        if selectedFriends.contains(friendId) {
+            selectedFriends.remove(friendId)
+        } else {
+            selectedFriends.insert(friendId)
+        }
+    }
+    
+    private func sendToFriends() {
+        isLoading = true
+        
+        Task {
+            do {
+                let response = try await APIService.shared.shareLocation(
+                    locationId: location.id,
+                    recipientIds: Array(selectedFriends),
+                    message: message.isEmpty ? "Check this out!" : message,
+                    messageType: "check_out"
+                )
+                
+                await MainActor.run {
+                    isLoading = false
+                    showSuccess = true
+                    print("✅ [FriendsShareModal] Successfully shared location with \(response.sharesCreated) followers")
+                    
+                    // Close the modal after successful sharing
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                }
+            } catch {
+                print("❌ [FriendsShareModal] Error sharing location: \(error)")
+                await MainActor.run {
+                    isLoading = false
+                    errorMessage = "Failed to share location. Please try again."
+                }
+            }
+        }
+    }
+    
+    private func fetchFriends() {
+        isLoadingFriends = true
+        
+        Task {
+            do {
+                let fetchedFriends = try await APIService.shared.getFollowers()
+                await MainActor.run {
+                    self.friends = fetchedFriends
+                    self.isLoadingFriends = false
+                }
+            } catch {
+                print("❌ [FriendsShareModal] Error fetching followers: \(error)")
+                await MainActor.run {
+                    self.friends = []
+                    self.isLoadingFriends = false
+                }
+            }
+        }
+    }
+}
+
+
+

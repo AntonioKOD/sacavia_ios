@@ -1559,10 +1559,7 @@ struct EnhancedAddLocationView: View {
                 "other": accessibility.other.isEmpty ? nil : accessibility.other
             ],
             "privacy": privacy,
-            "privateAccess": privacy == "private" ? privateAccess : [],
-            "isFeatured": isFeatured,
-            "isVerified": isVerified,
-            "hasBusinessPartnership": false // Set default value
+            "privateAccess": privacy == "private" ? privateAccess : []
         ]
         
         Task {
@@ -1604,11 +1601,25 @@ struct EnhancedAddLocationView: View {
             let jsonData = try JSONSerialization.data(withJSONObject: locationData)
             request.httpBody = jsonData
             
+            // Debug: Print the data being sent
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                print("📤 EnhancedAddLocationView sending location data: \(jsonString)")
+            }
+            
             let (data, response) = try await URLSession.shared.data(for: request)
             
             if let httpResponse = response as? HTTPURLResponse {
                 print("📱 Create location status: \(httpResponse.statusCode)")
+                
+                // Debug: Print the response data
+                if let responseString = String(data: data, encoding: .utf8) {
+                    print("📱 Create location response: \(responseString)")
+                }
+                
                 if httpResponse.statusCode == 200 || httpResponse.statusCode == 201 {
+                    // Send notification to refresh the map
+                    NotificationCenter.default.post(name: NSNotification.Name("LocationSaveStateChanged"), object: nil)
+                    print("📱 Posted LocationSaveStateChanged notification")
                     return true
                 } else {
                     let responseString = String(data: data, encoding: .utf8)

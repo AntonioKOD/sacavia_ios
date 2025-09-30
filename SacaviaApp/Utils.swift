@@ -3,12 +3,12 @@ import Foundation
 // MARK: - API Configuration
 // Production: Use https://sacavia.com for production
 
-// ===== ENVIRONMENT CONFIGURATION =====
-// Set this to true for development (localhost:3000), false for production (sacavia.com)
-let isDevelopment = false
+    // ===== ENVIRONMENT CONFIGURATION =====
+    // Set this to true for development (localhost:3000), false for production (sacavia.com)
+    let isDevelopment = false
 
-// Base API URL - automatically set based on environment
-let baseAPIURL = isDevelopment ? "http://localhost:3000" : "https://sacavia.com"
+    // Base API URL - automatically set based on environment
+    let baseAPIURL = isDevelopment ? "http://localhost:3000" : "https://sacavia.com"
 
 // ===== END CONFIGURATION =====
 

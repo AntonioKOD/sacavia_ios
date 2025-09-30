@@ -190,7 +190,12 @@ struct NotificationTestView: View {
     
     private func testLocalNotification() {
         addResult("Testing local notification...")
-        pushNotificationManager.sendTestNotification()
+        pushNotificationManager.scheduleLocalNotification(
+            title: "🧪 Test Notification",
+            body: "This is a test local notification",
+            timeInterval: 2,
+            identifier: "test_notification"
+        )
         addResult("✅ Local notification test completed")
         showAlert("Local notification test completed. Check if you received the notification.")
     }
@@ -212,11 +217,17 @@ struct NotificationTestView: View {
         addResult("Testing server notification...")
         isTesting = true
         
-        pushNotificationManager.sendServerTestNotification { success, message in
+        Task {
+            let success = await pushNotificationManager.sendTestNotification(
+                title: "🧪 Server Test",
+                body: "This is a test notification sent via the server",
+                data: ["type": "test", "timestamp": "\(Date().timeIntervalSince1970)"]
+            )
+            
             DispatchQueue.main.async {
                 isTesting = false
-                addResult(success ? "✅ Server notification test successful" : "❌ Server notification test failed: \(message)")
-                showAlert(message)
+                addResult(success ? "✅ Server notification test successful" : "❌ Server notification test failed")
+                showAlert(success ? "Server notification sent successfully!" : "Failed to send server notification")
             }
         }
     }
@@ -225,20 +236,30 @@ struct NotificationTestView: View {
         addResult("Checking registration status...")
         isTesting = true
         
-        pushNotificationManager.checkDeviceRegistrationStatus { success, message in
-            DispatchQueue.main.async {
-                isTesting = false
-                addResult(success ? "✅ Device is registered" : "❌ Device not registered: \(message)")
-                showAlert(message)
-            }
+        if let deviceToken = pushNotificationManager.deviceToken {
+            addResult("✅ Device token found: \(String(deviceToken.prefix(20)))...")
+            showAlert("Device is registered with token: \(String(deviceToken.prefix(20)))...")
+        } else {
+            addResult("❌ No device token found")
+            showAlert("Device is not registered. No device token found.")
         }
+        isTesting = false
     }
     
     private func forceReregisterDevice() {
         addResult("Force re-registering device...")
-        pushNotificationManager.forceReregisterDevice()
-        addResult("✅ Device re-registration initiated")
-        showAlert("Device re-registration initiated. Check the console for details.")
+        if let deviceToken = pushNotificationManager.deviceToken {
+            Task {
+                let success = await pushNotificationManager.registerDeviceToken(deviceToken)
+                DispatchQueue.main.async {
+                    addResult(success ? "✅ Device re-registration successful" : "❌ Device re-registration failed")
+                    showAlert(success ? "Device re-registration successful!" : "Device re-registration failed")
+                }
+            }
+        } else {
+            addResult("❌ No device token available for re-registration")
+            showAlert("No device token available for re-registration")
+        }
     }
     
     private func checkEntitlements() {

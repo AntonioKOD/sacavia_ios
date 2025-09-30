@@ -47,14 +47,19 @@ struct NotificationSettingsView: View {
                     
                     if !pushNotificationManager.isRegistered {
                         Button("Enable Push Notifications") {
-                            pushNotificationManager.requestPermission()
+                            pushNotificationManager.requestNotificationPermission()
                         }
                         .foregroundColor(.blue)
                     }
                     
                     // Test notification button
                     Button("Send Test Notification") {
-                        pushNotificationManager.sendTestNotification()
+                        pushNotificationManager.scheduleLocalNotification(
+                            title: "🧪 Test Notification",
+                            body: "This is a test notification from settings",
+                            timeInterval: 2,
+                            identifier: "settings_test_notification"
+                        )
                         alertMessage = "Test notification sent! Check if you received it."
                         showingAlert = true
                     }
@@ -63,9 +68,16 @@ struct NotificationSettingsView: View {
                     
                     // Server test notification button
                     Button("Send Server Test Notification") {
-                        pushNotificationManager.sendServerTestNotification { success, message in
-                            alertMessage = message
-                            showingAlert = true
+                        Task {
+                            let success = await pushNotificationManager.sendTestNotification(
+                                title: "🧪 Server Test",
+                                body: "This is a test notification sent via the server",
+                                data: ["type": "test", "source": "settings"]
+                            )
+                            DispatchQueue.main.async {
+                                alertMessage = success ? "Server test notification sent successfully!" : "Failed to send server test notification"
+                                showingAlert = true
+                            }
                         }
                     }
                     .foregroundColor(.green)
@@ -73,16 +85,28 @@ struct NotificationSettingsView: View {
                     
                     // Force re-registration button
                     Button("Force Re-register Device") {
-                        pushNotificationManager.forceReregisterDevice()
-                        alertMessage = "Device re-registration initiated. Check console logs for details."
-                        showingAlert = true
+                        if let deviceToken = pushNotificationManager.deviceToken {
+                            Task {
+                                let success = await pushNotificationManager.registerDeviceToken(deviceToken)
+                                DispatchQueue.main.async {
+                                    alertMessage = success ? "Device re-registration successful!" : "Device re-registration failed"
+                                    showingAlert = true
+                                }
+                            }
+                        } else {
+                            alertMessage = "No device token available for re-registration"
+                            showingAlert = true
+                        }
                     }
                     .foregroundColor(.purple)
                     
                     // Check registration status button
                     Button("Check Registration Status") {
-                        pushNotificationManager.checkDeviceRegistrationStatus { isRegistered, message in
-                            alertMessage = message
+                        if let deviceToken = pushNotificationManager.deviceToken {
+                            alertMessage = "Device is registered with token: \(String(deviceToken.prefix(20)))..."
+                            showingAlert = true
+                        } else {
+                            alertMessage = "Device is not registered. No device token found."
                             showingAlert = true
                         }
                     }
@@ -91,8 +115,10 @@ struct NotificationSettingsView: View {
                     // Test server connection button
                     Button("Test Server Connection") {
                         pushNotificationManager.testServerConnection { success, message in
-                            alertMessage = message
-                            showingAlert = true
+                            DispatchQueue.main.async {
+                                alertMessage = message
+                                showingAlert = true
+                            }
                         }
                     }
                     .foregroundColor(.teal)

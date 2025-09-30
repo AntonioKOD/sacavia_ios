@@ -116,14 +116,14 @@ struct FloatingActionButton: View {
         .fullScreenCover(isPresented: $showSaved) {
             SavedView()
         }
-        .fullScreenCover(isPresented: $showPlanner) {
-            PlannerView()
-        }
         .fullScreenCover(isPresented: $showAddLocation) {
             AddLocationView()
         }
+        .fullScreenCover(isPresented: $showPlanner) {
+            PlannerView()
+        }
         .fullScreenCover(isPresented: $showCreateEvent) {
-            CreateEventView()
+            SimpleCreateEventView()
         }
     }
 }

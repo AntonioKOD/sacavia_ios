@@ -12,6 +12,8 @@ struct PlannerView: View {
     @State private var locationManager = CLLocationManager()
     @State private var locationPermissionStatus: CLAuthorizationStatus = .notDetermined
     @State private var showSuggestions = false
+    @State private var selectedLocationId: String?
+    @State private var showLocationDetail = false
     
     // Brand colors
     let primaryColor = Color(red: 255/255, green: 107/255, blue: 107/255) // #FF6B6B
@@ -200,7 +202,10 @@ struct PlannerView: View {
                         
                         // Plan Display
                         if let plan = plan {
-                            SimplePlanDisplayView(plan: plan)
+                            SimplePlanDisplayView(plan: plan) { locationId in
+                    selectedLocationId = locationId
+                    showLocationDetail = true
+                }
                                 .padding(.horizontal)
                         }
                     }
@@ -211,17 +216,34 @@ struct PlannerView: View {
         .onAppear {
             setupLocationManager()
         }
+        .sheet(isPresented: $showLocationDetail) {
+            if let locationId = selectedLocationId {
+                EnhancedLocationDetailView(locationId: locationId)
+            }
+        }
     }
     
+    // Enhanced quick suggestions with intent-based categories
     private let quickSuggestions = [
-        "Take the kids out",
+        // Single suggestion prompts
+        "Find me just a date spot",
+        "Show me one good restaurant",
+        "Recommend me a coffee shop",
+        "Where should I go for lunch?",
+        
+        // Multiple options prompts
+        "Show me some dinner options",
+        "Give me choices for family fun",
+        "What are my options for tonight?",
+        "Show me different activities",
+        
+        // Activity-specific prompts
+        "I want to take the kids out",
         "Romantic dinner date",
         "Fun with friends",
         "Solo adventure",
         "Business meeting",
-        "Cultural experience",
-        "Celebration time",
-        "Casual hangout"
+        "Cultural experience"
     ]
     
     private func setupLocationManager() {
@@ -261,16 +283,19 @@ struct PlannerView: View {
         
         let coordinates = userLocation.map { Coordinates(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
         
+        // Smart context detection based on user input
+        let detectedContext = detectContextFromInput(input)
+        
         print("🔍 [PlannerView] Generating plan with:")
         print("  - Input: \(input)")
-        print("  - Context: Will be auto-detected from input")
+        print("  - Detected Context: \(detectedContext)")
         print("  - Coordinates: \(coordinates?.latitude ?? 0), \(coordinates?.longitude ?? 0)")
         
         Task {
             do {
                 let response = try await apiService.generatePlan(
                     input: input,
-                    context: "casual", // Default context, will be auto-detected by backend
+                    context: detectedContext, // Use smart context detection
                     coordinates: coordinates
                 )
                 
@@ -309,6 +334,57 @@ struct PlannerView: View {
                 }
             }
         }
+    }
+    
+    // MARK: - Smart Context Detection
+    
+    private func detectContextFromInput(_ input: String) -> String {
+        let inputLower = input.lowercased()
+        
+        // Family/kids context
+        if inputLower.contains("kid") || inputLower.contains("child") || inputLower.contains("family") || 
+           inputLower.contains("children") || inputLower.contains("baby") || inputLower.contains("toddler") {
+            return "family"
+        }
+        
+        // Date/romantic context
+        if inputLower.contains("date") || inputLower.contains("romantic") || inputLower.contains("couple") || 
+           inputLower.contains("anniversary") || inputLower.contains("valentine") || inputLower.contains("dinner") {
+            return "date"
+        }
+        
+        // Solo context
+        if inputLower.contains("solo") || inputLower.contains("alone") || inputLower.contains("me time") || 
+           inputLower.contains("quiet") || inputLower.contains("peaceful") {
+            return "solo"
+        }
+        
+        // Group/friends context
+        if inputLower.contains("friend") || inputLower.contains("group") || inputLower.contains("party") || 
+           inputLower.contains("social") || inputLower.contains("hangout") || inputLower.contains("meetup") {
+            return "friends"
+        }
+        
+        // Business context
+        if inputLower.contains("business") || inputLower.contains("meeting") || inputLower.contains("work") || 
+           inputLower.contains("professional") || inputLower.contains("office") {
+            return "business"
+        }
+        
+        // Celebration context
+        if inputLower.contains("birthday") || inputLower.contains("celebration") || inputLower.contains("party") || 
+           inputLower.contains("anniversary") || inputLower.contains("graduation") {
+            return "celebration"
+        }
+        
+        // Cultural context
+        if inputLower.contains("museum") || inputLower.contains("art") || inputLower.contains("culture") || 
+           inputLower.contains("theater") || inputLower.contains("gallery") || inputLower.contains("history") {
+            return "cultural"
+        }
+        
+        // Default to casual if no specific context detected
+        return "casual"
     }
 }
 
@@ -399,6 +475,7 @@ struct ErrorCard: View {
 
 struct SimplePlanDisplayView: View {
     let plan: Plan
+    let onLocationTap: (String) -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -428,31 +505,77 @@ struct SimplePlanDisplayView: View {
             
             // Suggestions
             VStack(alignment: .leading, spacing: 12) {
-                Text("Here are my suggestions:")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
+                HStack {
+                    Text("Here are my suggestions:")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                    
+                    // Show suggestion count
+                    if plan.steps.count == 1 {
+                        Text("1 focused recommendation")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    } else if plan.steps.count <= 3 {
+                        Text("\(plan.steps.count) curated options")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("\(plan.steps.count) diverse choices")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
                 
                 ForEach(Array(plan.steps.enumerated()), id: \.offset) { index, step in
-                    HStack(alignment: .top, spacing: 12) {
-                        // Suggestion bubble
-                        ZStack {
-                            Circle()
-                                .fill(Color(red: 78/255, green: 205/255, blue: 196/255).opacity(0.2))
-                                .frame(width: 32, height: 32)
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack(alignment: .top, spacing: 12) {
+                            // Suggestion bubble
+                            ZStack {
+                                Circle()
+                                    .fill(Color(red: 78/255, green: 205/255, blue: 196/255).opacity(0.2))
+                                    .frame(width: 32, height: 32)
+                                
+                                Image(systemName: "lightbulb.fill")
+                                    .font(.caption)
+                                    .foregroundColor(Color(red: 78/255, green: 205/255, blue: 196/255))
+                            }
                             
-                            Image(systemName: "lightbulb.fill")
-                                .font(.caption)
-                                .foregroundColor(Color(red: 78/255, green: 205/255, blue: 196/255))
+                            // Suggestion content
+                            Text(step)
+                                .font(.subheadline)
+                                .foregroundColor(.primary)
+                                .multilineTextAlignment(.leading)
+                            
+                            Spacer()
                         }
                         
-                        // Suggestion content
-                        Text(step)
-                            .font(.subheadline)
-                            .foregroundColor(.primary)
-                            .multilineTextAlignment(.leading)
-                        
-                        Spacer()
+                        // View Location Button
+                        if let locationIds = plan.locationIds, index < locationIds.count {
+                            HStack {
+                                Spacer()
+                                
+                                Button(action: {
+                                    onLocationTap(locationIds[index])
+                                }) {
+                                    HStack(spacing: 6) {
+                                        Image(systemName: "location.fill")
+                                            .font(.caption)
+                                        
+                                        Text("View Location")
+                                            .font(.caption)
+                                            .fontWeight(.medium)
+                                    }
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(Color(red: 78/255, green: 205/255, blue: 196/255))
+                                    .cornerRadius(8)
+                                }
+                            }
+                        }
                     }
                     .padding()
                     .background(Color.gray.opacity(0.05))
@@ -464,33 +587,54 @@ struct SimplePlanDisplayView: View {
                 }
             }
             
-            // Location info
+            // Enhanced location info with smart messaging
             if let usedRealLocations = plan.usedRealLocations, usedRealLocations {
                 VStack(spacing: 8) {
                     HStack {
                         Image(systemName: "location.fill")
                             .foregroundColor(.green)
-                        Text("I found some great verified places near you!")
-                            .font(.caption)
-                            .foregroundColor(.green)
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("I found some great verified places near you!")
+                                .font(.caption)
+                                .foregroundColor(.green)
+                                .fontWeight(.medium)
+                            
+                            // Smart messaging based on suggestion count
+                            if plan.steps.count == 1 {
+                                Text("Perfect match for your request")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            } else if plan.steps.count <= 3 {
+                                Text("Curated selection just for you")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            } else {
+                                Text("Diverse options to choose from")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        
+                        Spacer()
                     }
                     
                     if let verifiedCount = plan.verifiedLocationCount, verifiedCount > 0 {
-                        Text("\(verifiedCount) verified location\(verifiedCount == 1 ? "" : "s") included")
+                        Text("✨ \(verifiedCount) verified location\(verifiedCount == 1 ? "" : "s") included")
                             .font(.caption2)
                             .foregroundColor(.secondary)
                     }
                     
                     if let nearbyCount = plan.nearbyLocationsFound, nearbyCount > 0 {
-                        Text("Based on \(nearbyCount) location\(nearbyCount == 1 ? "" : "s") in your area")
+                        Text("📍 Based on \(nearbyCount) location\(nearbyCount == 1 ? "" : "s") in your area")
                             .font(.caption2)
                             .foregroundColor(.secondary)
                     }
                 }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
                 .background(Color.green.opacity(0.1))
-                .cornerRadius(8)
+                .cornerRadius(10)
             }
         }
     }

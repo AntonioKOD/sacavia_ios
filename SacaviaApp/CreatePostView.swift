@@ -8,6 +8,7 @@
 import SwiftUI
 import PhotosUI
 import AVKit
+import AVFoundation
 
 struct CreatePostView: View {
     @Environment(\.dismiss) private var dismiss
@@ -21,6 +22,7 @@ struct CreatePostView: View {
     @State private var capturedImage: UIImage?
     @State private var selectedImages: [UIImage] = []
     @State private var selectedVideoData: [Data] = []
+    @State private var selectedVideoThumbnails: [UIImage] = []
     @State private var isProcessingMedia = false
     
     // Form states
@@ -48,6 +50,7 @@ struct CreatePostView: View {
     let backgroundColor = Color(red: 250/255, green: 250/255, blue: 250/255) // Light background
     let cardBackground = Color.white // Card background
     let borderColor = Color(red: 219/255, green: 219/255, blue: 219/255) // Light border
+    private let captionLimit = 500
     
     var body: some View {
         mainContent
@@ -137,6 +140,17 @@ struct CreatePostView: View {
                                 } else if let videoURL = capturedMedia.videoURL,
                                           let videoData = try? Data(contentsOf: videoURL) {
                                     selectedVideoData.append(videoData)
+                                    Task {
+                                        if let thumb = await generateThumbnail(from: videoURL) {
+                                            await MainActor.run {
+                                                selectedVideoThumbnails.append(thumb)
+                                            }
+                                        } else {
+                                            await MainActor.run {
+                                                selectedVideoThumbnails.append(UIImage(systemName: "video") ?? UIImage())
+                                            }
+                                        }
+                                    }
                                 }
                                 self.capturedMedia = nil
                                 showCameraView = false
@@ -207,14 +221,30 @@ struct CreatePostView: View {
     }
     
     private var mediaSection: some View {
-        VStack(spacing: 16) {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: "photo.on.rectangle.angled")
+                    .foregroundColor(primaryColor)
+                Text("Media")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.black)
+                Spacer()
+                if isProcessingMedia {
+                    HStack(spacing: 6) {
+                        ProgressView().scaleEffect(0.8)
+                        Text("Processing...")
+                            .font(.system(size: 12))
+                            .foregroundColor(.gray)
+                    }
+                }
+            }
+
             if selectedImages.isEmpty && selectedVideoData.isEmpty {
-                // Media picker buttons
                 VStack(spacing: 20) {
                     Text("Add photos or videos")
                         .font(.system(size: 18, weight: .medium))
                         .foregroundColor(.black)
-                    
+
                     HStack(spacing: 20) {
                         Button(action: { showPhotoPicker = true }) {
                             VStack(spacing: 8) {
@@ -233,7 +263,7 @@ struct CreatePostView: View {
                             )
                             .cornerRadius(12)
                         }
-                        
+
                         Button(action: { showVideoPicker = true }) {
                             VStack(spacing: 8) {
                                 Image(systemName: "video.fill")
@@ -251,7 +281,7 @@ struct CreatePostView: View {
                             )
                             .cornerRadius(12)
                         }
-                        
+
                         Button(action: { showCameraView = true }) {
                             VStack(spacing: 8) {
                                 Image(systemName: "camera.fill")
@@ -271,9 +301,8 @@ struct CreatePostView: View {
                         }
                     }
                 }
-                .padding(.vertical, 40)
+                .padding(.vertical, 10)
             } else {
-                // Selected media preview
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
                         ForEach(Array(selectedImages.enumerated()), id: \.offset) { index, image in
@@ -284,7 +313,7 @@ struct CreatePostView: View {
                                     .frame(width: 120, height: 120)
                                     .clipped()
                                     .cornerRadius(12)
-                                
+
                                 Button(action: {
                                     selectedImages.remove(at: index)
                                 }) {
@@ -297,8 +326,55 @@ struct CreatePostView: View {
                                 .padding(6)
                             }
                         }
-                        
-                        // Add more button
+
+                        ForEach(Array(selectedVideoData.enumerated()), id: \.offset) { index, _ in
+                            ZStack(alignment: .topTrailing) {
+                                if index < selectedVideoThumbnails.count {
+                                    Image(uiImage: selectedVideoThumbnails[index])
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 120, height: 120)
+                                        .clipped()
+                                        .cornerRadius(12)
+                                        .overlay(
+                                            Image(systemName: "play.circle.fill")
+                                                .font(.system(size: 28))
+                                                .foregroundColor(.white)
+                                                .shadow(radius: 4)
+                                                .padding(6), alignment: .bottomTrailing
+                                        )
+                                } else {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(cardBackground)
+                                        .frame(width: 120, height: 120)
+                                        .overlay(
+                                            VStack(spacing: 8) {
+                                                Image(systemName: "video.fill")
+                                                    .font(.system(size: 24))
+                                                    .foregroundColor(secondaryColor)
+                                                Text("Video")
+                                                    .font(.caption)
+                                                    .foregroundColor(.gray)
+                                            }
+                                        )
+                                }
+
+                                Button(action: {
+                                    selectedVideoData.remove(at: index)
+                                    if index < selectedVideoThumbnails.count {
+                                        selectedVideoThumbnails.remove(at: index)
+                                    }
+                                }) {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .font(.system(size: 20))
+                                        .foregroundColor(.white)
+                                        .background(Color.black.opacity(0.6))
+                                        .clipShape(Circle())
+                                }
+                                .padding(6)
+                            }
+                        }
+
                         Button(action: { showPhotoPicker = true }) {
                             VStack(spacing: 8) {
                                 Image(systemName: "plus")
@@ -317,34 +393,66 @@ struct CreatePostView: View {
                             .cornerRadius(12)
                         }
                     }
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, 4)
                 }
             }
         }
+        .padding(16)
         .background(cardBackground)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(borderColor, lineWidth: 1)
+        )
+        .cornerRadius(12)
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
     }
     
     private var contentSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            TextField("Write a caption...", text: $postContent, axis: .vertical)
-                .font(.system(size: 16))
-                .lineLimit(5...10)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .background(cardBackground)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(borderColor, lineWidth: 1)
-                )
-                .cornerRadius(8)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                HStack(spacing: 8) {
+                    Image(systemName: "text.alignleft")
+                        .foregroundColor(primaryColor)
+                    Text("Caption")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.black)
+                }
+                Spacer()
+                Text("\(postContent.count)/\(captionLimit)")
+                    .font(.system(size: 12))
+                    .foregroundColor(.gray)
+                    .accessibilityLabel("Character count")
+            }
+
+            MentionInputView(
+                text: $postContent,
+                placeholder: "Write a caption...",
+                maxLength: captionLimit
+            )
         }
+        .padding(16)
+        .background(cardBackground)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(borderColor, lineWidth: 1)
+        )
+        .cornerRadius(12)
         .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(backgroundColor)
+        .padding(.top, 12)
     }
     
     private var locationSection: some View {
         VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: "mappin.and.ellipse")
+                    .foregroundColor(primaryColor)
+                Text("Location")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.black)
+                Spacer()
+            }
+
             Button(action: {
                 showLocationInput.toggle()
             }) {
@@ -368,7 +476,7 @@ struct CreatePostView: View {
                 )
                 .cornerRadius(8)
             }
-            
+
             if showLocationInput {
                 VStack(alignment: .leading, spacing: 8) {
                     TextField("Search for a location...", text: $locationSearchQuery)
@@ -388,7 +496,7 @@ struct CreatePostView: View {
                                 locationSearchResults = []
                             }
                         }
-                    
+
                     if isSearchingLocations {
                         HStack {
                             ProgressView()
@@ -424,7 +532,7 @@ struct CreatePostView: View {
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 12)
                                 }
-                                
+
                                 if location.id != locationSearchResults.last?.id {
                                     Divider()
                                         .padding(.horizontal, 16)
@@ -441,14 +549,21 @@ struct CreatePostView: View {
                 }
             }
         }
+        .padding(16)
+        .background(cardBackground)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(borderColor, lineWidth: 1)
+        )
+        .cornerRadius(12)
         .padding(.horizontal, 16)
-        .background(backgroundColor)
+        .padding(.top, 12)
     }
     
     private var submitSection: some View {
         VStack(spacing: 16) {
             // Additional options
-            HStack(spacing: 20) {
+            HStack {
                 Button(action: {}) {
                     HStack(spacing: 8) {
                         Image(systemName: "person.2.fill")
@@ -458,19 +573,16 @@ struct CreatePostView: View {
                             .font(.system(size: 16))
                     }
                 }
-                
                 Spacer()
-                
-                Button(action: {}) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "facebook")
-                            .foregroundColor(.blue)
-                        Text("Share to Facebook")
-                            .foregroundColor(.black)
-                            .font(.system(size: 16))
-                    }
-                }
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(cardBackground)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(borderColor, lineWidth: 1)
+            )
+            .cornerRadius(12)
             .padding(.horizontal, 16)
             
             // Share button
@@ -680,22 +792,43 @@ struct CreatePostView: View {
                         }
                         ForEach(Array(selectedVideoData.enumerated()), id: \.offset) { index, _ in
                             ZStack(alignment: .topTrailing) {
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(cardBackground)
-                                    .frame(width: 100, height: 100)
-                                    .overlay(
-                                        VStack(spacing: 8) {
-                                            Image(systemName: "video.fill")
+                                if index < selectedVideoThumbnails.count {
+                                    Image(uiImage: selectedVideoThumbnails[index])
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 100, height: 100)
+                                        .clipped()
+                                        .cornerRadius(16)
+                                        .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
+                                        .overlay(
+                                            Image(systemName: "play.circle.fill")
                                                 .font(.system(size: 24))
-                                                .foregroundColor(secondaryColor)
-                                            Text("Video")
-                                                .font(.caption)
-                                                .foregroundColor(.gray)
-                                        }
-                                    )
-                                    .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
+                                                .foregroundColor(.white)
+                                                .shadow(radius: 4)
+                                                .padding(6), alignment: .bottomTrailing
+                                        )
+                                } else {
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .fill(cardBackground)
+                                        .frame(width: 100, height: 100)
+                                        .overlay(
+                                            VStack(spacing: 8) {
+                                                Image(systemName: "video.fill")
+                                                    .font(.system(size: 24))
+                                                    .foregroundColor(secondaryColor)
+                                                Text("Video")
+                                                    .font(.caption)
+                                                    .foregroundColor(.gray)
+                                            }
+                                        )
+                                        .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
+                                }
+
                                 Button(action: {
                                     selectedVideoData.remove(at: index)
+                                    if index < selectedVideoThumbnails.count {
+                                        selectedVideoThumbnails.remove(at: index)
+                                    }
                                 }) {
                                     Image(systemName: "xmark.circle.fill")
                                         .font(.system(size: 20))
@@ -854,7 +987,7 @@ struct CreatePostView: View {
     // MARK: - Computed Properties
     
     private var isSubmitDisabled: Bool {
-        postContent.isEmpty && selectedImages.isEmpty && selectedVideoData.isEmpty || isSubmitting
+        (postContent.isEmpty && selectedImages.isEmpty && selectedVideoData.isEmpty) || isSubmitting || isProcessingMedia
     }
     
     // MARK: - State Variables
@@ -862,6 +995,33 @@ struct CreatePostView: View {
     @State private var selectedPhotos: [PhotosPickerItem] = []
     @State private var selectedVideos: [PhotosPickerItem] = []
     @State private var showLocationInput = false
+    
+    // MARK: - Video Thumbnail Generation
+    private func generateThumbnail(from data: Data) async -> UIImage? {
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathExtension("mp4")
+        do {
+            try data.write(to: tempURL)
+            defer { try? FileManager.default.removeItem(at: tempURL) }
+            return await generateThumbnail(from: tempURL)
+        } catch {
+            print("🎬 Thumbnail write error: \(error)")
+            return nil
+        }
+    }
+
+    private func generateThumbnail(from url: URL) async -> UIImage? {
+        let asset = AVAsset(url: url)
+        let generator = AVAssetImageGenerator(asset: asset)
+        generator.appliesPreferredTrackTransform = true
+        let time = CMTime(seconds: 0.5, preferredTimescale: 600)
+        do {
+            let cgImage = try generator.copyCGImage(at: time, actualTime: nil)
+            return UIImage(cgImage: cgImage)
+        } catch {
+            print("🎬 Thumbnail generation failed: \(error)")
+            return nil
+        }
+    }
     
     // MARK: - Helper Methods
     
@@ -921,6 +1081,16 @@ struct CreatePostView: View {
                 await MainActor.run {
                     selectedVideoData.append(data)
                     print("📱 Added video to selectedVideoData. Total: \(selectedVideoData.count)")
+                }
+                if let thumb = await generateThumbnail(from: data) {
+                    await MainActor.run {
+                        selectedVideoThumbnails.append(thumb)
+                    }
+                } else {
+                    // Keep arrays aligned with a placeholder if generation fails
+                    await MainActor.run {
+                        selectedVideoThumbnails.append(UIImage(systemName: "video") ?? UIImage())
+                    }
                 }
             } else {
                 print("📱 Failed to load video \(index + 1)")
@@ -1004,6 +1174,14 @@ struct CreatePostView: View {
                     isSubmitting = false
                     if success {
                         showSuccess = true
+                        
+                        // Notify other parts of the app about the new post
+                        NotificationCenter.default.post(
+                            name: NSNotification.Name("PostCreated"),
+                            object: nil,
+                            userInfo: ["success": true]
+                        )
+                        print("📢 [CreatePostView] Posted PostCreated notification")
                     } else {
                         errorMessage = "Failed to create post. Please try again."
                         showError = true
@@ -2113,7 +2291,7 @@ class CameraViewController: UIViewController {
                 } else {
                     // Photo mode
                     print("📱 CameraViewController: Capturing photo")
-            camera.capturePhoto()
+                    camera.capturePhoto()
                 }
             } else {
                 // Default to photo if no mode control found

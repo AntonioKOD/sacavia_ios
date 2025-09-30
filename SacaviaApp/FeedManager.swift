@@ -299,6 +299,62 @@ class FeedManager: ObservableObject {
     @Published var blockedUserIds: Set<String> = []
     
     private let authManager = AuthManager.shared
+    private var postDeletionObserver: NSObjectProtocol?
+    private var postCreationObserver: NSObjectProtocol?
+    
+    init() {
+        // Set up notification observer for post deletions from other parts of the app
+        postDeletionObserver = NotificationCenter.default.addObserver(
+            forName: NSNotification.Name("PostDeleted"),
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            if let userInfo = notification.userInfo,
+               let postId = userInfo["postId"] as? String {
+                print("🔍 [FeedManager] Received post deletion notification for post: \(postId)")
+                
+                // Remove the post from the feed items
+                self?.items.removeAll { item in
+                    switch item {
+                    case .post(let post):
+                        return post.id == postId
+                    default:
+                        return false
+                    }
+                }
+                
+                print("🗑️ [FeedManager] Removed post \(postId) from feed")
+            }
+        }
+        
+        // Set up notification observer for post creation
+        postCreationObserver = NotificationCenter.default.addObserver(
+            forName: NSNotification.Name("PostCreated"),
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            if let userInfo = notification.userInfo,
+               let success = userInfo["success"] as? Bool, success {
+                print("🔍 [FeedManager] Received post creation notification")
+                
+                // Refresh the feed to show the new post
+                Task {
+                    await self?.refreshFeedWithInteractionSync()
+                    print("🔄 [FeedManager] Feed refreshed after post creation")
+                }
+            }
+        }
+    }
+    
+    deinit {
+        // Remove notification observers
+        if let observer = postDeletionObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        if let observer = postCreationObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
     
     // MARK: - Engagement State Management
     func updatePostLikeState(postId: String, isLiked: Bool) {
@@ -746,6 +802,82 @@ class FeedManager: ObservableObject {
     
     func refreshBlockedUsers() async {
         await loadBlockedUsers()
+    }
+    
+    // MARK: - Post Deletion
+    
+    func deletePost(postId: String) async {
+        do {
+            let apiService = APIService()
+            try await apiService.deletePost(postId: postId)
+            
+            // Remove the post from the local feed
+            DispatchQueue.main.async {
+                self.items.removeAll { item in
+                    switch item {
+                    case .post(let post):
+                        return post.id == postId
+                    default:
+                        return false
+                    }
+                }
+                print("🗑️ Successfully deleted post \(postId) from feed")
+                
+                // Notify other parts of the app about the post deletion
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("PostDeleted"),
+                    object: nil,
+                    userInfo: ["postId": postId]
+                )
+                print("📢 [FeedManager] Posted PostDeleted notification for post: \(postId)")
+            }
+        } catch {
+            print("🗑️ Failed to delete post \(postId): \(error)")
+            DispatchQueue.main.async {
+                self.errorMessage = "Failed to delete post. Please try again."
+            }
+        }
+    }
+    
+    // MARK: - Share Count Management
+    
+    func incrementShareCount(postId: String) async {
+        print("📊 [FeedManager] Incrementing share count for post: \(postId)")
+        
+        // Update the share count in the local feed
+        for i in 0..<items.count {
+            switch items[i] {
+            case .post(let post):
+                if post.id == postId {
+                    let updatedPost = FeedPost(
+                        id: post.id,
+                        caption: post.caption,
+                        author: post.author,
+                        location: post.location,
+                        media: post.media,
+                        engagement: FeedEngagement(
+                            likeCount: post.engagement.likeCount,
+                            commentCount: post.engagement.commentCount,
+                            shareCount: post.engagement.shareCount + 1,
+                            saveCount: post.engagement.saveCount,
+                            isLiked: post.engagement.isLiked,
+                            isSaved: post.engagement.isSaved
+                        ),
+                        categories: post.categories,
+                        tags: post.tags,
+                        createdAt: post.createdAt,
+                        updatedAt: post.updatedAt,
+                        rating: post.rating,
+                        isPromoted: post.isPromoted
+                    )
+                    items[i] = .post(updatedPost)
+                    print("📊 [FeedManager] Updated share count for post \(postId): \(post.engagement.shareCount + 1)")
+                    break
+                }
+            default:
+                break
+            }
+        }
     }
 } 
 

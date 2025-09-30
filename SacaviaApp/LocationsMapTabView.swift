@@ -22,7 +22,9 @@ struct LocationPreview: Codable, Identifiable {
     let isFeatured: Bool?
     let priceRange: String?
     let coordinates: MapCoordinates?
+    let ownership: OwnershipInfo?
 }
+
 
 struct Location: Identifiable, Codable {
     let id: String
@@ -54,6 +56,7 @@ struct Location: Identifiable, Codable {
     let createdBy: String?
     let createdAt: String?
     let updatedAt: String?
+    let ownership: OwnershipInfo?
     let reviewCount: Int?
     let visitCount: Int?
     // For new sections
@@ -67,7 +70,7 @@ struct Location: Identifiable, Codable {
     }
     
     // Custom initializer for creating Location instances
-    init(id: String, name: String, address: String?, coordinates: MapCoordinates, featuredImage: String?, imageUrl: String?, rating: Double?, description: String?, shortDescription: String?, slug: String?, gallery: [GalleryImage]?, categories: [String]?, tags: [String]?, priceRange: String?, businessHours: [BusinessHour]?, contactInfo: ContactInfo?, accessibility: Accessibility?, bestTimeToVisit: [BestTimeToVisit]?, insiderTips: [InsiderTip]?, isVerified: Bool?, isFeatured: Bool?, hasBusinessPartnership: Bool?, partnershipDetails: PartnershipDetails?, neighborhood: String?, isSaved: Bool?, isSubscribed: Bool?, createdBy: String?, createdAt: String?, updatedAt: String?, reviewCount: Int?, visitCount: Int?, reviews: [Review]?, communityPhotos: [CommunityPhoto]?) {
+    init(id: String, name: String, address: String?, coordinates: MapCoordinates, featuredImage: String?, imageUrl: String?, rating: Double?, description: String?, shortDescription: String?, slug: String?, gallery: [GalleryImage]?, categories: [String]?, tags: [String]?, priceRange: String?, businessHours: [BusinessHour]?, contactInfo: ContactInfo?, accessibility: Accessibility?, bestTimeToVisit: [BestTimeToVisit]?, insiderTips: [InsiderTip]?, isVerified: Bool?, isFeatured: Bool?, hasBusinessPartnership: Bool?, partnershipDetails: PartnershipDetails?, neighborhood: String?, isSaved: Bool?, isSubscribed: Bool?, createdBy: String?, createdAt: String?, updatedAt: String?, ownership: OwnershipInfo?, reviewCount: Int?, visitCount: Int?, reviews: [Review]?, communityPhotos: [CommunityPhoto]?) {
         self.id = id
         self.name = name
         self.address = address
@@ -97,6 +100,7 @@ struct Location: Identifiable, Codable {
         self.createdBy = createdBy
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.ownership = ownership
         self.reviewCount = reviewCount
         self.visitCount = visitCount
         self.reviews = reviews
@@ -163,6 +167,7 @@ struct Location: Identifiable, Codable {
         }
         createdAt = try container.decodeIfPresent(String.self, forKey: .createdAt)
         updatedAt = try container.decodeIfPresent(String.self, forKey: .updatedAt)
+        ownership = try container.decodeIfPresent(OwnershipInfo.self, forKey: .ownership)
         reviewCount = try container.decodeIfPresent(Int.self, forKey: .reviewCount)
         visitCount = try container.decodeIfPresent(Int.self, forKey: .visitCount)
         reviews = try container.decodeIfPresent([Review].self, forKey: .reviews)
@@ -226,6 +231,7 @@ struct Location: Identifiable, Codable {
         try container.encodeIfPresent(createdBy, forKey: .createdBy)
         try container.encodeIfPresent(createdAt, forKey: .createdAt)
         try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
+        try container.encodeIfPresent(ownership, forKey: .ownership)
         try container.encodeIfPresent(reviewCount, forKey: .reviewCount)
         try container.encodeIfPresent(visitCount, forKey: .visitCount)
         try container.encodeIfPresent(reviews, forKey: .reviews)
@@ -237,7 +243,7 @@ struct Location: Identifiable, Codable {
     
     // Coding keys to include latitude and longitude as separate fields
     private enum CodingKeys: String, CodingKey {
-        case id, name, address, coordinates, featuredImage, imageUrl, rating, description, shortDescription, slug, gallery, categories, tags, priceRange, businessHours, contactInfo, accessibility, bestTimeToVisit, insiderTips, isVerified, isFeatured, hasBusinessPartnership, partnershipDetails, neighborhood, isSaved, isSubscribed, createdBy, createdAt, updatedAt, reviewCount, visitCount, reviews, communityPhotos, latitude, longitude
+        case id, name, address, coordinates, featuredImage, imageUrl, rating, description, shortDescription, slug, gallery, categories, tags, priceRange, businessHours, contactInfo, accessibility, bestTimeToVisit, insiderTips, isVerified, isFeatured, hasBusinessPartnership, partnershipDetails, neighborhood, isSaved, isSubscribed, createdBy, createdAt, updatedAt, ownership, reviewCount, visitCount, reviews, communityPhotos, latitude, longitude
     }
 }
 
@@ -288,6 +294,7 @@ struct MapCoordinates: Codable {
         // Handle latitude - can be string or number
         if let latitudeString = try? container.decode(String.self, forKey: .latitude) {
             latitude = Double(latitudeString) ?? 0.0
+            print("[DEBUG] Converted latitude string '\(latitudeString)' to \(latitude)")
         } else {
             latitude = try container.decode(Double.self, forKey: .latitude)
         }
@@ -295,8 +302,14 @@ struct MapCoordinates: Codable {
         // Handle longitude - can be string or number
         if let longitudeString = try? container.decode(String.self, forKey: .longitude) {
             longitude = Double(longitudeString) ?? 0.0
+            print("[DEBUG] Converted longitude string '\(longitudeString)' to \(longitude)")
         } else {
             longitude = try container.decode(Double.self, forKey: .longitude)
+        }
+        
+        // Validate coordinates
+        if latitude == 0.0 && longitude == 0.0 {
+            print("[WARNING] Coordinates are (0,0) - this might be invalid data")
         }
     }
     
@@ -333,11 +346,15 @@ struct CreatedByObject: Codable {
 }
 
 // MARK: - Cluster Model
-struct LocationCluster: Identifiable {
+struct LocationCluster: Identifiable, Equatable {
     let id = UUID()
     let locations: [Location]
     let center: CLLocationCoordinate2D
     let count: Int
+    
+    static func == (lhs: LocationCluster, rhs: LocationCluster) -> Bool {
+        return lhs.id == rhs.id
+    }
     
     var primaryLocation: Location {
         return locations.first ?? createFallbackLocation()
@@ -375,6 +392,7 @@ struct LocationCluster: Identifiable {
             createdBy: nil,
             createdAt: nil,
             updatedAt: nil,
+            ownership: nil,
             reviewCount: nil,
             visitCount: nil,
             reviews: nil,
@@ -450,6 +468,25 @@ class LocationsViewModel: ObservableObject {
                             print("[DEBUG] First location:", firstLocation)
                             print("[DEBUG] First location rating:", firstLocation["rating"])
                             print("[DEBUG] First location reviewCount:", firstLocation["reviewCount"])
+                            print("[DEBUG] First location coordinates:", firstLocation["coordinates"])
+                            print("[DEBUG] First location ownership:", firstLocation["ownership"])
+                            print("[DEBUG] First location featuredImage:", firstLocation["featuredImage"])
+                            print("[DEBUG] First location categories:", firstLocation["categories"])
+                            
+                            // Debug: Print the raw ownership data structure
+                            if let ownershipData = firstLocation["ownership"] {
+                                print("[DEBUG] Raw ownership data type:", type(of: ownershipData))
+                                print("[DEBUG] Raw ownership data:", ownershipData)
+                            } else {
+                                print("[DEBUG] No ownership data in raw JSON for location:", firstLocation["name"] ?? "unknown")
+                            }
+                            
+                            // Debug coordinate structure
+                            if let coords = firstLocation["coordinates"] as? [String: Any] {
+                                print("[DEBUG] Coordinates structure:", coords)
+                                print("[DEBUG] Latitude type:", type(of: coords["latitude"]))
+                                print("[DEBUG] Longitude type:", type(of: coords["longitude"]))
+                            }
                         }
                         
                         let locationsData = try JSONSerialization.data(withJSONObject: locationsArr)
@@ -460,6 +497,17 @@ class LocationsViewModel: ObservableObject {
                         if let firstLocation = self.locations.first {
                             print("[DEBUG] First decoded location rating:", firstLocation.rating)
                             print("[DEBUG] First decoded location reviewCount:", firstLocation.reviewCount)
+                            print("[DEBUG] First decoded location coordinates: lat=\(firstLocation.coordinates.latitude), lng=\(firstLocation.coordinates.longitude)")
+                            print("[DEBUG] First decoded location ownership:", firstLocation.ownership?.claimStatus ?? "nil")
+                            print("[DEBUG] First decoded location featuredImage:", firstLocation.featuredImage ?? "nil")
+                            print("[DEBUG] First decoded location categories:", firstLocation.categories)
+                            
+                            // Debug: Print all ownership details
+                            if let ownership = firstLocation.ownership {
+                                print("[DEBUG] Full ownership object:", ownership)
+                            } else {
+                                print("[DEBUG] Ownership is nil for location:", firstLocation.name)
+                            }
                         }
                         
                         // After loading locations, check interaction state for saved/subscribed status
@@ -580,18 +628,35 @@ class LocationsViewModel: ObservableObject {
     
     // MARK: - Clustering Logic
     private func createClusters(from locations: [Location]) {
-        let clusterRadius: CLLocationDistance = 500 // 500 meters
+        let clusterRadius: CLLocationDistance = 200 // 200 meters - only cluster very close locations
         var processedLocations = Set<String>()
         var newClusters: [LocationCluster] = []
         
-        for location in locations {
+        // Filter out locations with invalid coordinates
+        let validLocations = locations.filter { location in
+            let lat = location.coordinates.latitude
+            let lng = location.coordinates.longitude
+            return lat != 0 && lng != 0 && 
+                   lat >= -90 && lat <= 90 && 
+                   lng >= -180 && lng <= 180 &&
+                   !lat.isNaN && !lng.isNaN
+        }
+        
+        print("[DEBUG] Creating clusters from \(validLocations.count) valid locations out of \(locations.count) total (cluster radius: 200m)")
+        
+        // Debug: Print first few valid locations
+        for (index, location) in validLocations.prefix(3).enumerated() {
+            print("[DEBUG] Valid location \(index + 1): \(location.name) at [\(location.coordinates.latitude), \(location.coordinates.longitude)]")
+        }
+        
+        for location in validLocations {
             if processedLocations.contains(location.id) { continue }
             
             var nearbyLocations = [location]
             processedLocations.insert(location.id)
             
             // Find nearby locations
-            for otherLocation in locations {
+            for otherLocation in validLocations {
                 if otherLocation.id == location.id || processedLocations.contains(otherLocation.id) { continue }
                 
                 let distance = calculateDistance(
@@ -599,6 +664,7 @@ class LocationsViewModel: ObservableObject {
                     to: CLLocationCoordinate2D(latitude: otherLocation.coordinates.latitude, longitude: otherLocation.coordinates.longitude)
                 )
                 
+                // Only cluster if locations are very close (within 200 meters)
                 if distance <= clusterRadius {
                     nearbyLocations.append(otherLocation)
                     processedLocations.insert(otherLocation.id)
@@ -622,7 +688,17 @@ class LocationsViewModel: ObservableObject {
         }
         
         self.clusters = newClusters
-        print("[DEBUG] Created \(newClusters.count) clusters from \(locations.count) locations")
+        print("[DEBUG] Created \(newClusters.count) clusters from \(validLocations.count) valid locations")
+        
+        // Debug: Print cluster details
+        for (index, cluster) in newClusters.enumerated() {
+            print("[DEBUG] Cluster \(index + 1): \(cluster.count) locations at [\(cluster.center.latitude), \(cluster.center.longitude)]")
+            if cluster.count == 1 {
+                print("[DEBUG]   Single location: \(cluster.primaryLocation.name)")
+            } else {
+                print("[DEBUG]   Multiple locations: \(cluster.locations.map { $0.name }.joined(separator: ", "))")
+            }
+        }
     }
     
     private func calculateDistance(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> CLLocationDistance {
@@ -763,6 +839,7 @@ struct LocationsMapTabView: View {
         span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
     )
     @State private var selectedLocation: Location? = nil
+    @State private var selectedCluster: LocationCluster? = nil
     @State private var showingAddLocation = false
     @State private var showingAddBusiness = false
     @EnvironmentObject var auth: AuthManager
@@ -773,220 +850,209 @@ struct LocationsMapTabView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Custom Tab Picker with modern design
-            HStack(spacing: 0) {
-                CustomTabButton(
-                    title: "List",
-                    icon: "list.bullet",
-                    isSelected: selectedTab == 0,
-                    primaryColor: primaryColor
-                ) {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        selectedTab = 0
-                    }
-                }
-                
-                CustomTabButton(
-                    title: "Map",
-                    icon: "map",
-                    isSelected: selectedTab == 1,
-                    primaryColor: primaryColor
-                ) {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        selectedTab = 1
-                    }
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 10)
-            .padding(.bottom, 16)
-            .background(Color.white)
-            .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
-
-            if viewModel.isLoading {
-                VStack(spacing: 24) {
-                    Spacer()
-                    ZStack {
-                        Circle()
-                            .fill(primaryColor.opacity(0.1))
-                            .frame(width: 80, height: 80)
-                        
-                        ProgressView()
-                            .scaleEffect(1.5)
-                            .tint(primaryColor)
-                    }
-                    Text("Discovering amazing places...")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.gray)
-                    Spacer()
-                }
-            } else if let error = viewModel.error {
-                VStack(spacing: 24) {
-                    Spacer()
-                    ZStack {
-                        Circle()
-                            .fill(Color.orange.opacity(0.1))
-                            .frame(width: 80, height: 80)
-                        
-                        Image(systemName: "exclamationmark.triangle")
-                            .font(.system(size: 32))
-                            .foregroundColor(.orange)
-                    }
-                    Text("Oops! Something went wrong")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                    Text(error)
-                        .font(.body)
-                        .foregroundColor(.gray)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 40)
-                    
-                    Button(action: { viewModel.fetchLocations() }) {
-                        HStack(spacing: 8) {
-                            Image(systemName: "arrow.clockwise")
-                                .font(.system(size: 16, weight: .semibold))
-                            Text("Try Again")
-                                .font(.system(size: 16, weight: .semibold))
-                        }
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 30)
-                        .padding(.vertical, 12)
-                        .background(
-                            LinearGradient(
-                                gradient: Gradient(colors: [primaryColor, secondaryColor]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .cornerRadius(25)
-                    }
-                    Spacer()
-                }
-            } else if viewModel.locations.isEmpty {
-                VStack(spacing: 24) {
-                    // Location Encouragement Card
-                    LocationEncouragementView(
-                        variant: .default,
-                        onAddLocation: { showingAddLocation = true },
-                        onAddBusiness: { showingAddBusiness = true }
-                    )
-                    
-                    // Original empty state
-                    VStack(spacing: 16) {
-                        ZStack {
-                            Circle()
-                                .fill(primaryColor.opacity(0.1))
-                                .frame(width: 80, height: 80)
-                            
-                            Image(systemName: "mappin.and.ellipse")
-                                .font(.system(size: 32))
-                                .foregroundColor(primaryColor)
-                        }
-                        Text("No locations found")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                        Text("Start exploring and discovering amazing places around you")
-                            .font(.body)
-                            .foregroundColor(.gray)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 40)
-                    }
-                }
-                .fullScreenCover(isPresented: $showingAddLocation) {
-                    EnhancedAddLocationView()
-                }
-                .fullScreenCover(isPresented: $showingAddBusiness) {
-                    EnhancedAddLocationView()
-                }
-            } else {
-                if selectedTab == 0 {
-                    // Modern List View
-                    ScrollView {
-                        LazyVStack(spacing: 16) {
-                            ForEach(viewModel.locations) { location in
-                                LocationCard(
-                                    location: location,
-                                    primaryColor: primaryColor,
-                                    secondaryColor: secondaryColor
-                                ) {
-                                    selectedTab = 1
-                                    selectedLocation = location
-                                    region.center = CLLocationCoordinate2D(
-                                        latitude: location.coordinates.latitude,
-                                        longitude: location.coordinates.longitude
-                                    )
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 16)
-                        .padding(.bottom, 100) // Add bottom padding to prevent overlap with navbar
-                    }
-                } else {
-                    // Map View
-                    ZStack {
-                        Map(coordinateRegion: $region, annotationItems: viewModel.clusters) { cluster in
-                            MapAnnotation(coordinate: cluster.center) {
-                                Button(action: {
-                                    if cluster.count == 1 {
-                                        // Single location - show preview
-                                        viewModel.showPreview(for: cluster.primaryLocation.id)
-                                    } else {
-                                        // Multiple locations - show cluster preview
-                                        viewModel.showClusterPreview(for: cluster)
-                                    }
-                                }) {
-                                    ZStack {
-                                        if cluster.count == 1 {
-                                            // Single location marker
-                                            Circle()
-                                                .fill(primaryColor)
-                                                .frame(width: 32, height: 32)
-                                                .overlay(
-                                                    Circle()
-                                                        .stroke(Color.white, lineWidth: 3)
-                                                )
-                                                .shadow(color: primaryColor.opacity(0.3), radius: 6, x: 0, y: 3)
-                                            
-                                            Image(systemName: "mappin.circle.fill")
-                                                .font(.system(size: 16, weight: .bold))
-                                                .foregroundColor(.white)
-                                        } else {
-                                            // Cluster marker
-                                            Circle()
-                                                .fill(primaryColor)
-                                                .frame(width: 40, height: 40)
-                                                .overlay(
-                                                    Circle()
-                                                        .stroke(Color.white, lineWidth: 3)
-                                                )
-                                                .shadow(color: primaryColor.opacity(0.3), radius: 8, x: 0, y: 4)
-                                            
-                                            Text("\(cluster.count)")
-                                                .font(.system(size: 14, weight: .bold))
-                                                .foregroundColor(.white)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        .edgesIgnoringSafeArea(.all)
-                    }
-                    .sheet(item: $selectedLocation) { location in
-                        EnhancedLocationDetailView(locationId: location.id)
-                            .environmentObject(auth)
-                    }
-                }
-            }
+            tabPickerView
+            mainContentView
         }
         .background(Color(.systemGray6))
         .onAppear {
             viewModel.fetchLocations()
         }
+        .onChange(of: viewModel.clusters) { clusters in
+            print("[DEBUG] Clusters updated: \(clusters.count) clusters")
+            print("[DEBUG] Map region: center=[\(region.center.latitude), \(region.center.longitude)], span=[\(region.span.latitudeDelta), \(region.span.longitudeDelta)]")
+            for (index, cluster) in clusters.enumerated() {
+                print("[DEBUG] Cluster \(index + 1): \(cluster.count) locations at [\(cluster.center.latitude), \(cluster.center.longitude)]")
+            }
+        }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("LocationSaveStateChanged"))) { notification in
             // Refresh locations when a location save state changes to update saved status
             print("🔍 [LocationsMapTabView] Received location save state change notification")
             viewModel.fetchLocations()
+        }
+    }
+    
+    private var tabPickerView: some View {
+        HStack(spacing: 0) {
+            CustomTabButton(
+                title: "List",
+                icon: "list.bullet",
+                isSelected: selectedTab == 0,
+                primaryColor: primaryColor
+            ) {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    selectedTab = 0
+                }
+            }
+            
+            CustomTabButton(
+                title: "Map",
+                icon: "map",
+                isSelected: selectedTab == 1,
+                primaryColor: primaryColor
+            ) {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    selectedTab = 1
+                }
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 10)
+        .padding(.bottom, 16)
+        .background(Color.white)
+        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+    }
+    
+    private var mainContentView: some View {
+        Group {
+            if viewModel.isLoading {
+                loadingView
+            } else if let error = viewModel.error {
+                errorView(error)
+            } else {
+                contentView
+            }
+        }
+    }
+    
+    private var loadingView: some View {
+        VStack(spacing: 24) {
+            Spacer()
+            ZStack {
+                Circle()
+                    .fill(primaryColor.opacity(0.1))
+                    .frame(width: 80, height: 80)
+                
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .tint(primaryColor)
+            }
+            Text("Discovering amazing places...")
+                .font(.system(size: 18, weight: .medium))
+                .foregroundColor(.gray)
+            Spacer()
+        }
+    }
+    
+    private func errorView(_ error: String) -> some View {
+        VStack(spacing: 24) {
+            Spacer()
+            ZStack {
+                Circle()
+                    .fill(Color.orange.opacity(0.1))
+                    .frame(width: 80, height: 80)
+                
+                Image(systemName: "exclamationmark.triangle")
+                    .font(.system(size: 32))
+                    .foregroundColor(.orange)
+            }
+            Text("Oops! Something went wrong")
+                .font(.title2)
+                .fontWeight(.semibold)
+            Text(error)
+                .font(.body)
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
+            
+            Button(action: { viewModel.fetchLocations() }) {
+                HStack(spacing: 8) {
+                    Image(systemName: "arrow.clockwise")
+                        .font(.system(size: 16, weight: .semibold))
+                    Text("Try Again")
+                        .font(.system(size: 16, weight: .semibold))
+                }
+                .foregroundColor(.white)
+                .padding(.horizontal, 30)
+                .padding(.vertical, 12)
+                .background(
+                    LinearGradient(
+                        gradient: Gradient(colors: [primaryColor, secondaryColor]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .cornerRadius(25)
+            }
+            Spacer()
+        }
+    }
+    
+    private var contentView: some View {
+        Group {
+            if viewModel.locations.isEmpty {
+                emptyStateView
+            } else {
+                tabContent
+            }
+        }
+    }
+    
+    private var emptyStateView: some View {
+        VStack(spacing: 24) {
+            // Location Encouragement Card
+            LocationEncouragementView(
+                variant: .default,
+                onAddLocation: { showingAddLocation = true },
+                onAddBusiness: { showingAddBusiness = true }
+            )
+            
+            // Original empty state
+            VStack(spacing: 16) {
+                ZStack {
+                    Circle()
+                        .fill(primaryColor.opacity(0.1))
+                        .frame(width: 80, height: 80)
+                    
+                    Image(systemName: "mappin.and.ellipse")
+                        .font(.system(size: 32))
+                        .foregroundColor(primaryColor)
+                }
+                Text("No locations found")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                Text("Start exploring and discovering amazing places around you")
+                    .font(.body)
+                    .foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
+            }
+        }
+        .fullScreenCover(isPresented: $showingAddLocation) {
+            EnhancedAddLocationView()
+        }
+        .fullScreenCover(isPresented: $showingAddBusiness) {
+            EnhancedAddLocationView()
+        }
+    }
+    
+    private var tabContent: some View {
+        Group {
+            if selectedTab == 0 {
+                listView
+            } else {
+                mapView
+            }
+        }
+        .fullScreenCover(isPresented: $showingAddLocation) {
+            EnhancedAddLocationView()
+        }
+        .fullScreenCover(isPresented: $showingAddBusiness) {
+            EnhancedAddLocationView()
+        }
+        .sheet(item: $selectedLocation) { location in
+            EnhancedLocationDetailView(locationId: location.id)
+                .environmentObject(auth)
+        }
+        .sheet(item: $selectedCluster) { cluster in
+            ClusterPreviewSheet(
+                cluster: cluster,
+                primaryColor: primaryColor,
+                secondaryColor: secondaryColor,
+                onLocationSelect: { location in
+                    selectedLocation = location
+                    selectedCluster = nil
+                }
+            )
         }
         .sheet(isPresented: $viewModel.showPreviewSheet) {
             if let preview = viewModel.previewLocation {
@@ -1024,6 +1090,231 @@ struct LocationsMapTabView: View {
                 .presentationBackground(.regularMaterial)
             }
         }
+    }
+    
+    private var listView: some View {
+        // Modern List View
+        ScrollView {
+            LazyVStack(spacing: 16) {
+                ForEach(viewModel.locations) { location in
+                    LocationCard(
+                        location: location,
+                        primaryColor: primaryColor,
+                        secondaryColor: secondaryColor
+                    ) {
+                        selectedTab = 1
+                        selectedLocation = location
+                        region.center = CLLocationCoordinate2D(
+                            latitude: location.coordinates.latitude,
+                            longitude: location.coordinates.longitude
+                        )
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+            .padding(.bottom, 100) // Add bottom padding to prevent overlap with navbar
+        }
+    }
+    
+    
+    
+    private var mapView: some View {
+        // Map View with proper annotation system for fixed pin positioning
+        MapViewRepresentable(
+            region: $region,
+            clusters: viewModel.clusters,
+            primaryColor: primaryColor,
+            onClusterTap: { cluster in
+                if cluster.count == 1 {
+                    // Single location - show preview
+                    viewModel.showPreview(for: cluster.primaryLocation.id)
+                } else {
+                    // Multiple locations - show cluster preview
+                    viewModel.showClusterPreview(for: cluster)
+                }
+            }
+        )
+        .edgesIgnoringSafeArea(.all)
+    }
+}
+
+// MARK: - MapViewRepresentable
+struct MapViewRepresentable: UIViewRepresentable {
+    @Binding var region: MKCoordinateRegion
+    let clusters: [LocationCluster]
+    let primaryColor: Color
+    let onClusterTap: (LocationCluster) -> Void
+    
+    func makeUIView(context: Context) -> MKMapView {
+        let mapView = MKMapView()
+        mapView.delegate = context.coordinator
+        mapView.showsUserLocation = true
+        mapView.userTrackingMode = .none
+        return mapView
+    }
+    
+    func updateUIView(_ mapView: MKMapView, context: Context) {
+        // Update region
+        mapView.setRegion(region, animated: true)
+        
+        // Remove existing annotations
+        mapView.removeAnnotations(mapView.annotations)
+        
+        // Add new annotations
+        for cluster in clusters {
+            let annotation = ClusterAnnotation(cluster: cluster, primaryColor: primaryColor)
+            mapView.addAnnotation(annotation)
+        }
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject, MKMapViewDelegate {
+        var parent: MapViewRepresentable
+        
+        init(_ parent: MapViewRepresentable) {
+            self.parent = parent
+        }
+        
+        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            guard let clusterAnnotation = annotation as? ClusterAnnotation else { return nil }
+            
+            let identifier = "ClusterAnnotation"
+            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+            
+            if annotationView == nil {
+                annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+                annotationView?.canShowCallout = false
+            } else {
+                annotationView?.annotation = annotation
+                // Remove existing subviews
+                annotationView?.subviews.forEach { $0.removeFromSuperview() }
+            }
+            
+            // Create custom view for the annotation
+            let customView = createCustomAnnotationView(for: clusterAnnotation)
+            annotationView?.addSubview(customView)
+            
+            // Center the custom view
+            customView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                customView.centerXAnchor.constraint(equalTo: annotationView!.centerXAnchor),
+                customView.centerYAnchor.constraint(equalTo: annotationView!.centerYAnchor)
+            ])
+            
+            return annotationView
+        }
+        
+        func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+            guard let clusterAnnotation = view.annotation as? ClusterAnnotation else { return }
+            parent.onClusterTap(clusterAnnotation.cluster)
+        }
+        
+        private func createCustomAnnotationView(for annotation: ClusterAnnotation) -> UIView {
+            let containerView = UIView()
+            
+            if annotation.cluster.count == 1 {
+                // Check if this is an unclaimed location
+                let location = annotation.cluster.locations.first!
+                let isUnclaimed = location.ownership?.claimStatus == "unclaimed"
+                let isVerified = location.ownership?.claimStatus == "approved" || location.ownership?.claimStatus == "verified"
+                
+                // Debug: Print ownership information
+                print("🗺️ Map annotation for location: \(location.name)")
+                print("🗺️ Ownership: \(location.ownership?.claimStatus ?? "nil")")
+                print("🗺️ Is unclaimed: \(isUnclaimed)")
+                print("🗺️ Is verified: \(isVerified)")
+                
+                // Single location marker - consistent styling based on category color
+                let circleView = UIView()
+                circleView.backgroundColor = UIColor(annotation.primaryColor)
+                circleView.layer.cornerRadius = 10
+                circleView.layer.borderWidth = 2
+                circleView.layer.borderColor = UIColor.white.cgColor
+                
+                let shadowColor = UIColor(annotation.primaryColor)
+                circleView.layer.shadowColor = shadowColor.cgColor
+                circleView.layer.shadowOpacity = 0.3
+                circleView.layer.shadowRadius = 4
+                circleView.layer.shadowOffset = CGSize(width: 0, height: 2)
+                
+                // Use consistent icon for all locations
+                let iconName = "mappin.circle.fill"
+                let iconView = UIImageView(image: UIImage(systemName: iconName))
+                iconView.tintColor = UIColor.white
+                iconView.contentMode = UIView.ContentMode.scaleAspectFit
+                
+                containerView.addSubview(circleView)
+                containerView.addSubview(iconView)
+                
+                circleView.translatesAutoresizingMaskIntoConstraints = false
+                iconView.translatesAutoresizingMaskIntoConstraints = false
+                
+                NSLayoutConstraint.activate([
+                    circleView.widthAnchor.constraint(equalToConstant: 20),
+                    circleView.heightAnchor.constraint(equalToConstant: 20),
+                    circleView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+                    circleView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+                    
+                    iconView.widthAnchor.constraint(equalToConstant: 12),
+                    iconView.heightAnchor.constraint(equalToConstant: 12),
+                    iconView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+                    iconView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
+                ])
+            } else {
+                // Cluster marker - smaller size
+                let circleView = UIView()
+                circleView.backgroundColor = UIColor(annotation.primaryColor)
+                circleView.layer.cornerRadius = 12
+                circleView.layer.borderWidth = 2
+                circleView.layer.borderColor = UIColor.white.cgColor
+                circleView.layer.shadowColor = UIColor(annotation.primaryColor).cgColor
+                circleView.layer.shadowOpacity = 0.3
+                circleView.layer.shadowRadius = 5
+                circleView.layer.shadowOffset = CGSize(width: 0, height: 2)
+                
+                let label = UILabel()
+                label.text = "\(annotation.cluster.count)"
+                label.textColor = .white
+                label.font = UIFont.systemFont(ofSize: 12, weight: .bold)
+                label.textAlignment = .center
+                
+                containerView.addSubview(circleView)
+                containerView.addSubview(label)
+                
+                circleView.translatesAutoresizingMaskIntoConstraints = false
+                label.translatesAutoresizingMaskIntoConstraints = false
+                
+                NSLayoutConstraint.activate([
+                    circleView.widthAnchor.constraint(equalToConstant: 24),
+                    circleView.heightAnchor.constraint(equalToConstant: 24),
+                    circleView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+                    circleView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+                    
+                    label.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+                    label.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
+                ])
+            }
+            
+            return containerView
+        }
+    }
+}
+
+// MARK: - ClusterAnnotation
+class ClusterAnnotation: NSObject, MKAnnotation {
+    let cluster: LocationCluster
+    let primaryColor: Color
+    let coordinate: CLLocationCoordinate2D
+    
+    init(cluster: LocationCluster, primaryColor: Color) {
+        self.cluster = cluster
+        self.primaryColor = primaryColor
+        self.coordinate = cluster.center
+        super.init()
     }
 }
 
@@ -1568,8 +1859,26 @@ struct LocationDetailSheet: View {
     func openInMaps() {
         let lat = location.coordinates.latitude
         let lon = location.coordinates.longitude
-        if let url = URL(string: "http://maps.apple.com/?ll=\(lat),\(lon)") {
+        
+        print("[DEBUG] Opening directions for location: \(location.name)")
+        print("[DEBUG] Coordinates: lat=\(lat), lng=\(lon)")
+        
+        // Validate coordinates
+        if lat == 0.0 && lon == 0.0 {
+            print("[ERROR] Invalid coordinates (0,0) for location: \(location.name)")
+            return
+        }
+        
+        if lat < -90 || lat > 90 || lon < -180 || lon > 180 {
+            print("[ERROR] Coordinates out of range for location: \(location.name)")
+            return
+        }
+        
+        if let url = URL(string: "http://maps.apple.com/?daddr=\(lat),\(lon)") {
+            print("[DEBUG] Opening directions URL: \(url)")
             UIApplication.shared.open(url)
+        } else {
+            print("[ERROR] Failed to create directions URL for coordinates: \(lat), \(lon)")
         }
     }
     // Call helper
@@ -1603,6 +1912,13 @@ struct LocationPreviewSheet: View {
     let primaryColor: Color
     let secondaryColor: Color
     let onViewDetails: () -> Void
+    @State private var showClaimModal = false
+    @State private var showComprehensiveClaimModal = false
+    
+    // Check if location is unclaimed
+    private var isUnclaimed: Bool {
+        preview.ownership?.claimStatus == "unclaimed"
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -1727,6 +2043,19 @@ struct LocationPreviewSheet: View {
                                         )
                                         .shadow(color: .yellow.opacity(0.3), radius: 2, x: 0, y: 1)
                                 }
+                                
+                                // Unclaimed location indicator
+                                if isUnclaimed {
+                                    Image(systemName: "hand.raised.fill")
+                                        .foregroundColor(.orange)
+                                        .font(.system(size: 14, weight: .semibold))
+                                        .background(
+                                            Circle()
+                                                .fill(Color.white)
+                                                .frame(width: 20, height: 20)
+                                        )
+                                        .shadow(color: .orange.opacity(0.3), radius: 2, x: 0, y: 1)
+                                }
                             }
                         }
                         
@@ -1742,6 +2071,30 @@ struct LocationPreviewSheet: View {
                                     .foregroundColor(.secondary)
                                     .lineLimit(1)
                             }
+                        }
+                        
+                        // Unclaimed location notice
+                        if isUnclaimed {
+                            HStack(spacing: 6) {
+                                Image(systemName: "info.circle.fill")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.orange)
+                                
+                                Text("This location needs more information - help by claiming it!")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.orange)
+                                    .lineLimit(2)
+                            }
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color.orange.opacity(0.1))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+                                    )
+                            )
                         }
                         
                         // Enhanced rating and reviews with better styling
@@ -1808,61 +2161,147 @@ struct LocationPreviewSheet: View {
                 
                 // Enhanced action buttons with better styling
                 HStack(spacing: 12) {
-                    // Enhanced Directions button
-                    Button(action: {
-                        openInMaps()
-                    }) {
-                        HStack(spacing: 6) {
-                            Image(systemName: "location.fill")
-                                .font(.system(size: 13, weight: .semibold))
-                            Text("Directions")
-                                .font(.system(size: 13, weight: .semibold))
-                        }
-                        .foregroundColor(primaryColor)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                        .background(
-                            Capsule()
-                                .fill(Color.white)
-                                .overlay(
-                                    Capsule()
-                                        .stroke(
-                                            LinearGradient(
-                                                colors: [primaryColor, primaryColor.opacity(0.8)],
-                                                startPoint: .leading,
-                                                endPoint: .trailing
-                                            ),
-                                            lineWidth: 1.5
+                    if isUnclaimed {
+                        // Claim Location button (primary action for unclaimed locations)
+                        Button(action: {
+                            showComprehensiveClaimModal = true
+                        }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "hand.raised.fill")
+                                    .font(.system(size: 13, weight: .semibold))
+                                Text("Claim Location")
+                                    .font(.system(size: 13, weight: .bold))
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .background(
+                                Capsule()
+                                    .fill(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [Color.orange, Color.orange.opacity(0.8)]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
                                         )
-                                )
-                                .shadow(color: primaryColor.opacity(0.2), radius: 4, x: 0, y: 2)
-                        )
-                    }
-                    
-                    Spacer()
-                    
-                    // Enhanced View Details button with gradient
-                    Button(action: onViewDetails) {
-                        HStack(spacing: 6) {
-                            Text("View Details")
-                                .font(.system(size: 14, weight: .bold))
-                            Image(systemName: "arrow.right")
-                                .font(.system(size: 12, weight: .bold))
-                        }
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 12)
-                        .background(
-                            Capsule()
-                                .fill(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [primaryColor, secondaryColor]),
-                                        startPoint: .leading,
-                                        endPoint: .trailing
                                     )
-                                )
-                                .shadow(color: primaryColor.opacity(0.4), radius: 6, x: 0, y: 3)
-                        )
+                                    .shadow(color: Color.orange.opacity(0.4), radius: 6, x: 0, y: 3)
+                            )
+                        }
+                        
+                        // View Details button for unclaimed locations
+                        Button(action: onViewDetails) {
+                            HStack(spacing: 6) {
+                                Text("View Details")
+                                    .font(.system(size: 13, weight: .bold))
+                                Image(systemName: "arrow.right")
+                                    .font(.system(size: 11, weight: .bold))
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .background(
+                                Capsule()
+                                    .fill(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [primaryColor, secondaryColor]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                                    .shadow(color: primaryColor.opacity(0.4), radius: 6, x: 0, y: 3)
+                            )
+                        }
+                        
+                        Spacer()
+                        
+                        // Directions button (secondary action)
+                        Button(action: {
+                            openInMaps()
+                        }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "location.fill")
+                                    .font(.system(size: 13, weight: .semibold))
+                                Text("Directions")
+                                    .font(.system(size: 13, weight: .semibold))
+                            }
+                            .foregroundColor(primaryColor)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(
+                                Capsule()
+                                    .fill(Color.white)
+                                    .overlay(
+                                        Capsule()
+                                            .stroke(
+                                                LinearGradient(
+                                                    colors: [primaryColor, primaryColor.opacity(0.8)],
+                                                    startPoint: .leading,
+                                                    endPoint: .trailing
+                                                ),
+                                                lineWidth: 1.5
+                                            )
+                                    )
+                                    .shadow(color: primaryColor.opacity(0.2), radius: 4, x: 0, y: 2)
+                            )
+                        }
+                    } else {
+                        // Standard buttons for claimed locations
+                        // Enhanced Directions button
+                        Button(action: {
+                            openInMaps()
+                        }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "location.fill")
+                                    .font(.system(size: 13, weight: .semibold))
+                                Text("Directions")
+                                    .font(.system(size: 13, weight: .semibold))
+                            }
+                            .foregroundColor(primaryColor)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(
+                                Capsule()
+                                    .fill(Color.white)
+                                    .overlay(
+                                        Capsule()
+                                            .stroke(
+                                                LinearGradient(
+                                                    colors: [primaryColor, primaryColor.opacity(0.8)],
+                                                    startPoint: .leading,
+                                                    endPoint: .trailing
+                                                ),
+                                                lineWidth: 1.5
+                                            )
+                                    )
+                                    .shadow(color: primaryColor.opacity(0.2), radius: 4, x: 0, y: 2)
+                            )
+                        }
+                        
+                        Spacer()
+                        
+                        // Enhanced View Details button with gradient
+                        Button(action: onViewDetails) {
+                            HStack(spacing: 6) {
+                                Text("View Details")
+                                    .font(.system(size: 14, weight: .bold))
+                                Image(systemName: "arrow.right")
+                                    .font(.system(size: 12, weight: .bold))
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 12)
+                            .background(
+                                Capsule()
+                                    .fill(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [primaryColor, secondaryColor]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                                    .shadow(color: primaryColor.opacity(0.4), radius: 6, x: 0, y: 3)
+                            )
+                        }
                     }
                 }
             }
@@ -1881,15 +2320,50 @@ struct LocationPreviewSheet: View {
                 .shadow(color: Color.black.opacity(0.15), radius: 25, x: 0, y: -8)
         )
         .frame(maxHeight: 220) // Slightly increased height for better spacing
+        .sheet(isPresented: $showClaimModal) {
+            ClaimBusinessModal(
+                locationId: preview.id,
+                locationName: preview.name,
+                isPresented: $showClaimModal
+            )
+        }
+        .sheet(isPresented: $showComprehensiveClaimModal) {
+            ComprehensiveClaimModal(
+                locationId: preview.id,
+                locationName: preview.name,
+                isPresented: $showComprehensiveClaimModal
+            )
+        }
     }
     
     // Open in Maps helper
     func openInMaps() {
-        guard let coordinates = preview.coordinates else { return }
+        guard let coordinates = preview.coordinates else { 
+            print("[ERROR] No coordinates available for preview: \(preview.name)")
+            return 
+        }
         let lat = coordinates.latitude
         let lon = coordinates.longitude
-        if let url = URL(string: "http://maps.apple.com/?ll=\(lat),\(lon)") {
+        
+        print("[DEBUG] Opening directions for preview: \(preview.name)")
+        print("[DEBUG] Coordinates: lat=\(lat), lng=\(lon)")
+        
+        // Validate coordinates
+        if lat == 0.0 && lon == 0.0 {
+            print("[ERROR] Invalid coordinates (0,0) for preview: \(preview.name)")
+            return
+        }
+        
+        if lat < -90 || lat > 90 || lon < -180 || lon > 180 {
+            print("[ERROR] Coordinates out of range for preview: \(preview.name)")
+            return
+        }
+        
+        if let url = URL(string: "http://maps.apple.com/?daddr=\(lat),\(lon)") {
+            print("[DEBUG] Opening directions URL: \(url)")
             UIApplication.shared.open(url)
+        } else {
+            print("[ERROR] Failed to create directions URL for coordinates: \(lat), \(lon)")
         }
     }
 }
@@ -2046,7 +2520,7 @@ struct ReviewsSectionView: View {
                         if let title = review.title {
                             Text(title).font(.headline)
                         }
-                        Text(review.content)
+                        MentionDisplayView(text: review.content)
                         if let pros = review.pros, !pros.isEmpty {
                             Text("Pros: \(pros.joined(separator: ", "))").font(.caption)
                         }
@@ -2141,8 +2615,12 @@ struct WriteReviewModal: View {
                     TextField("Title", text: $title)
                 }
                 Section(header: Text("Content")) {
-                    TextEditor(text: $content)
-                        .frame(height: 100)
+                    MentionInputView(
+                        text: $content,
+                        placeholder: "Write your review...",
+                        maxLength: 1000
+                    )
+                    .frame(height: 100)
                 }
                 Section(header: Text("Rating")) {
                     Slider(value: $rating, in: 1...5, step: 0.5)
@@ -2560,6 +3038,7 @@ extension Location {
         self.createdBy = nil
         self.createdAt = searchLocation.createdAt
         self.updatedAt = searchLocation.updatedAt
+        self.ownership = nil
         self.reviewCount = searchLocation.reviewCount
         self.visitCount = nil
         self.reviews = nil

@@ -92,7 +92,7 @@ struct SettingsView: View {
                             .foregroundColor(.blue)
                         Text("Version")
                         Spacer()
-                        Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
+                        Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.9.81")
                             .foregroundColor(.secondary)
                     }
                     
@@ -108,6 +108,20 @@ struct SettingsView: View {
                 
                 // Support Section
                 Section("Support") {
+                    Button(action: {
+                        shareApp()
+                    }) {
+                        HStack {
+                            Image(systemName: "square.and.arrow.up")
+                                .foregroundColor(.green)
+                            Text("Invite Friends")
+                            Spacer()
+                            Image(systemName: "arrow.up.right.square")
+                                .foregroundColor(.secondary)
+                                .font(.caption)
+                        }
+                    }
+                    
                     Button(action: {
                         // Open support URL
                         if let url = URL(string: "https://sacavia.com/support") {
@@ -159,6 +173,25 @@ struct SettingsView: View {
                         }
                     }
                 }
+                
+                // Debug Section (only in debug builds)
+                #if DEBUG
+                Section("Debug") {
+                    Button(action: {
+                        CrashHandler.shared.simulateCrash()
+                    }) {
+                        HStack {
+                            Image(systemName: "exclamationmark.triangle")
+                                .foregroundColor(.orange)
+                            Text("Test Crash Screen")
+                            Spacer()
+                            Image(systemName: "arrow.right")
+                                .foregroundColor(.secondary)
+                                .font(.caption)
+                        }
+                    }
+                }
+                #endif
                 
                 // Account Actions Section
                 Section {
@@ -228,6 +261,55 @@ struct SettingsView: View {
         #else
         return "Production"
         #endif
+    }
+    
+    private func shareApp() {
+        print("🔍 [SettingsView] Sharing app")
+        
+        // Create app share content
+        let appURL = "https://sacavia.com"
+        let appTitle = "Sacavia - Discover Amazing Places"
+        let appMessage = "Join me on Sacavia! Discover amazing places, connect with your community, and share your favorite spots. Download the app now!"
+        
+        // Create shareable URL
+        guard let url = URL(string: appURL) else {
+            print("🔍 [SettingsView] Failed to create app URL")
+            return
+        }
+        
+        // Use iOS native sharing
+        let activityVC = UIActivityViewController(
+            activityItems: [appTitle, appMessage, url],
+            applicationActivities: nil
+        )
+        
+        // Configure for iPad presentation
+        if let popover = activityVC.popoverPresentationController {
+            popover.sourceView = UIApplication.shared.windows.first?.rootViewController?.view
+            popover.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
+            popover.permittedArrowDirections = []
+        }
+        
+        // Present the share sheet safely
+        DispatchQueue.main.async {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first,
+               let rootViewController = window.rootViewController {
+                
+                // Find the topmost presented view controller
+                var topViewController = rootViewController
+                while let presentedViewController = topViewController.presentedViewController {
+                    topViewController = presentedViewController
+                }
+                
+                print("🔍 [SettingsView] Presenting app share sheet from: \(type(of: topViewController))")
+                topViewController.present(activityVC, animated: true) {
+                    print("🔍 [SettingsView] App share sheet presented successfully")
+                }
+            } else {
+                print("🔍 [SettingsView] Failed to present app share sheet - no root view controller found")
+            }
+        }
     }
 }
 
